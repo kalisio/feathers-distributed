@@ -97,7 +97,7 @@ describe('feathers-distributed', () => {
     remoteService.on('created', user => {
       expect(user).toExist();
       done();
-    })
+    });
     localClientService.create({ name: 'Donald Doe' });
   })
   // Let enough time to process

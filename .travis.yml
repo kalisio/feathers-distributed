@@ -3,21 +3,12 @@ node_js:
   - 'node'
   - '6'
   - '4'
-# FIXME: because travis still uses Mongo 2.4 and we want Mongo 3 we install it manually
-# services:
-#  - mongodb
 addons:
   code_climate:
-    repo_token: 'd6589258f9a1e18f8dc6e4c1700d960c00298e1a8618bb9cde99ceaaded49398'
+    repo_token: '5184ae1a70a543a19bee9c16ed4b55a7e6afa687c49d0cbcb78994334eddf11a'
 notifications:
   email: false
-before_install:
-  - "sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10"
-  - "echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list"
-  - "sudo apt-get update"
-  - "sudo apt-get install mongodb-org-server"
 before_script:
-  - "until nc -z localhost 27017; do echo Waiting for MongoDB; sleep 1; done"
   - npm install -g codeclimate-test-reporter
 after_script:
   - codeclimate-test-reporter < coverage/lcov.info

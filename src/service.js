@@ -27,16 +27,16 @@ class RemoteService {
     });
     this.serviceEventsSubscriber.on('created', object => {
       this.emit('created', object);
-    })
+    });
     this.serviceEventsSubscriber.on('updated', object => {
       this.emit('updated', object);
-    })
+    });
     this.serviceEventsSubscriber.on('patched', object => {
       this.emit('patched', object);
-    })
+    });
     this.serviceEventsSubscriber.on('removed', object => {
       this.emit('removed', object);
-    })
+    });
     debug('Subscriber created for remote service events on path ' + this.path);
   }
 
@@ -151,16 +151,16 @@ class LocalService extends cote.Responder {
     });
     service.on('created', object => {
       this.serviceEventsPublisher.publish('created', object);
-    })
+    });
     service.on('updated', object => {
       this.serviceEventsPublisher.publish('updated', object);
-    })
+    });
     service.on('patched', object => {
       this.serviceEventsPublisher.publish('patched', object);
-    })
+    });
     service.on('removed', object => {
       this.serviceEventsPublisher.publish('removed', object);
-    })
+    });
     debug('Publisher created for local service events on path ' + path);
   }
 }
