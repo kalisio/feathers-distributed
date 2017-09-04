@@ -98,7 +98,7 @@ describe('feathers-distributed', () => {
   .timeout(5000);
 
   it('dispatch service events from local to remote', (done) => {
-    remoteService.on('created', user => {
+    remoteClientService.on('created', user => {
       expect(user).toExist();
       done();
     });
