@@ -69,7 +69,9 @@ describe('feathers-distributed', () => {
         }
       });
     });
-  });
+  })
+  // Let enough time to process
+  .timeout(10000);
 
   it('initiate the clients', () => {
     firstClient = client().configure(socketioClient(io('http://localhost:8081')));
@@ -82,7 +84,9 @@ describe('feathers-distributed', () => {
     // The second client will target the first app through the second one
     remoteClientService = secondClient.service('users');
     expect(remoteClientService).toExist();
-  });
+  })
+  // Let enough time to process
+  .timeout(10000);
 
   it('dispatch service calls from remote to local', () => {
     return remoteClientService.find({})
