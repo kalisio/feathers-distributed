@@ -33,7 +33,7 @@ npm install feathers-distributed --save
 
 **TODO**
 
-Please wait for the [feathers-distributed](http://docs.feathersjs.com/).
+Please wait for the [full feathers-distributed docs](http://docs.feathersjs.com/).
 
 When the plugin initializes the following is done for your app:
 * creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other nodes. 
