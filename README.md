@@ -35,6 +35,8 @@ npm install feathers-distributed --save
 
 Please wait for the [full feathers-distributed docs](http://docs.feathersjs.com/).
 
+![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/018e21e750851be3796d322d3805f871636a91a6/Architecture%20Diagram.svg)
+
 When the plugin initializes the following is done for your app:
 * creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other nodes. 
 * creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other nodes. 
