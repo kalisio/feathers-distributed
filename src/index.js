@@ -13,21 +13,37 @@ export default function init () {
 
   // This publisher publishes an event each time a local app service is registered
   app.servicePublisher = new cote.Publisher({
-    name: 'feathers services publisher #' + app.uuid,
+    name: 'feathers services publisher',
     namespace: 'services',
     broadcasts: ['service']
   });
+  // Also each time a new node pops up so that it does not depend of the initialization order of the apps
+  app.servicePublisher.on('cote:added', data => {
+    // console.log(data)
+    Object.entries(app.services).forEach(([path, service]) => {
+      app.servicePublisher.publish('service', { uuid: app.uuid, path });
+      debug('Republished local service on path ' + path);
+    });
+  });
   // This subscriber listen to an event each time a remote app service has been registered
   app.serviceSubscriber = new cote.Subscriber({
-    name: 'feathers services subscriber #' + app.uuid,
+    name: 'feathers services subscriber',
     namespace: 'services',
     subscribesTo: ['service']
+  });
+  app.servicePublisher.on('cote:added', data => {
+    // console.log(data)
   });
   // When a remote service is declared create the local proxy interface to it
   app.serviceSubscriber.on('service', (serviceDescriptor) => {
     // Do not register our own services
     if (serviceDescriptor.uuid === app.uuid) {
       debug('Do not register service as remote on path ' + serviceDescriptor.path);
+      return;
+    }
+    // Skip already registered services
+    if (app.service(serviceDescriptor.path)) {
+      debug('Already registered service as remote on path ' + serviceDescriptor.path);
       return;
     }
     app.use(serviceDescriptor.path, new RemoteService(serviceDescriptor));

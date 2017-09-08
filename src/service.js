@@ -13,7 +13,7 @@ class RemoteService {
   setup (app, path) {
     // Create the request manager to remote ones for this service
     this.requester = new cote.Requester({
-      name: path + ' requester #' + app.uuid,
+      name: path + ' requester',
       namespace: path,
       requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
     });
@@ -21,7 +21,7 @@ class RemoteService {
     debug('Requester created for remote service on path ' + this.path);
     // Create the subscriber to listen to events from other nodes
     this.serviceEventsSubscriber = new cote.Subscriber({
-      name: path + ' events subscriber #' + app.uuid,
+      name: path + ' events subscriber',
       namespace: path,
       subscribesTo: ['created', 'updated', 'patched', 'removed']
     });
@@ -67,7 +67,7 @@ class RemoteService {
 
   update (id, data, params) {
     debug('Requesting update() remote service on path ' + this.path);
-    return this.requester.send({ type: 'update', id, params }).then(result => {
+    return this.requester.send({ type: 'update', id, data, params }).then(result => {
       debug('Successfully update() remote service on path ' + this.path);
       return result;
     });
@@ -75,7 +75,7 @@ class RemoteService {
 
   patch (id, data, params) {
     debug('Requesting patch() remote service on path ' + this.path);
-    return this.requester.send({ type: 'patch', id, params }).then(result => {
+    return this.requester.send({ type: 'patch', id, data, params }).then(result => {
       debug('Successfully patch() remote service on path ' + this.path);
       return result;
     });
@@ -95,7 +95,7 @@ class LocalService extends cote.Responder {
   constructor (options) {
     const app = options.app;
     const path = options.path;
-    super({ name: path + ' responder #' + app.uuid, namespace: path, respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove'] });
+    super({ name: path + ' responder', namespace: path, respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove'] });
     debug('Responder created for local service on path ' + path);
     let service = app.service(path);
 
@@ -109,35 +109,35 @@ class LocalService extends cote.Responder {
     });
     this.on('get', (req) => {
       debug('Responding get() remote service on path ' + path);
-      service.get(req.id, req.params).then((result) => {
+      return service.get(req.id, req.params).then((result) => {
         debug('Successfully get() local service on path ' + path);
         return result;
       });
     });
     this.on('create', (req) => {
       debug('Responding create() remote service on path ' + path);
-      service.create(req.data, req.params).then((result) => {
+      return service.create(req.data, req.params).then((result) => {
         debug('Successfully create() local service on path ' + path);
         return result;
       });
     });
     this.on('update', (req) => {
       debug('Responding update() remote service on path ' + path);
-      service.update(req.id, req.data, req.params).then((result) => {
+      return service.update(req.id, req.data, req.params).then((result) => {
         debug('Successfully update() local service on path ' + path);
         return result;
       });
     });
     this.on('patch', (req) => {
       debug('Responding patch() remote service on path ' + path);
-      service.patch(req.id, req.data, req.params).then((result) => {
+      return service.patch(req.id, req.data, req.params).then((result) => {
         debug('Successfully patch() local service on path ' + path);
         return result;
       });
     });
     this.on('remove', (req) => {
       debug('Responding remove() remote service on path ' + path);
-      service.remove(req.id, req.params).then((result) => {
+      return service.remove(req.id, req.params).then((result) => {
         debug('Successfully remove() local service on path ' + path);
         return result;
       });
@@ -145,7 +145,7 @@ class LocalService extends cote.Responder {
 
     // Dispatch events to other nodes
     this.serviceEventsPublisher = new cote.Publisher({
-      name: path + ' events publisher #' + app.uuid,
+      name: path + ' events publisher',
       namespace: path,
       broadcasts: ['created', 'updated', 'patched', 'removed']
     });
