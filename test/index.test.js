@@ -111,7 +111,7 @@ describe('feathers-distributed', () => {
     }
   })
   // Let enough time to process
-  .timeout(10000);
+  .timeout(5000);
 
   it('dispatch find service calls from remote to local', () => {
     return clientServices[1].find({})

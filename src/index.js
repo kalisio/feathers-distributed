@@ -20,7 +20,7 @@ export default function init () {
   // Also each time a new node pops up so that it does not depend of the initialization order of the apps
   app.servicePublisher.on('cote:added', data => {
     // console.log(data)
-    Object.entries(app.services).forEach(([path, service]) => {
+    Object.getOwnPropertyNames(app.services).forEach(path => {
       app.servicePublisher.publish('service', { uuid: app.uuid, path });
       debug('Republished local service on path ' + path);
     });
