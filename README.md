@@ -35,7 +35,7 @@ npm install feathers-distributed --save
 
 Please wait for the [full feathers-distributed docs](http://docs.feathersjs.com/).
 
-![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/018e21e750851be3796d322d3805f871636a91a6/Architecture%20Diagram.svg)
+![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
 
 When the plugin initializes the following is done for your app:
 * creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other nodes. 
