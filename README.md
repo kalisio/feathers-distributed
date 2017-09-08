@@ -1,9 +1,9 @@
 # feathers-distributed
 
-[![Build Status](https://travis-ci.org/kalisio/feathers-distributed.png?branch=master)](https://travis-ci.org/feathersjs/feathers-distributed)
+[![Build Status](https://travis-ci.org/kalisio/feathers-distributed.png?branch=master)](https://travis-ci.org/kalisio/feathers-distributed)
 [![Code Climate](https://codeclimate.com/github/kalisio/feathers-distributed/badges/gpa.svg)](https://codeclimate.com/github/kalisio/feathers-distributed)
 [![Test Coverage](https://codeclimate.com/github/kalisio/feathers-distributed/badges/coverage.svg)](https://codeclimate.com/github/kalisio/feathers-distributed/coverage)
-[![Dependency Status](https://img.shields.io/david/kalisio/feathers-distributed.svg?style=flat-square)](https://david-dm.org/feathersjs/feathers-distributed)
+[![Dependency Status](https://img.shields.io/david/kalisio/feathers-distributed.svg?style=flat-square)](https://david-dm.org/kalisio/feathers-distributed)
 [![Download Status](https://img.shields.io/npm/dm/feathers-distributed.svg?style=flat-square)](https://www.npmjs.com/package/feathers-distributed)
 
 > Distribute your Feathers services as microservices
