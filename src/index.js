@@ -1,4 +1,5 @@
 import { RemoteService, LocalService } from './service';
+import { stripSlashes } from 'feathers-commons';
 import cote from 'cote';
 import uuid from 'uuid/v4';
 import makeDebug from 'debug';
@@ -21,7 +22,7 @@ export default function init () {
   app.servicePublisher.on('cote:added', data => {
     // console.log(data)
     Object.getOwnPropertyNames(app.services).forEach(path => {
-      app.servicePublisher.publish('service', { uuid: app.uuid, path });
+      app.servicePublisher.publish('service', { uuid: app.uuid, path: path });
       debug('Republished local service on path ' + path);
     });
   });
@@ -61,10 +62,10 @@ export default function init () {
     // Also avoid infinite loop by registering already registered remote services
     if (typeof service === 'object' && !service.remote) {
       // Publish new local service
-      app.servicePublisher.publish('service', { uuid: app.uuid, path });
+      app.servicePublisher.publish('service', { uuid: app.uuid, path: path });
       debug('Published local service on path ' + path);
       // Register the responder to handle remote calls to the service
-      service.responder = new LocalService({ app, path });
+      service.responder = new LocalService({ app, path: path });
     }
   };
 }

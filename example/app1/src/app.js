@@ -47,7 +47,9 @@ app.configure(authentication);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Configure a middleware for 404s and the error handler
-app.use(notFound());
+// FIXME: this does not allow to declare remote services after the app has been launched
+// Indeed this middleware is hit first...
+//app.use(notFound());
 app.use(handler());
 
 app.hooks(appHooks);
