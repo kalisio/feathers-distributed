@@ -49,6 +49,10 @@ What is done when your app is aware of a new remotely registered service is the 
 * creates a local Feathers service *acting as a proxy* to the remote one by creating a [requester](https://github.com/dashersw/cote#creating-a-requester) to send incoming requests to other nodes.
 * this proxy service also creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service-level events coming from other nodes.
 
+## Example
+
+Look into the [example folder](./example).
+
 ## License
 
 Copyright (c) 2016
