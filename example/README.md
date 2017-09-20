@@ -7,7 +7,23 @@ They are feeded with a default user/todo.
 
 The *index.html* is a simple web page connecting to app1 and requesting todos from the service in app2.
 
-They have been generated using the `feathers-cli`:
+## Launch
+
+To launch these apps:
+```
+// Launch app1
+cd app1
+npm start
+// Launch app2
+cd app2
+npm start
+```
+
+Open the *index.html* file in your browser, you should see a TODO.
+
+## Generation
+
+These apps have been generated using the `feathers-cli`:
 ```
 // Initialize app1
 mkdir app1
@@ -18,6 +34,7 @@ feathers generate authentication
 cd ..
 // Initialize app2
 mkdir app2
+cd app2
 feathers generate app
 // Add todos service
 feathers generate service
