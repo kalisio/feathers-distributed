@@ -13,9 +13,11 @@ To launch these apps:
 ```
 // Launch app1
 cd app1
+npm/yarn install
 npm start
 // Launch app2
 cd app2
+npm/yarn install
 npm start
 ```
 
