@@ -38,7 +38,9 @@
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --opts mocha.opts",
     "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
     "test": "npm run compile && npm run lint && npm run coverage",
-    "start": "npm run compile && node example/app"
+    "start:app1": "cd example/app1 &&npm start",
+    "start:app2": "cd example/app2 &&npm start",
+    "start": "npm run compile && npm-run-all --parallel start:**"
   },
   "semistandard": {
     "sourceType": "module",
@@ -71,6 +73,7 @@
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.4.2",
     "mongodb": "^2.2.29",
+    "npm-run-all": "^4.1.1",
     "semistandard": "^11.0.0",
     "shx": "^0.2.2",
     "socket.io-client": "^2.0.3",

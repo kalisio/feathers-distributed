@@ -23,17 +23,30 @@ This plugin relies on [cote](https://github.com/dashersw/cote) and takes benefit
 **cote** requires your cloud provider to support IP broadcast or multicast. You can still have the same functionality
 with [Weave overlay networks](https://github.com/weaveworks/weave), eg on Docker's Cloud. In any other cases you can use [centralized discovery](https://github.com/dashersw/cote#using-centralized-discovery-tools).
 
+You might find this [presentation](http://slides.com/armaganamcalar/apiconf-zero-conf-microservices#/) really helpful to understand it.
+
 ## Installation
 
 ```
 npm install feathers-distributed --save
 ```
 
+**While it is a WIP please use the following command:**
+```
+npm install https://github.com/kalisio/feathers-distributed --save
+```
+
+`feathers-distributed` is as least intrusive as possible so for most use cases you simply need to configure it along with your applications holding your services:
+```javascript
+const distribution = require('feathers-distributed');
+...
+app.configure(hooks());
+app.configure(socketio());
+app.configure(distribution);
+...
+```
+
 ## Documentation
-
-**TODO**
-
-Please wait for the [full feathers-distributed docs](http://docs.feathersjs.com/).
 
 ![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
 
@@ -51,7 +64,13 @@ What is done when your app is aware of a new remotely registered service is the 
 
 ## Example
 
-Look into the [example folder](./example).
+To launch the example:
+```
+npm start
+```
+Wait a couple of seconds so that each app is aware of other apps on the network.
+
+Look for details into the [example folder](./example).
 
 ## License
 

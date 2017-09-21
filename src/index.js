@@ -6,7 +6,8 @@ import makeDebug from 'debug';
 
 const debug = makeDebug('feathers-distributed');
 
-export default function init () {
+export default function init (options) {
+  const distributionOptions = Object.assign({}, options);
   let app = this;
   // We need to uniquely identify the app to avoid infinite loop by registering our own services
   app.uuid = uuid();
@@ -21,19 +22,20 @@ export default function init () {
   // Also each time a new node pops up so that it does not depend of the initialization order of the apps
   app.servicePublisher.on('cote:added', data => {
     // console.log(data)
-    Object.getOwnPropertyNames(app.services).forEach(path => {
-      app.servicePublisher.publish('service', { uuid: app.uuid, path });
-      debug('Republished local service on path ' + path);
-    });
+    // Add a timeout so that the subscriber has been initialized on the node
+    const publicationDelay = distributionOptions.publicationDelay || 5000;
+    setTimeout(_ => {
+      Object.getOwnPropertyNames(app.services).forEach(path => {
+        app.servicePublisher.publish('service', { uuid: app.uuid, path });
+        debug('Republished local service on path ' + path);
+      });
+    }, publicationDelay);
   });
   // This subscriber listen to an event each time a remote app service has been registered
   app.serviceSubscriber = new cote.Subscriber({
     name: 'feathers services subscriber',
     namespace: 'services',
     subscribesTo: ['service']
-  });
-  app.servicePublisher.on('cote:added', data => {
-    // console.log(data)
   });
   // When a remote service is declared create the local proxy interface to it
   app.serviceSubscriber.on('service', (serviceDescriptor) => {
