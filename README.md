@@ -42,7 +42,7 @@ const distribution = require('feathers-distributed');
 ...
 app.configure(hooks());
 app.configure(socketio());
-app.configure(distribution);
+app.configure(distribution());
 ...
 ```
 

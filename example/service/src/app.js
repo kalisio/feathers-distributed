@@ -37,7 +37,7 @@ app.use('/', feathers.static(app.get('public')));
 app.configure(hooks());
 app.configure(rest());
 app.configure(socketio());
-app.configure(distribution);
+app.configure(distribution());
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
