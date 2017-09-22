@@ -23,7 +23,7 @@
         var appElement = document.getElementById('app')
         html = '<ul>'
         for (var i = 0; i < todos.total; i++) {
-          html += '<li>' + todos.data[i].title + ':' + todos.data[i].description + '</li>'
+          html += '<li>' + todos.data[i].title + ' with ID ' + todos.data[i]._id + ' : ' + todos.data[i].description + '</li>'
         }
         html += '</ul>'
         appElement.innerHTML = html
