@@ -29,9 +29,9 @@ npm start
 
 Open the *index.html* file in your browser, you should see a TODO from the service.
 
-If you use [cote monitoring tool]() you should see something like that:
+If you use [cote monitoring tool](https://github.com/dashersw/cote#monitoring-tool) you should see something like that:
 <p align="center">
-  <img src="https://github.com/kalisio/feathers-distributed/ac75ff0d4c1326cdcd5ca4522bb2f06179b9bd6f/example/monitor.jpg"/>
+  <img src="https://cdn.rawgit.com/kalisio/feathers-distributed/ac75ff0d4c1326cdcd5ca4522bb2f06179b9bd6f/example/monitor.jpg"/>
 </p>
 
 ## Generation
