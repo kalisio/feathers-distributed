@@ -68,7 +68,7 @@ To launch the example:
 ```
 npm start
 ```
-Wait a couple of seconds so that each app is aware of other apps on the network.
+Wait a couple of seconds so that each app is aware of other apps on the network. Open the *example/index.html* file in your browser, you should see a TODO coming from a microservice.
 
 Look for details into the [example folder](./example).
 
