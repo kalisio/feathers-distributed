@@ -2,7 +2,7 @@ version: '2'
 
 services:
   gateway:
-    build: ./app1
+    build: ./gateway
     container_name: gateway
     image: feathers/gateway
     ports:
@@ -10,7 +10,7 @@ services:
     networks:
       - feathers
   service1:
-    build: ./app2
+    build: ./service
     container_name: service1
     image: feathers/service1
     ports:
@@ -18,7 +18,7 @@ services:
     networks:
       - feathers
   service2:
-    build: ./app2
+    build: ./service
     container_name: service2
     image: feathers/service2
     ports:

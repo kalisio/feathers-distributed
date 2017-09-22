@@ -9,7 +9,7 @@ module.exports = function () {
     if (todos.total === 0) {
       todoService.create({
         title: 'TODO',
-        description: 'You have a todo from process ' + process.pid + ' !'
+        description: 'You have a todo !'
       }).then(result => {
         console.log('Todo created!', result);
       }).catch(error => {

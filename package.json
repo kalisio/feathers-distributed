@@ -2,7 +2,7 @@
   "name": "feathers-distributed",
   "description": "Distribute your Feathers services as microservices",
   "version": "0.0.0",
-  "homepage": "https://github.com/feathersjs/ && cpx src/ example/app1/lib/",
+  "homepage": "https://github.com/kalisio/feathers-distributed",
   "main": "lib/",
   "keywords": [
     "feathers",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/feathersjs/feathers-distributed.git"
+    "url": "git://github.com/kalisio/feathers-distributed.git"
   },
   "author": {
     "name": "Feathers contributors",
@@ -20,7 +20,7 @@
   },
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/feathersjs/feathers-distributed/issues"
+    "url": "https://github.com/kalisio/feathers-distributed/issues"
   },
   "engines": {
     "node": ">= 4.6.0"
@@ -32,14 +32,14 @@
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
     "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
-    "compile": "shx rm -rf lib/ && babel -d lib/ src/ && cpx lib/** example/app1/lib && cpx lib/** example/app2/lib",
+    "compile": "shx rm -rf lib/ && babel -d lib/ src/ && cpx lib/** example/gateway/lib && cpx lib/** example/service/lib",
     "watch": "babel --watch -d lib/ src/",
     "lint": "semistandard src/**/*.js test/**/*.js --fix",
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --opts mocha.opts",
     "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
     "test": "npm run compile && npm run lint && npm run coverage",
-    "start:app1": "cd example/app1 &&npm start",
-    "start:app2": "cd example/app2 &&npm start",
+    "start:gateway": "cd example/gateway && npm start",
+    "start:service": "cd example/service && npm start",
     "start": "npm run compile && npm-run-all --parallel start:**"
   },
   "semistandard": {
