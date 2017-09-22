@@ -31,6 +31,7 @@
     "body-parser": "^1.18.1",
     "compression": "^1.7.0",
     "cors": "^2.8.4",
+    "cote": "^0.15.1",
     "feathers": "^2.2.0",
     "feathers-authentication": "^1.2.7",
     "feathers-authentication-hooks": "^0.1.4",

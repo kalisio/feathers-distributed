@@ -10,7 +10,7 @@ const configuration = require('feathers-configuration');
 const hooks = require('feathers-hooks');
 const rest = require('feathers-rest');
 const socketio = require('feathers-socketio');
-const distribution = require('../../../lib');
+const distribution = require('../lib');
 
 const handler = require('feathers-errors/handler');
 const notFound = require('feathers-errors/not-found');
