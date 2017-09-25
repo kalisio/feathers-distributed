@@ -77,7 +77,7 @@ describe('feathers-distributed', () => {
   it('registers the plugin/services', () => {
     let promises = [];
     for (let i = 0; i < nbApps; i++) {
-      apps[i].configure(plugin);
+      apps[i].configure(plugin());
       // Only the first app has a local service
       if (i === 0) {
         apps[i].use('users', memory({ store: clone(store), startId }));
