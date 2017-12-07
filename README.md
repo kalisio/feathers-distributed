@@ -74,6 +74,6 @@ Look for details into the [example folder](./example).
 
 ## License
 
-Copyright (c) 2016
+Copyright (c) 2017 Kalisio
 
 Licensed under the [MIT license](LICENSE).
