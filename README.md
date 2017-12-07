@@ -28,17 +28,17 @@ You might find this [presentation](http://slides.com/armaganamcalar/apiconf-zero
 ## Installation
 
 ```
-npm install feathers-distributed --save
+npm install @kalisio/feathers-distributed --save
 ```
 
-**While it is a WIP please use the following command:**
+**To get the latest version please use the following command:**
 ```
 npm install https://github.com/kalisio/feathers-distributed --save
 ```
 
 `feathers-distributed` is as least intrusive as possible so for most use cases you simply need to configure it along with your applications holding your services:
 ```javascript
-const distribution = require('feathers-distributed');
+const distribution = require('@kalisio/feathers-distributed');
 ...
 app.configure(hooks());
 app.configure(socketio());
