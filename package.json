@@ -1,5 +1,5 @@
 {
-  "name": "feathers-distributed",
+  "name": "@kalisio/feathers-distributed",
   "description": "Distribute your Feathers services as microservices",
   "version": "0.1.0",
   "homepage": "https://github.com/kalisio/feathers-distributed",
