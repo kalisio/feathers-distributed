@@ -1,7 +1,7 @@
 {
   "name": "feathers-distributed",
   "description": "Distribute your Feathers services as microservices",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "homepage": "https://github.com/kalisio/feathers-distributed",
   "main": "lib/",
   "keywords": [
@@ -14,9 +14,8 @@
     "url": "git://github.com/kalisio/feathers-distributed.git"
   },
   "author": {
-    "name": "Feathers contributors",
-    "email": "hello@feathersjs.com",
-    "url": "https://feathersjs.com"
+    "name": "Kalisio contributors",
+    "url": "https://github.com/kalisio"
   },
   "contributors": [],
   "bugs": {
