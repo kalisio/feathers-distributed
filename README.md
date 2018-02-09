@@ -9,8 +9,9 @@
 
 > Distribute your Feathers services as microservices
 
-**This plugin is under heavy development, breaking changes could be pushed unexpectedly.
-As a consequence it should be considered unstable, not yet ready for production use.**
+**This plugin is under development and currently in alpha-test, updates will be pushed frequently.
+As a consequence it should be considered unstable, not yet ready for production use.
+Although we try to avoid this wherever possible, `0.x` versions on the master branch can promote breaking changes in the API.**
 
 This plugin relies on [cote](https://github.com/dashersw/cote) and takes benefits of it:
 - **Zero-configuration:** no IP addresses, no ports, no routing to configure
@@ -23,6 +24,8 @@ This plugin relies on [cote](https://github.com/dashersw/cote) and takes benefit
 
 **cote** requires your cloud provider to support IP broadcast or multicast. You can still have the same functionality
 with [Weave overlay networks](https://github.com/weaveworks/weave), eg on Docker's Cloud. In any other cases you can use [centralized discovery](https://github.com/dashersw/cote#using-centralized-discovery-tools).
+
+> cote works out of the box with Docker Swarm and Docker Cloud but we are seeking for volunteers to test this module under various Cloud providers like AWS, Google Cloud, etc. Please open an issue if you'd like to do so and report your findings.
 
 You might find this [presentation](http://slides.com/armaganamcalar/apiconf-zero-conf-microservices#/) really helpful to understand it.
 
