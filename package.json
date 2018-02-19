@@ -51,7 +51,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "cote": "^0.15.1",
+    "cote": "^0.16.2",
     "debug": "^2.6.8",
     "feathers": "^2.1.4",
     "feathers-commons": "^0.8.7",
