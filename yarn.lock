@@ -12,9 +12,9 @@
     debug "*"
     escape-regexp "0.0.1"
 
-"@dashersw/node-discover@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@dashersw/node-discover/-/node-discover-0.7.1.tgz#e184fb274615b438b26bfa8d0462841aae5b84a4"
+"@dashersw/node-discover@^0.8.2":
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/@dashersw/node-discover/-/node-discover-0.8.2.tgz#892d2565522cb8aae4391e560d4737e79d386e51"
   dependencies:
     node-uuid "^1.4.3"
     redis "^2.7.1"
@@ -1009,18 +1009,18 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-cote@^0.15.1:
-  version "0.15.1"
-  resolved "https://registry.yarnpkg.com/cote/-/cote-0.15.1.tgz#9079bb3d9b81432ee7b3f16a3e53bda5b0c5cc34"
+cote@^0.16.2:
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/cote/-/cote-0.16.2.tgz#9b46ab6adae90650f88ffd2b4f156fb685cd69b9"
   dependencies:
     "@dashersw/axon" "2.0.5"
-    "@dashersw/node-discover" "^0.7.1"
+    "@dashersw/node-discover" "^0.8.2"
     charm "1.0.2"
     colors "1.1.2"
-    eventemitter2 "4.1.0"
-    lodash "4.17.4"
+    eventemitter2 "4.1.2"
+    lodash "4.17.5"
     portfinder "1.0.13"
-    socket.io "2.0.3"
+    socket.io "2.0.4"
     uuid "^3.1.0"
 
 cpx@^1.5.0:
@@ -1522,9 +1522,9 @@ event-stream@~3.3.0:
     stream-combiner "~0.0.4"
     through "~2.3.1"
 
-eventemitter2@4.1.0:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-4.1.0.tgz#b1fb8a1144e7dfcf80cecce9877ff6d68e7d8506"
+eventemitter2@4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-4.1.2.tgz#0e1a8477af821a6ef3995b311bf74c23a5247f15"
 
 events@^1.1.1:
   version "1.1.1"
@@ -2526,7 +2526,11 @@ lodash.keys@^3.0.0:
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
 
-lodash@4.17.4, lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.3.0:
+lodash@4.17.5:
+  version "4.17.5"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
+lodash@^4.0.0, lodash@^4.14.0, lodash@^4.17.4, lodash@^4.3.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -3436,6 +3440,24 @@ socket.io-adapter@~1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-1.1.1.tgz#2a805e8a14d6372124dd9159ad4502f8cb07f06b"
 
+socket.io-client@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.0.4.tgz#0918a552406dc5e540b380dcd97afc4a64332f8e"
+  dependencies:
+    backo2 "1.0.2"
+    base64-arraybuffer "0.1.5"
+    component-bind "1.0.0"
+    component-emitter "1.2.1"
+    debug "~2.6.4"
+    engine.io-client "~3.1.0"
+    has-cors "1.1.0"
+    indexof "0.0.1"
+    object-component "0.0.3"
+    parseqs "0.0.5"
+    parseuri "0.0.5"
+    socket.io-parser "~3.1.1"
+    to-array "0.1.4"
+
 socket.io-client@^2.0.3, socket.io-client@~2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-2.0.3.tgz#6caf4aff9f85b19fd91b6ce13d69adb564f8873b"
@@ -3463,7 +3485,17 @@ socket.io-parser@~3.1.1:
     has-binary2 "~1.0.2"
     isarray "2.0.1"
 
-socket.io@2.0.3, socket.io@^2.0.1:
+socket.io@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-2.0.4.tgz#c1a4590ceff87ecf13c72652f046f716b29e6014"
+  dependencies:
+    debug "~2.6.6"
+    engine.io "~3.1.0"
+    socket.io-adapter "~1.1.0"
+    socket.io-client "2.0.4"
+    socket.io-parser "~3.1.1"
+
+socket.io@^2.0.1:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-2.0.3.tgz#4359f06a24933ae6bd087798af78c680eae345e3"
   dependencies:
