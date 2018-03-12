@@ -76,6 +76,42 @@ Wait a couple of seconds so that each app is aware of other apps on the network.
 
 Look for details into the [example folder](./example).
 
+## Authentication
+
+There are two scenarios:
+* the **API gateway**, where you have a single entry point (ie node) to authenticate and access your API but services are distributed accross different nodes
+* the **distributed application**, where you can distribute and access any service on any node on your network mesh with authentication
+
+### API gateway: 
+
+In this case you have to [install the authentication plugin](https://auk.docs.feathersjs.com/api/authentication/server.html#authentication) on your gateway and register a hook that will enforce authentication on each registered remote service by using the `hooks` option:
+```
+app.configure(
+  distribution({
+    hooks: {
+      before: {
+        all: [authenticate('jwt')],
+      },
+    },
+  })
+);
+```
+You don't need to install the authentication plugin or hook on each service served from your nodes.
+
+You process as usual to [authenticate your client](https://auk.docs.feathersjs.com/api/authentication/client.html#additional-feathersclient-methods) first on the gateway with a local or JWT strategy for instance.
+
+Our [example folder](./example) is a good start for this use case.
+
+### Distributed application
+
+In this case you have to [install the authentication plugin](https://auk.docs.feathersjs.com/api/authentication/server.html#authentication) on each of your nodes and register a hook that will enforce authentication on each service as usual.
+
+You process as usual to [authenticate your client](https://auk.docs.feathersjs.com/api/authentication/client.html#additional-feathersclient-methods) first on any node with a local or JWT strategy for instance.
+
+Our [tests](https://github.com/kalisio/feathers-distributed/blob/master/test/index.test.js) contain a good example for this use case.
+
+> To make it work all node must share the same authentication configuration (i.e. secret)
+
 ## License
 
 Copyright (c) 2017 Kalisio
