@@ -16,7 +16,7 @@ class RemoteService {
       name: path + ' requester',
       namespace: path,
       requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
-    });
+    }, { log: false });
     this.path = path;
     debug('Requester created for remote service on path ' + this.path);
     // Create the subscriber to listen to events from other nodes
@@ -24,7 +24,7 @@ class RemoteService {
       name: path + ' events subscriber',
       namespace: path,
       subscribesTo: ['created', 'updated', 'patched', 'removed']
-    });
+    }, { log: false });
     this.serviceEventsSubscriber.on('created', object => {
       this.emit('created', object);
     });
@@ -42,7 +42,7 @@ class RemoteService {
 
   // Perform requests to other nodes
   find (params) {
-    debug('Requesting find() remote service on path ' + this.path);
+    debug('Requesting find() remote service on path ' + this.path, params);
     return this.requester.send({ type: 'find', params }).then(result => {
       debug('Successfully find() remote service on path ' + this.path);
       return result;
@@ -50,7 +50,7 @@ class RemoteService {
   }
 
   get (id, params) {
-    debug('Requesting get() remote service on path ' + this.path);
+    debug('Requesting get() remote service on path ' + this.path, id, params);
     return this.requester.send({ type: 'get', id, params }).then(result => {
       debug('Successfully get() remote service on path ' + this.path);
       return result;
@@ -58,7 +58,7 @@ class RemoteService {
   }
 
   create (data, params) {
-    debug('Requesting create() remote service on path ' + this.path);
+    debug('Requesting create() remote service on path ' + this.path, data, params);
     return this.requester.send({ type: 'create', data, params }).then(result => {
       debug('Successfully create() remote service on path ' + this.path);
       return result;
@@ -66,7 +66,7 @@ class RemoteService {
   }
 
   update (id, data, params) {
-    debug('Requesting update() remote service on path ' + this.path);
+    debug('Requesting update() remote service on path ' + this.path, id, data, params);
     return this.requester.send({ type: 'update', id, data, params }).then(result => {
       debug('Successfully update() remote service on path ' + this.path);
       return result;
@@ -74,7 +74,7 @@ class RemoteService {
   }
 
   patch (id, data, params) {
-    debug('Requesting patch() remote service on path ' + this.path);
+    debug('Requesting patch() remote service on path ' + this.path, id, data, params);
     return this.requester.send({ type: 'patch', id, data, params }).then(result => {
       debug('Successfully patch() remote service on path ' + this.path);
       return result;
@@ -82,7 +82,7 @@ class RemoteService {
   }
 
   remove (id, params) {
-    debug('Requesting remove() remote service on path ' + this.path);
+    debug('Requesting remove() remote service on path ' + this.path, id, params);
     return this.requester.send({ type: 'remove', id, params }).then(result => {
       debug('Successfully remove() remote service on path ' + this.path);
       return result;
@@ -95,48 +95,48 @@ class LocalService extends cote.Responder {
   constructor (options) {
     const app = options.app;
     const path = options.path;
-    super({ name: path + ' responder', namespace: path, respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove'] });
+    super({ name: path + ' responder', namespace: path, respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove'] }, { log: false });
     debug('Responder created for local service on path ' + path);
     let service = app.service(path);
 
     // Answer requests from other nodes
     this.on('find', (req) => {
-      debug('Responding find() remote service on path ' + path);
+      debug('Responding find() local service on path ' + path);
       return service.find(req.params).then((result) => {
         debug('Successfully find() local service on path ' + path);
         return result;
       });
     });
     this.on('get', (req) => {
-      debug('Responding get() remote service on path ' + path);
+      debug('Responding get() local service on path ' + path);
       return service.get(req.id, req.params).then((result) => {
         debug('Successfully get() local service on path ' + path);
         return result;
       });
     });
     this.on('create', (req) => {
-      debug('Responding create() remote service on path ' + path);
+      debug('Responding create() local service on path ' + path);
       return service.create(req.data, req.params).then((result) => {
         debug('Successfully create() local service on path ' + path);
         return result;
       });
     });
     this.on('update', (req) => {
-      debug('Responding update() remote service on path ' + path);
+      debug('Responding update() local service on path ' + path);
       return service.update(req.id, req.data, req.params).then((result) => {
         debug('Successfully update() local service on path ' + path);
         return result;
       });
     });
     this.on('patch', (req) => {
-      debug('Responding patch() remote service on path ' + path);
+      debug('Responding patch() local service on path ' + path);
       return service.patch(req.id, req.data, req.params).then((result) => {
         debug('Successfully patch() local service on path ' + path);
         return result;
       });
     });
     this.on('remove', (req) => {
-      debug('Responding remove() remote service on path ' + path);
+      debug('Responding remove() local service on path ' + path);
       return service.remove(req.id, req.params).then((result) => {
         debug('Successfully remove() local service on path ' + path);
         return result;
@@ -148,7 +148,7 @@ class LocalService extends cote.Responder {
       name: path + ' events publisher',
       namespace: path,
       broadcasts: ['created', 'updated', 'patched', 'removed']
-    });
+    }, { log: false });
     service.on('created', object => {
       this.serviceEventsPublisher.publish('created', object);
     });

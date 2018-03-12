@@ -21,6 +21,7 @@ const appHooks = require('./app.hooks');
 
 const authentication = require('./authentication');
 
+const { authenticate } = require('feathers-authentication').hooks;
 const app = feathers();
 
 // Load app configuration
@@ -39,7 +40,15 @@ app.use('/', feathers.static(app.get('public')));
 app.configure(hooks());
 app.configure(rest());
 app.configure(socketio());
-app.configure(distribution());
+app.configure(
+  distribution({
+    hooks: {
+      before: {
+        all: [authenticate('jwt')],
+      },
+    },
+  })
+);
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);

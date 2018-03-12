@@ -12,6 +12,13 @@
       .configure(feathers.authentication({ storage: window.localStorage }));
     var todoService = client.service('todos');
     todoService.timeout = 10000;
+    // This one should fail
+    todoService.find({})
+    .catch(error => {
+      var appElement = document.getElementById('app')
+      appElement.innerHTML += '<p>Unauthenticated call to the TODO service gives this result:</p><pre>' + error + '</pre>'
+      console.log('Unauthenticated!', error)
+    })
     client.authenticate({
       strategy: 'local',
       email: 'user@test.com',
@@ -21,12 +28,12 @@
       todoService.find({})
       .then(function(todos){
         var appElement = document.getElementById('app')
-        html = '<ul>'
+        html = '<p>Authenticated call to the TODO service gives this result:</p><ul>'
         for (var i = 0; i < todos.total; i++) {
           html += '<li>' + todos.data[i].title + ' with ID ' + todos.data[i]._id + ' : ' + todos.data[i].description + '</li>'
         }
         html += '</ul>'
-        appElement.innerHTML = html
+        appElement.innerHTML += html
       })
     }).catch(function(error){
       console.error('Error authenticating!', error);
