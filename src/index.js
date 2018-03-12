@@ -47,8 +47,13 @@ export default function init (options) {
         return;
       }
       // Skip already registered services
-      if (app.service(serviceDescriptor.path)) {
-        debug('Already registered service as remote on path ' + serviceDescriptor.path);
+      const service = app.service(serviceDescriptor.path);
+      if (service) {
+        if (service instanceof RemoteService) {
+          debug('Already registered service as remote on path ' + serviceDescriptor.path);
+        } else {
+          debug('Already registered local service on path ' + serviceDescriptor.path);
+        }
         return;
       }
       app.use(serviceDescriptor.path, new RemoteService(serviceDescriptor));

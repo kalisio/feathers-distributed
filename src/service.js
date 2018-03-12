@@ -101,42 +101,42 @@ class LocalService extends cote.Responder {
 
     // Answer requests from other nodes
     this.on('find', (req) => {
-      debug('Responding find() remote service on path ' + path);
+      debug('Responding find() local service on path ' + path);
       return service.find(req.params).then((result) => {
         debug('Successfully find() local service on path ' + path);
         return result;
       });
     });
     this.on('get', (req) => {
-      debug('Responding get() remote service on path ' + path);
+      debug('Responding get() local service on path ' + path);
       return service.get(req.id, req.params).then((result) => {
         debug('Successfully get() local service on path ' + path);
         return result;
       });
     });
     this.on('create', (req) => {
-      debug('Responding create() remote service on path ' + path);
+      debug('Responding create() local service on path ' + path);
       return service.create(req.data, req.params).then((result) => {
         debug('Successfully create() local service on path ' + path);
         return result;
       });
     });
     this.on('update', (req) => {
-      debug('Responding update() remote service on path ' + path);
+      debug('Responding update() local service on path ' + path);
       return service.update(req.id, req.data, req.params).then((result) => {
         debug('Successfully update() local service on path ' + path);
         return result;
       });
     });
     this.on('patch', (req) => {
-      debug('Responding patch() remote service on path ' + path);
+      debug('Responding patch() local service on path ' + path);
       return service.patch(req.id, req.data, req.params).then((result) => {
         debug('Successfully patch() local service on path ' + path);
         return result;
       });
     });
     this.on('remove', (req) => {
-      debug('Responding remove() remote service on path ' + path);
+      debug('Responding remove() local service on path ' + path);
       return service.remove(req.id, req.params).then((result) => {
         debug('Successfully remove() local service on path ' + path);
         return result;

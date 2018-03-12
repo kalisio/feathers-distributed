@@ -36,6 +36,7 @@ describe('feathers-distributed', () => {
   let services = [];
   let clients = [];
   let clientServices = [];
+  let checkAuthentication = false;
   let accessToken;
   const nbApps = 3;
   const gateway = 0;
@@ -106,13 +107,16 @@ describe('feathers-distributed', () => {
   it('registers the plugin/services', () => {
     let promises = [];
     for (let i = 0; i < nbApps; i++) {
-      // apps[i].configure(plugin({ hooks: { before: { all: [ commonHooks.when(hook => hook.params.provider, authentication.hooks.authenticate('jwt'))] } } }));
       apps[i].configure(plugin());
       // Only the first app has a local service
       if (i === gateway) {
         apps[i].use('users', memory({ store: clone(store), startId }));
         services[i] = apps[i].service('users');
-        services[i].hooks({ before: { all: [ commonHooks.when(hook => hook.params.provider, authentication.hooks.authenticate('jwt')) ] } });
+        services[i].hooks({
+          before: {
+            all: [ commonHooks.when(hook => hook.params.provider && checkAuthentication, authentication.hooks.authenticate('jwt')) ]
+          }
+        });
         expect(services[i]).toExist();
       } else {
         // For remote services we have to wait they are registered
@@ -147,14 +151,111 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('unauthenticated call should return 401 on local service', () => {
+  it('dispatch find service calls from remote to local without auth', () => {
+    return clientServices[service1].find({})
+    .then(users => {
+      expect(users.length > 0).beTrue();
+    });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch get service calls from remote to local without auth', () => {
+    return clientServices[service1].get(1)
+    .then(user => {
+      expect(user.id === 1).beTrue();
+    });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch create service calls from remote to local without auth', () => {
+    return clientServices[service1].create({ name: 'Donald Doe' })
+    .then(user => {
+      expect(user.id === startId).beTrue();
+    });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch update service calls from remote to local without auth', () => {
+    return clientServices[service1].update(startId, { name: 'Donald Dover' })
+    .then(user => {
+      expect(user.name === 'Donald Dover').beTrue();
+    });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch patch service calls from remote to local without auth', () => {
+    return clientServices[service1].patch(startId, { name: 'Donald Doe' })
+    .then(user => {
+      expect(user.name === 'Donald Doe').beTrue();
+    });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch remove service calls from remote to local without auth', () => {
+    return clientServices[service1].remove(startId)
+    .then(user => {
+      expect(user.id === startId).beTrue();
+    });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch create service events from local to remote without auth', (done) => {
+    // Jump to next user
+    startId += 1;
+    clientServices[service2].once('created', user => {
+      expect(user.id === startId).beTrue();
+      done();
+    });
+    clientServices[gateway].create({ name: 'Donald Doe' });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch update service events from local to remote without auth', (done) => {
+    clientServices[service2].once('updated', user => {
+      expect(user.name === 'Donald Dover').beTrue();
+      done();
+    });
+    clientServices[gateway].update(startId, { name: 'Donald Dover' });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch patch service events from local to remote without auth', (done) => {
+    clientServices[service2].once('patched', user => {
+      expect(user.name === 'Donald Doe').beTrue();
+      done();
+    });
+    clientServices[gateway].patch(startId, { name: 'Donald Doe' });
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('dispatch remove service events from local to remote without auth', (done) => {
+    clientServices[service2].once('removed', user => {
+      expect(user.id === startId).beTrue();
+      done();
+    });
+    clientServices[gateway].remove(startId);
+  })
+  // Let enough time to process
+  .timeout(5000);
+
+  it('unauthenticated call should return 401 on local service with auth', () => {
+    checkAuthentication = true;
     return clientServices[gateway].find({})
     .catch(err => {
       expect(err.code === 401).beTrue();
     });
   });
 
-  it('unauthenticated call should return 401 on remote service', () => {
+  it('unauthenticated call should return 401 on remote service with auth', () => {
     return clientServices[service1].find({})
     .catch(err => {
       expect(err.code === 401).beTrue();
@@ -162,6 +263,7 @@ describe('feathers-distributed', () => {
   });
 
   it('authenticate should return token', () => {
+    // Local auth on gateway
     return clients[gateway]
     .authenticate({
       strategy: 'local',
@@ -171,15 +273,18 @@ describe('feathers-distributed', () => {
     .then(response => {
       accessToken = response.accessToken;
       expect(accessToken).toExist();
+      // Local auth on service
       return clients[service1]
       .authenticate({
-        strategy: 'jwt',
-        accessToken
+        strategy: 'local',
+        email: 'user@test.com',
+        password: 'password'
       });
     })
     .then(response => {
       accessToken = response.accessToken;
       expect(accessToken).toExist();
+      // JWT auth on service using JWT from gateway
       return clients[service2]
       .authenticate({
         strategy: 'jwt',
@@ -192,7 +297,7 @@ describe('feathers-distributed', () => {
     });
   });
 
-  it('dispatch find service calls from remote to local', () => {
+  it('dispatch find service calls from remote to local with auth', () => {
     return clientServices[service1].find({})
     .then(users => {
       expect(users.length > 0).beTrue();
@@ -201,7 +306,7 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch get service calls from remote to local', () => {
+  it('dispatch get service calls from remote to local with auth', () => {
     return clientServices[service1].get(1)
     .then(user => {
       expect(user.id === 1).beTrue();
@@ -210,7 +315,9 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch create service calls from remote to local', () => {
+  it('dispatch create service calls from remote to local with auth', () => {
+    // Jump to next user
+    startId += 1;
     return clientServices[service1].create({ name: 'Donald Doe' })
     .then(user => {
       expect(user.id === startId).beTrue();
@@ -219,7 +326,7 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch update service calls from remote to local', () => {
+  it('dispatch update service calls from remote to local with auth', () => {
     return clientServices[service1].update(startId, { name: 'Donald Dover' })
     .then(user => {
       expect(user.name === 'Donald Dover').beTrue();
@@ -228,7 +335,7 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch patch service calls from remote to local', () => {
+  it('dispatch patch service calls from remote to local with auth', () => {
     return clientServices[service1].patch(startId, { name: 'Donald Doe' })
     .then(user => {
       expect(user.name === 'Donald Doe').beTrue();
@@ -237,7 +344,7 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch remove service calls from remote to local', () => {
+  it('dispatch remove service calls from remote to local with auth', () => {
     return clientServices[service1].remove(startId)
     .then(user => {
       expect(user.id === startId).beTrue();
@@ -246,10 +353,10 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch create service events from local to remote', (done) => {
+  it('dispatch create service events from local to remote with auth', (done) => {
     // Jump to next user
     startId += 1;
-    clientServices[service2].on('created', user => {
+    clientServices[service2].once('created', user => {
       expect(user.id === startId).beTrue();
       done();
     });
@@ -258,8 +365,8 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch update service events from local to remote', (done) => {
-    clientServices[service2].on('updated', user => {
+  it('dispatch update service events from local to remote with auth', (done) => {
+    clientServices[service2].once('updated', user => {
       expect(user.name === 'Donald Dover').beTrue();
       done();
     });
@@ -268,8 +375,8 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch patch service events from local to remote', (done) => {
-    clientServices[service2].on('patched', user => {
+  it('dispatch patch service events from local to remote with auth', (done) => {
+    clientServices[service2].once('patched', user => {
       expect(user.name === 'Donald Doe').beTrue();
       done();
     });
@@ -278,8 +385,8 @@ describe('feathers-distributed', () => {
   // Let enough time to process
   .timeout(5000);
 
-  it('dispatch remove service events from local to remote', (done) => {
-    clientServices[service2].on('removed', user => {
+  it('dispatch remove service events from local to remote with auth', (done) => {
+    clientServices[service2].once('removed', user => {
       expect(user.id === startId).beTrue();
       done();
     });
