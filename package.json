@@ -69,6 +69,7 @@
     "feathers-authentication-jwt": "^0.3.2",
     "feathers-authentication-local": "^0.4.4",
     "feathers-hooks": "^2.0.2",
+    "feathers-hooks-common": "^3.0.0",
     "feathers-memory": "^1.1.0",
     "feathers-rest": "^1.8.1",
     "feathers-socketio": "^2.0.0",
