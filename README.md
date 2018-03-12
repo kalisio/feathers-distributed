@@ -110,7 +110,7 @@ You process as usual to [authenticate your client](https://auk.docs.feathersjs.c
 
 Our [tests](https://github.com/kalisio/feathers-distributed/blob/master/test/index.test.js) contain a good example for this use case.
 
-> To make it work all node must share the same authentication configuration (i.e. secret)
+> To make it work all nodes must share the same authentication configuration (i.e. secret)
 
 ## License
 
