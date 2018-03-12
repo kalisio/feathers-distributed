@@ -4,7 +4,10 @@
   "version": "0.1.0",
   "homepage": "https://github.com/kalisio/feathers-distributed",
   "main": "lib/",
-  "keywords": ["feathers", "feathers-plugin"],
+  "keywords": [
+    "feathers",
+    "feathers-plugin"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -28,13 +31,11 @@
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
     "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
-    "compile":
-      "shx rm -rf lib/ && babel -d lib/ src/ && cpx \"lib/**\" example/gateway/lib && cpx \"lib/**\" example/service/lib",
+    "compile": "shx rm -rf lib/ && babel -d lib/ src/ && cpx \"lib/**\" example/gateway/lib && cpx \"lib/**\" example/service/lib",
     "watch": "babel --watch -d lib/ src/",
     "lint": "semistandard src/**/*.js test/**/*.js --fix",
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --opts mocha.opts",
-    "coverage":
-      "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
+    "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
     "test": "npm run compile && npm run lint && npm run coverage",
     "start:gateway": "cd example/gateway && npm start",
     "start:service": "cd example/service && npm start",
@@ -42,14 +43,16 @@
   },
   "semistandard": {
     "sourceType": "module",
-    "env": ["mocha"]
+    "env": [
+      "mocha"
+    ]
   },
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
     "cote": "^0.16.2",
-    "debug": "^2.6.8",
+    "debug": "^3.1.0",
     "feathers": "^2.1.4",
     "feathers-commons": "^0.8.7",
     "feathers-errors": "^2.8.1"
