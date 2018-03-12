@@ -3,7 +3,7 @@ import chailint from 'chai-lint';
 import feathers from 'feathers';
 import client from 'feathers/client';
 import hooks from 'feathers-hooks';
-import commonHooks from 'feathers-hooks-common'
+import commonHooks from 'feathers-hooks-common';
 import authentication from 'feathers-authentication';
 import jwt from 'feathers-authentication-jwt';
 import local from 'feathers-authentication-local';
@@ -36,7 +36,7 @@ describe('feathers-distributed', () => {
   let services = [];
   let clients = [];
   let clientServices = [];
-  let accessToken
+  let accessToken;
   const nbApps = 3;
   const gateway = 0;
   const service1 = 1;
@@ -48,10 +48,10 @@ describe('feathers-distributed', () => {
     app.configure(socketio());
     app.configure(rest());
     app.configure(authentication({ secret: '1234' }));
-    let strategies = ['jwt']
+    let strategies = ['jwt'];
     app.configure(jwt());
     if (index === gateway) {
-      strategies.push('local')
+      strategies.push('local');
       app.configure(local());
     }
     // The `authentication` service is used to create a JWT.
@@ -66,7 +66,7 @@ describe('feathers-distributed', () => {
           authentication.hooks.authenticate('jwt')
         ]
       }
-    })
+    });
     /*
     app.hooks({
       before: { all: plugin.hooks.dispatch }
@@ -106,13 +106,13 @@ describe('feathers-distributed', () => {
   it('registers the plugin/services', () => {
     let promises = [];
     for (let i = 0; i < nbApps; i++) {
-      //apps[i].configure(plugin({ hooks: { before: { all: [ commonHooks.when(hook => hook.params.provider, authentication.hooks.authenticate('jwt'))] } } }));
+      // apps[i].configure(plugin({ hooks: { before: { all: [ commonHooks.when(hook => hook.params.provider, authentication.hooks.authenticate('jwt'))] } } }));
       apps[i].configure(plugin());
       // Only the first app has a local service
       if (i === gateway) {
         apps[i].use('users', memory({ store: clone(store), startId }));
         services[i] = apps[i].service('users');
-        services[i].hooks({ before: { all: [ commonHooks.when(hook => hook.params.provider, authentication.hooks.authenticate('jwt'))] } });
+        services[i].hooks({ before: { all: [ commonHooks.when(hook => hook.params.provider, authentication.hooks.authenticate('jwt')) ] } });
         expect(services[i]).toExist();
       } else {
         // For remote services we have to wait they are registered
@@ -169,25 +169,25 @@ describe('feathers-distributed', () => {
       password: 'password'
     })
     .then(response => {
-      accessToken = response.accessToken
+      accessToken = response.accessToken;
       expect(accessToken).toExist();
       return clients[service1]
       .authenticate({
         strategy: 'jwt',
         accessToken
-      })
+      });
     })
     .then(response => {
-      accessToken = response.accessToken
+      accessToken = response.accessToken;
       expect(accessToken).toExist();
       return clients[service2]
       .authenticate({
         strategy: 'jwt',
         accessToken
-      })
+      });
     })
     .then(response => {
-      accessToken = response.accessToken
+      accessToken = response.accessToken;
       expect(accessToken).toExist();
     });
   });

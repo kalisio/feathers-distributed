@@ -6,8 +6,8 @@ import makeDebug from 'debug';
 
 const debug = makeDebug('feathers-distributed');
 
-export default function init(options) {
-  return function() {
+export default function init (options) {
+  return function () {
     const distributionOptions = Object.assign({
       publicationDelay: 5000
     }, options);
@@ -66,7 +66,7 @@ export default function init(options) {
 
     // We replace the use method to inject service publisher/responder
     const superUse = app.use;
-    app.use = function(path, service) {
+    app.use = function (path, service) {
       // Register the service normally first
       superUse.apply(app, arguments);
       // Note: middlewares are not supported
