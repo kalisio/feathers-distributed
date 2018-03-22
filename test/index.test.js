@@ -30,6 +30,20 @@ const store = {
   '5': { name: 'Dork Doe', id: 5 }
 };
 
+function channels (app) {
+  if (typeof app.channel !== 'function') {
+    return;
+  }
+
+  app.on('connection', connection => {
+    app.channel('all').join(connection);
+  });
+
+  app.publish((data, context) => {
+    return app.channel('all');
+  });
+}
+
 function clone (obj) {
   return JSON.parse(JSON.stringify(obj));
 }
@@ -107,6 +121,7 @@ describe('feathers-distributed', () => {
     let promises = [];
     for (let i = 0; i < nbApps; i++) {
       apps[i].configure(plugin());
+      apps[i].configure(channels);
       // Only the first app has a local service
       if (i === gateway) {
         apps[i].use('users', memory({ store: clone(store), startId }));
