@@ -1,5 +1,5 @@
 import { RemoteService, LocalService } from './service';
-import { stripSlashes } from 'feathers-commons';
+import { stripSlashes } from '@feathersjs/commons';
 import cote from 'cote';
 import uuid from 'uuid/v4';
 import makeDebug from 'debug';
@@ -8,20 +8,26 @@ const debug = makeDebug('feathers-distributed');
 
 export default function init (options) {
   return function () {
-    const distributionOptions = Object.assign({
-      publicationDelay: 5000
-    }, options);
+    const distributionOptions = Object.assign(
+      {
+        publicationDelay: 5000
+      },
+      options
+    );
     let app = this;
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid();
     debug('Initializing feathers-distributed');
 
     // This publisher publishes an event each time a local app service is registered
-    app.servicePublisher = new cote.Publisher({
-      name: 'feathers services publisher',
-      namespace: 'services',
-      broadcasts: ['service']
-    }, { log: false });
+    app.servicePublisher = new cote.Publisher(
+      {
+        name: 'feathers services publisher',
+        namespace: 'services',
+        broadcasts: ['service']
+      },
+      { log: false }
+    );
     // Also each time a new node pops up so that it does not depend of the initialization order of the apps
     app.servicePublisher.on('cote:added', data => {
       // console.log(data)
@@ -34,11 +40,14 @@ export default function init (options) {
       }, distributionOptions.publicationDelay);
     });
     // This subscriber listen to an event each time a remote app service has been registered
-    app.serviceSubscriber = new cote.Subscriber({
-      name: 'feathers services subscriber',
-      namespace: 'services',
-      subscribesTo: ['service']
-    }, { log: false });
+    app.serviceSubscriber = new cote.Subscriber(
+      {
+        name: 'feathers services subscriber',
+        namespace: 'services',
+        subscribesTo: ['service']
+      },
+      { log: false }
+    );
     // When a remote service is declared create the local proxy interface to it
     app.serviceSubscriber.on('service', serviceDescriptor => {
       // Do not register our own services
