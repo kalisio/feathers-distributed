@@ -2,7 +2,6 @@
 const createService = require('feathers-nedb');
 const createModel = require('../../models/users.model');
 const hooks = require('./users.hooks');
-const filters = require('./users.filters');
 
 module.exports = function () {
   const app = this;
@@ -22,8 +21,4 @@ module.exports = function () {
   const service = app.service('users');
 
   service.hooks(hooks);
-
-  if (service.filter) {
-    service.filter(filters);
-  }
 };
