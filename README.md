@@ -13,6 +13,9 @@
 As a consequence it should be considered unstable, not yet ready for production use.
 Although we try to avoid this wherever possible, `0.x` versions on the master branch can promote breaking changes in the API.**
 
+The [`master`](https://github.com/kalisio/feathers-distributed) branch is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard).
+The [`auk`](https://github.com/kalisio/feathers-distributed/tree/auk) branch is expected to work with [Feathers v2](https://auk.docs.feathersjs.com/) (a.k.a. Auk).
+
 This plugin relies on [cote](https://github.com/dashersw/cote) and takes benefits of it:
 - **Zero-configuration:** no IP addresses, no ports, no routing to configure
 - **Decentralized:** No fixed parts, no "manager" nodes, no single point of
