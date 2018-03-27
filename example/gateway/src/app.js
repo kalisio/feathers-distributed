@@ -57,8 +57,8 @@ app.configure(channels);
 // Configure a middleware for 404s and the error handler
 // FIXME: this does not allow to declare remote services after the app has been launched
 // Indeed this middleware is hit first...
-//app.use(notFound());
-app.use(handler());
+app.use(express.notFound());
+app.use(express.errorHandler());
 
 app.hooks(appHooks);
 
