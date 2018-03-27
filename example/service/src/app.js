@@ -10,9 +10,6 @@ const configuration = require('@feathersjs/configuration');
 const socketio = require('@feathersjs/socketio');
 const distribution = require('../lib');
 
-const handler = require('@feathersjs/express/errors');
-// const notFound = require('feathers-errors/not-found');
-
 const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
