@@ -10,9 +10,6 @@ const configuration = require('@feathersjs/configuration');
 const socketio = require('@feathersjs/socketio');
 const distribution = require('../lib');
 
-const handler = require('@feathersjs/express/errors');
-// const notFound = require('feathers-errors/not-found');
-
 const middleware = require('./middleware');
 const services = require('./services');
 const appHooks = require('./app.hooks');
@@ -45,8 +42,8 @@ app.configure(channels);
 // Configure a middleware for 404s and the error handler
 // FIXME: this does not allow to declare remote services after the app has been launched
 // Indeed this middleware is hit first...
-//app.use(notFound());
-app.use(handler());
+app.use(express.notFound());
+app.use(express.errorHandler());
 
 app.hooks(appHooks);
 

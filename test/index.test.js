@@ -68,6 +68,8 @@ describe('feathers-distributed', () => {
     app.configure(authentication({ secret: '1234' }));
     let strategies = ['jwt'];
     app.configure(jwt());
+    app.use(express.notFound());
+    app.use(express.errorHandler());
     if (index === gateway) {
       strategies.push('local');
       app.configure(local());
