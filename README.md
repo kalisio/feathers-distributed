@@ -9,7 +9,7 @@
 
 > Distribute your Feathers services as microservices
 
-**This plugin is under development and currently in alpha-test, updates will be pushed frequently.
+**This plugin is under development and currently in beta-test, updates will be pushed frequently.
 As a consequence it should be considered unstable, not yet ready for production use.
 Although we try to avoid this wherever possible, `0.x` versions on the master branch can promote breaking changes in the API.**
 
