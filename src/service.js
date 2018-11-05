@@ -12,15 +12,15 @@ class RemoteService {
 
   setup (app, path) {
     // Create the request manager to remote ones for this service
-    this.requester = new cote.Requester({
+    this.requester = new app.cote.Requester({
       name: path + ' requester',
       namespace: path,
       requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
-    }, { log: false });
+    }, Object.assign({ log: false }, app.coteOptions));
     this.path = path;
     debug('Requester created for remote service on path ' + this.path);
     // Create the subscriber to listen to events from other nodes
-    this.serviceEventsSubscriber = new cote.Subscriber({
+    this.serviceEventsSubscriber = new app.cote.Subscriber({
       name: path + ' events subscriber',
       namespace: path,
       subscribesTo: ['created', 'updated', 'patched', 'removed']
@@ -144,11 +144,11 @@ class LocalService extends cote.Responder {
     });
 
     // Dispatch events to other nodes
-    this.serviceEventsPublisher = new cote.Publisher({
+    this.serviceEventsPublisher = new app.cote.Publisher({
       name: path + ' events publisher',
       namespace: path,
       broadcasts: ['created', 'updated', 'patched', 'removed']
-    }, { log: false });
+    }, Object.assign({ log: false }, app.coteOptions));
     service.on('created', object => {
       this.serviceEventsPublisher.publish('created', object);
     });

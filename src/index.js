@@ -1,6 +1,6 @@
 import { RemoteService, LocalService } from './service';
 import { stripSlashes } from '@feathersjs/commons';
-import cote from 'cote';
+import makeCote from 'cote';
 import uuid from 'uuid/v4';
 import makeDebug from 'debug';
 
@@ -15,18 +15,21 @@ export default function init (options) {
       options
     );
     let app = this;
+    // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
+    app.coteOptions = distributionOptions.cote || {}
+    app.cote = (distributionOptions.cote ? makeCote(distributionOptions.cote) : makeCote())
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid();
     debug('Initializing feathers-distributed');
 
     // This publisher publishes an event each time a local app service is registered
-    app.servicePublisher = new cote.Publisher(
+    app.servicePublisher = new app.cote.Publisher(
       {
         name: 'feathers services publisher',
         namespace: 'services',
         broadcasts: ['service']
       },
-      { log: false }
+      Object.assign({ log: false }, app.coteOptions)
     );
     // Also each time a new node pops up so that it does not depend of the initialization order of the apps
     app.servicePublisher.on('cote:added', data => {
@@ -40,13 +43,13 @@ export default function init (options) {
       }, distributionOptions.publicationDelay);
     });
     // This subscriber listen to an event each time a remote app service has been registered
-    app.serviceSubscriber = new cote.Subscriber(
+    app.serviceSubscriber = new app.cote.Subscriber(
       {
         name: 'feathers services subscriber',
         namespace: 'services',
         subscribesTo: ['service']
       },
-      { log: false }
+      Object.assign({ log: false }, app.coteOptions)
     );
     // When a remote service is declared create the local proxy interface to it
     app.serviceSubscriber.on('service', serviceDescriptor => {
