@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/feathers-distributed",
   "description": "Distribute your Feathers services as microservices",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/kalisio/feathers-distributed",
   "main": "lib/",
   "keywords": [
@@ -30,7 +30,7 @@
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
+    "changelog": "github_changelog_generator -u kalisio -p feathers-distributed && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "compile": "shx rm -rf lib/ && babel -d lib/ src/ && cpx \"lib/**\" example/gateway/lib && cpx \"lib/**\" example/service/lib",
     "watch": "babel --watch -d lib/ src/",
     "lint": "semistandard src/**/*.js test/**/*.js --fix",
