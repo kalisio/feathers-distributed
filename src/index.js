@@ -1,8 +1,9 @@
-import { RemoteService, LocalService } from './service';
 import { stripSlashes } from '@feathersjs/commons';
 import cote from 'cote';
-import uuid from 'uuid/v4';
 import makeDebug from 'debug';
+import uuid from 'uuid/v4';
+
+import { LocalService, RemoteService } from './service';
 
 const debug = makeDebug('feathers-distributed');
 
@@ -76,6 +77,11 @@ export default function init (options) {
 
       // dispatch an event internally through node so that async processes can run
       app.emit('service', serviceDescriptor);
+
+      // register error handler
+      if (distributionOptions.errorHandler) {
+        app.use(distributionOptions.errorHandler);
+      }
     });
 
     // We replace the use method to inject service publisher/responder
