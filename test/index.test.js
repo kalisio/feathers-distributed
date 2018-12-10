@@ -1,20 +1,21 @@
-import chai, { util, expect } from 'chai';
-import chailint from 'chai-lint';
-import feathers from '@feathersjs/feathers';
-import client from '@feathersjs/client';
-import commonHooks from 'feathers-hooks-common';
 import authentication from '@feathersjs/authentication';
+import auth from '@feathersjs/authentication-client';
 import jwt from '@feathersjs/authentication-jwt';
 import local from '@feathersjs/authentication-local';
-import memory from 'feathers-memory';
-import io from 'socket.io-client';
+import client from '@feathersjs/client';
+import express from '@feathersjs/express';
+import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
 import socketioClient from '@feathersjs/socketio-client';
-import express from '@feathersjs/express';
-import auth from '@feathersjs/authentication-client';
-// import restClient from 'feathers-rest/client';
+import chai, { expect, util } from 'chai';
+import chailint from 'chai-lint';
+import commonHooks from 'feathers-hooks-common';
+import memory from 'feathers-memory';
+import io from 'socket.io-client';
+
 import plugin from '../src';
 
+// import restClient from 'feathers-rest/client';
 let startId = 6;
 const store = {
   '0': {
@@ -118,6 +119,18 @@ describe('feathers-distributed', () => {
       server.once('listening', _ => resolve());
     });
   }
+
+  it('register the service with hooks', () => {
+    let app = express(feathers());
+    app.configure(plugin({ hooks: {} }));
+    expect(app).toExist();
+  });
+
+  it('register the service with errorHandler', () => {
+    let app = express(feathers());
+    app.configure(plugin({ errorHandler: express.errorHandler() }));
+    expect(app).toExist();
+  });
 
   it('registers the plugin/services', () => {
     let promises = [];
