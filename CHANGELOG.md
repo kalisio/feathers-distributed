@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.3.2](https://github.com/kalisio/feathers-distributed/tree/v0.3.2) (2018-12-13)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.1...v0.3.2)
+
+**Merged pull requests:**
+
+- feat: add errorHandler [\#16](https://github.com/kalisio/feathers-distributed/pull/16) ([Flofie](https://github.com/Flofie))
+
 ## [v0.3.1](https://github.com/kalisio/feathers-distributed/tree/v0.3.1) (2018-08-31)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.0...v0.3.1)
