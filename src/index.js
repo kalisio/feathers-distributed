@@ -16,8 +16,8 @@ export default function init (options) {
     );
     let app = this;
     // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
-    app.coteOptions = distributionOptions.cote || {}
-    app.cote = (distributionOptions.cote ? makeCote(distributionOptions.cote) : makeCote())
+    app.coteOptions = distributionOptions.cote || {};
+    app.cote = (distributionOptions.cote ? makeCote(distributionOptions.cote) : makeCote());
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid();
     debug('Initializing feathers-distributed');

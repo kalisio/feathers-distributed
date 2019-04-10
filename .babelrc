@@ -1,4 +1,10 @@
 {
   "plugins": [ "add-module-exports" ],
-  "presets": [ "es2015" ]
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": "7.0"
+      }
+    }]
+  ]
 }
