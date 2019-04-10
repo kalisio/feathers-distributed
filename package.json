@@ -37,8 +37,8 @@
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --opts mocha.opts",
     "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
     "test": "npm run compile && npm run lint && npm run coverage",
-    "start:gateway": "cd example/gateway && npm start",
-    "start:service": "cd example/service && npm start",
+    "start:gateway": "cd example/gateway && npm install && npm start",
+    "start:service": "cd example/service && npm install && npm start",
     "start": "npm run compile && npm-run-all --parallel start:**"
   },
   "semistandard": {
