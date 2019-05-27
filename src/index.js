@@ -36,9 +36,13 @@ export default function init (options) {
       // console.log(data)
       // Add a timeout so that the subscriber has been initialized on the node
       setTimeout(_ => {
-        Object.getOwnPropertyNames(app.services).forEach(path => {
-          app.servicePublisher.publish('service', { uuid: app.uuid, path });
-          debug('Republished local service on path ' + path);
+        Object.getOwnPropertyNames(app.services).forEach((path) => {
+          let service = app.services[path];
+          if(service && !(service.options && service.options.distributeIgnore))
+          {
+            app.servicePublisher.publish('service', { uuid: app.uuid, path });
+            debug('Republished local service on path ' + path);
+          }
         });
       }, distributionOptions.publicationDelay);
     });
@@ -93,7 +97,7 @@ export default function init (options) {
       superUse.apply(app, arguments);
       // Note: middlewares are not supported
       // Also avoid infinite loop by registering already registered remote services
-      if (typeof service === 'object' && !service.remote) {
+      if (typeof service === 'object' && !service.remote && !(service.options && service.options.distributeIgnore)) {
         // Publish new local service
         app.servicePublisher.publish('service', { uuid: app.uuid, path: stripSlashes(path) });
         debug('Published local service on path ' + path);
