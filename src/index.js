@@ -33,13 +33,11 @@ export default function init (options) {
     );
     // Also each time a new node pops up so that it does not depend of the initialization order of the apps
     app.servicePublisher.on('cote:added', data => {
-      // console.log(data)
       // Add a timeout so that the subscriber has been initialized on the node
       setTimeout(_ => {
         Object.getOwnPropertyNames(app.services).forEach((path) => {
           let service = app.services[path];
-          if(service && !(service.options && service.options.distributeIgnore))
-          {
+          if(service && !(service.options && service.options.distributeIgnore)) {
             app.servicePublisher.publish('service', { uuid: app.uuid, path });
             debug('Republished local service on path ' + path);
           }
@@ -97,10 +95,12 @@ export default function init (options) {
       superUse.apply(app, arguments);
       // Note: middlewares are not supported
       // Also avoid infinite loop by registering already registered remote services
-      if (typeof service === 'object' && !service.remote && !(service.options && service.options.distributeIgnore)) {
+      if (typeof service === 'object' && !service.remote) {
         // Publish new local service
-        app.servicePublisher.publish('service', { uuid: app.uuid, path: stripSlashes(path) });
-        debug('Published local service on path ' + path);
+        if ( !(service.options && service.options.distributeIgnore) ) {
+          app.servicePublisher.publish('service', { uuid: app.uuid, path: stripSlashes(path) });
+          debug('Published local service on path ' + path);
+        }
         // Register the responder to handle remote calls to the service
         service.responder = new LocalService({ app, path: stripSlashes(path) });
       }
