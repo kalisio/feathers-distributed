@@ -52,6 +52,17 @@ app.configure(socketio());
 app.configure(distribution());
 ...
 ```
+By default all your services will be exposed, you can use the `services` option to indicate which services need to be published if you'd like to keep some available only internally:
+```
+app.configure(
+  distribution({
+    // Can be a static list of service path to be exposed
+    services: ['api/service1', 'api/service2']
+    // Can be a function returning true for exposed services
+    services: (service) => (service.path !== 'api/internal')
+  })
+)
+```
 
 ## Documentation
 
