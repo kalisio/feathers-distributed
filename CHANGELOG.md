@@ -1,14 +1,20 @@
 # Changelog
 
+## [v0.3.4](https://github.com/kalisio/feathers-distributed/tree/v0.3.4) (2019-05-29)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.3...v0.3.4)
+
+**Implemented enhancements:**
+
+- Allow to define which services to be distributed [\#22](https://github.com/kalisio/feathers-distributed/issues/22)
+
 ## [v0.3.3](https://github.com/kalisio/feathers-distributed/tree/v0.3.3) (2019-04-10)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.2...v0.3.3)
 
 **Closed issues:**
 
-- fail requests to unresponsive nodes [\#17](https://github.com/kalisio/feathers-distributed/issues/17)
 - notFound handler blocks request to remote service [\#18](https://github.com/kalisio/feathers-distributed/issues/18)
-- Cannot Read Error Message When Throwing Exception in Remote Service [\#20](https://github.com/kalisio/feathers-distributed/issues/20)
 
 ## [v0.3.2](https://github.com/kalisio/feathers-distributed/tree/v0.3.2) (2018-12-13)
 
