@@ -14,6 +14,12 @@ export default function init (options) {
       },
       options
     );
+    const isInternalService = service => {
+      // Default is to expose all services
+      if (!distributionOptions.services) return false
+      if (typeof distributionOptions.services === 'function') return !distributionOptions.services(service)
+      else return !distributionOptions.services.includes(service.path)
+    }
     let app = this;
     // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
     app.coteOptions = distributionOptions.cote || {};
@@ -37,6 +43,8 @@ export default function init (options) {
       // Add a timeout so that the subscriber has been initialized on the node
       setTimeout(_ => {
         Object.getOwnPropertyNames(app.services).forEach(path => {
+          const serviceDescriptor = { uuid: app.uuid, path }
+          if (isInternalService(serviceDescriptor)) return
           app.servicePublisher.publish('service', { uuid: app.uuid, path });
           debug('Republished local service on path ' + path);
         });
@@ -94,11 +102,13 @@ export default function init (options) {
       // Note: middlewares are not supported
       // Also avoid infinite loop by registering already registered remote services
       if (typeof service === 'object' && !service.remote) {
+        const serviceDescriptor = { uuid: app.uuid, path: stripSlashes(path) };
+        if (isInternalService(serviceDescriptor)) return;
         // Publish new local service
-        app.servicePublisher.publish('service', { uuid: app.uuid, path: stripSlashes(path) });
+        app.servicePublisher.publish('service', serviceDescriptor);
         debug('Published local service on path ' + path);
         // Register the responder to handle remote calls to the service
-        service.responder = new LocalService({ app, path: stripSlashes(path) });
+        service.responder = new LocalService({ app, path: serviceDescriptor.path });
       }
     };
   };
