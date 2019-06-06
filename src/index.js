@@ -20,6 +20,12 @@ export default function init (options) {
       if (typeof distributionOptions.services === 'function') return !distributionOptions.services(service)
       else return !distributionOptions.services.includes(service.path)
     }
+    const isDiscoveredService = service => {
+      // Default is to discover all services
+      if (!distributionOptions.remoteServices) return true
+      if (typeof distributionOptions.remoteServices === 'function') return distributionOptions.remoteServices(service)
+      else return distributionOptions.remoteServices.includes(service.path)
+    }
     let app = this;
     // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
     app.coteOptions = distributionOptions.cote || {};
@@ -43,8 +49,14 @@ export default function init (options) {
       // Add a timeout so that the subscriber has been initialized on the node
       setTimeout(_ => {
         Object.getOwnPropertyNames(app.services).forEach(path => {
+          const service = app.services[path]
+          if (service.remote) return
           const serviceDescriptor = { uuid: app.uuid, path }
-          if (isInternalService(serviceDescriptor)) return
+          // Skip internal services
+          if (isInternalService(serviceDescriptor)) {
+            debug('Ignoring local service on path ' + serviceDescriptor.path);
+            return;
+          }
           app.servicePublisher.publish('service', { uuid: app.uuid, path });
           debug('Republished local service on path ' + path);
         });
@@ -76,6 +88,11 @@ export default function init (options) {
         }
         return;
       }
+      // Skip services we are not interested into
+      if (!isDiscoveredService(serviceDescriptor)) {
+        debug('Ignoring remote service on path ' + serviceDescriptor.path);
+        return;
+      }
       app.use(serviceDescriptor.path, new RemoteService(serviceDescriptor));
       debug('Registered remote service on path ' + serviceDescriptor.path);
 
@@ -103,7 +120,11 @@ export default function init (options) {
       // Also avoid infinite loop by registering already registered remote services
       if (typeof service === 'object' && !service.remote) {
         const serviceDescriptor = { uuid: app.uuid, path: stripSlashes(path) };
-        if (isInternalService(serviceDescriptor)) return;
+        // Skip internal services
+        if (isInternalService(serviceDescriptor)) {
+          debug('Ignoring local service on path ' + serviceDescriptor.path);
+          return;
+        }
         // Publish new local service
         app.servicePublisher.publish('service', serviceDescriptor);
         debug('Published local service on path ' + path);

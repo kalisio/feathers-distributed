@@ -64,6 +64,18 @@ app.configure(
 )
 ```
 
+By default all remote services will be consumed, you can use the `remoteServices` option to indicate which services need to be consumed if you don't want to be polluted by unused ones:
+```javascript
+app.configure(
+  distribution({
+    // Can be a static list of service path to be consumed
+    remoteServices: ['api/service1', 'api/service2']
+    // Can be a function returning true for consumed services
+    remoteServices: (service) => (service.path !== 'api/external')
+  })
+)
+```
+
 ## Documentation
 
 ![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
