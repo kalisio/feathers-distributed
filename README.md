@@ -69,6 +69,8 @@ What is done when your app is aware of a new remotely registered service is the 
 * creates a local Feathers service *acting as a proxy* to the remote one by creating a [requester](https://github.com/dashersw/cote#creating-a-requester) to send incoming requests to other nodes.
 * this proxy service also creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service-level events coming from other nodes.
 
+## Configuration options
+
 By default all your services will be exposed, you can use the `services` option to indicate which services need to be published if you'd like to keep some available only internally:
 ```javascript
 app.configure(
@@ -91,6 +93,19 @@ app.configure(
     remoteServices: (service) => (service.path !== 'api/external')
   })
 )
+```
+
+You can add hooks to each registered remote service by using the `hooks` option:
+```
+app.configure(
+  distribution({
+    hooks: {
+      before: {
+        all: [authenticate('jwt')],
+      },
+    },
+  })
+);
 ```
 
 ## Example
