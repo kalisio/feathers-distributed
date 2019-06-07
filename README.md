@@ -101,7 +101,7 @@ app.configure(
   distribution({
     hooks: {
       before: {
-        all: [authenticate('jwt')],
+        all: [authenticate('jwt')]
       },
     },
   })
