@@ -52,6 +52,23 @@ app.configure(socketio());
 app.configure(distribution());
 ...
 ```
+
+## Documentation
+
+![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
+
+When the plugin initializes the following is done for your app:
+* creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other nodes. 
+* creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other nodes. 
+
+What is done by overriding `app.use` is the following: 
+* each *local* Feathers service of your app creates a [responder](https://github.com/dashersw/cote#creating-a-responder) to handle incoming requests from other nodes.
+* each *local* Feathers service of your app creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch service-level events to other nodes.
+
+What is done when your app is aware of a new remotely registered service is the following: 
+* creates a local Feathers service *acting as a proxy* to the remote one by creating a [requester](https://github.com/dashersw/cote#creating-a-requester) to send incoming requests to other nodes.
+* this proxy service also creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service-level events coming from other nodes.
+
 By default all your services will be exposed, you can use the `services` option to indicate which services need to be published if you'd like to keep some available only internally:
 ```javascript
 app.configure(
@@ -75,22 +92,6 @@ app.configure(
   })
 )
 ```
-
-## Documentation
-
-![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
-
-When the plugin initializes the following is done for your app:
-* creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other nodes. 
-* creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other nodes. 
-
-What is done by overriding `app.use` is the following: 
-* each *local* Feathers service of your app creates a [responder](https://github.com/dashersw/cote#creating-a-responder) to handle incoming requests from other nodes.
-* each *local* Feathers service of your app creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch service-level events to other nodes.
-
-What is done when your app is aware of a new remotely registered service is the following: 
-* creates a local Feathers service *acting as a proxy* to the remote one by creating a [requester](https://github.com/dashersw/cote#creating-a-requester) to send incoming requests to other nodes.
-* this proxy service also creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service-level events coming from other nodes.
 
 ## Example
 
