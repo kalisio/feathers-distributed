@@ -96,7 +96,7 @@ app.configure(
 ```
 
 You can add hooks to each registered remote service by using the `hooks` option:
-```
+```javascript
 app.configure(
   distribution({
     hooks: {
