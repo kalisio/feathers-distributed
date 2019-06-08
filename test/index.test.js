@@ -7,12 +7,13 @@ import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import socketio from '@feathersjs/socketio';
 import socketioClient from '@feathersjs/socketio-client';
+import request from 'superagent';
 import chai, { expect, util } from 'chai';
 import chailint from 'chai-lint';
+import spies from 'chai-spies';
 import commonHooks from 'feathers-hooks-common';
 import memory from 'feathers-memory';
 import io from 'socket.io-client';
-
 import plugin from '../src';
 
 // import restClient from 'feathers-rest/client';
@@ -30,16 +31,16 @@ const store = {
   '4': { name: 'Dick Doe', id: 4 },
   '5': { name: 'Dork Doe', id: 5 }
 };
+let beforeHook = (hook) => hook
+let afterHook = (hook) => hook
 
 function channels (app) {
   if (typeof app.channel !== 'function') {
     return;
   }
-
   app.on('connection', connection => {
     app.channel('all').join(connection);
   });
-
   app.publish((data, context) => {
     return app.channel('all');
   });
@@ -69,7 +70,8 @@ describe('feathers-distributed', () => {
     app.configure(authentication({ secret: '1234' }));
     let strategies = ['jwt'];
     app.configure(jwt());
-    app.use(express.notFound());
+    // See https://github.com/kalisio/feathers-distributed/issues/3
+    //app.use(express.notFound());
     app.use(express.errorHandler());
     if (index === gateway) {
       strategies.push('local');
@@ -94,6 +96,9 @@ describe('feathers-distributed', () => {
 
   before(() => {
     chailint(chai, util);
+    chai.use(spies)
+    beforeHook = chai.spy(beforeHook)
+    afterHook = chai.spy(afterHook)
     for (let i = 0; i < nbApps; i++) {
       apps[i] = createApp(i);
     }
@@ -120,22 +125,15 @@ describe('feathers-distributed', () => {
     });
   }
 
-  it('register the service with hooks', () => {
-    let app = express(feathers());
-    app.configure(plugin({ hooks: {} }));
-    expect(app).toExist();
-  });
-
-  it('register the service with errorHandler', () => {
-    let app = express(feathers());
-    app.configure(plugin({ errorHandler: express.errorHandler() }));
-    expect(app).toExist();
-  });
-
-  it('registers the plugin/services', () => {
+  it('registers the plugin with options and services', () => {
     let promises = [];
     for (let i = 0; i < nbApps; i++) {
-      apps[i].configure(plugin());
+      apps[i].configure(plugin({
+        hooks: { before: { all: beforeHook }, after: { all: afterHook } },
+        middlewares: { after: express.errorHandler() }
+      }));
+      expect(apps[i].servicePublisher).toExist();
+      expect(apps[i].serviceSubscriber).toExist();
       apps[i].configure(channels);
       // Only the first app has a local service
       if (i === gateway) {
@@ -231,6 +229,11 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(5000);
 
+  it('ensure hooks have been called on remote service', () => {
+    expect(beforeHook).to.have.been.called();
+    expect(afterHook).to.have.been.called();
+  })
+  
   it('dispatch create service events from local to remote without auth', done => {
     // Jump to next user
     startId += 1;
@@ -280,9 +283,23 @@ describe('feathers-distributed', () => {
     });
   });
 
+  it('unauthenticated request should return 401 on local service with auth', () => {
+    const url = 'http://localhost:' + (8080 + gateway) + '/users';
+    return request.get(url).then(response => {
+      console.log(response);
+    });
+  });
+
   it('unauthenticated call should return 401 on remote service with auth', () => {
     return clientServices[service1].find({}).catch(err => {
       expect(err.code === 401).beTrue();
+    });
+  });
+
+  it('unauthenticated request should return 401 on remote service with auth', () => {
+    const url = 'http://localhost:' + (8080 + service1) + '/users';
+    return request.get(url).then(response => {
+      console.log(response);
     });
   });
 

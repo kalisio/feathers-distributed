@@ -10,7 +10,8 @@ export default function init (options) {
   return function () {
     const distributionOptions = Object.assign(
       {
-        publicationDelay: 5000
+        publicationDelay: 5000,
+        middlewares: {}
       },
       options
     );
@@ -74,12 +75,9 @@ export default function init (options) {
     // When a remote service is declared create the local proxy interface to it
     app.serviceSubscriber.on('service', serviceDescriptor => {
       // Do not register our own services
-      if (serviceDescriptor.uuid === app.uuid) {
-        debug('Do not register service as remote on path ' + serviceDescriptor.path);
-        return;
-      }
+      if (serviceDescriptor.uuid === app.uuid) return;
       // Skip already registered services
-      const service = app.service(serviceDescriptor.path);
+      let service = app.service(serviceDescriptor.path);
       if (service) {
         if (service instanceof RemoteService) {
           debug('Already registered service as remote on path ' + serviceDescriptor.path);
@@ -93,7 +91,12 @@ export default function init (options) {
         debug('Ignoring remote service on path ' + serviceDescriptor.path);
         return;
       }
-      app.use(serviceDescriptor.path, new RemoteService(serviceDescriptor));
+      // Initialize our service by providing any required middleware
+      let args = [ serviceDescriptor.path ];
+      if (distributionOptions.middlewares.before) args = args.concat(distributionOptions.middlewares.before);
+      args.push(new RemoteService(serviceDescriptor));
+      if (distributionOptions.middlewares.after) args = args.concat(distributionOptions.middlewares.after);
+      app.use(...args);
       debug('Registered remote service on path ' + serviceDescriptor.path);
 
       // registering hook object on every remote service
@@ -104,11 +107,6 @@ export default function init (options) {
 
       // dispatch an event internally through node so that async processes can run
       app.emit('service', serviceDescriptor);
-
-      // register error handler
-      if (distributionOptions.errorHandler) {
-        app.use(distributionOptions.errorHandler);
-      }
     });
 
     // We replace the use method to inject service publisher/responder
