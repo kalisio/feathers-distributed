@@ -111,9 +111,11 @@ export default function init (options) {
 
     // We replace the use method to inject service publisher/responder
     const superUse = app.use
-    app.use = function (path, service) {
+    app.use = function () {
+      const path = arguments[0]
       // Register the service normally first
       superUse.apply(app, arguments)
+      let service = app.service(path)
       // Note: middlewares are not supported
       // Also avoid infinite loop by registering already registered remote services
       if (typeof service === 'object' && !service.remote) {

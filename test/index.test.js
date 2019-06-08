@@ -33,6 +33,7 @@ const store = {
 }
 let beforeHook = (hook) => hook
 let afterHook = (hook) => hook
+let middleware = (req, res, next) => next()
 
 function channels (app) {
   if (typeof app.channel !== 'function') {
@@ -99,6 +100,7 @@ describe('feathers-distributed', () => {
     chai.use(spies)
     beforeHook = chai.spy(beforeHook)
     afterHook = chai.spy(afterHook)
+    middleware = chai.spy(middleware)
     for (let i = 0; i < nbApps; i++) {
       apps[i] = createApp(i)
     }
@@ -137,7 +139,7 @@ describe('feathers-distributed', () => {
       apps[i].configure(channels)
       // Only the first app has a local service
       if (i === gateway) {
-        apps[i].use('users', memory({ store: clone(store), startId }))
+        apps[i].use('users', middleware, memory({ store: clone(store), startId }))
         services[i] = apps[i].service('users')
         services[i].hooks({
           before: {
@@ -221,6 +223,12 @@ describe('feathers-distributed', () => {
   })
     // Let enough time to process
     .timeout(5000)
+
+  it('ensure middleware can been called on local service', async () => {
+    const url = 'http://localhost:' + (8080 + gateway) + '/users'
+    const response = await request.get(url)
+    expect(middleware).to.have.been.called()
+  })
 
   it('ensure hooks have been called on remote service', () => {
     expect(beforeHook).to.have.been.called()
