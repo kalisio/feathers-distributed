@@ -108,6 +108,18 @@ app.configure(
 );
 ```
 
+You can add middlewares to each registered remote service by using the `middlewares` option:
+```javascript
+app.configure(
+  distribution({
+    middlewares: {
+      before: (req, res, next) => next(),
+      after: (req, res, next) => next()
+    },
+  })
+);
+```
+
 ## Example
 
 To launch the example:
