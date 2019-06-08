@@ -21,9 +21,6 @@
   "bugs": {
     "url": "https://github.com/kalisio/feathers-distributed/issues"
   },
-  "engines": {
-    "node": ">= 4.6.0"
-  },
   "scripts": {
     "prepublish": "npm run compile",
     "publish": "git push origin --tags && npm run changelog && git push origin",
@@ -33,7 +30,7 @@
     "changelog": "github_changelog_generator -u kalisio -p feathers-distributed && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "compile": "shx rm -rf lib/ && babel -d lib/ src/ && cpx \"lib/**\" example/gateway/lib && cpx \"lib/**\" example/service/lib",
     "watch": "babel --watch -d lib/ src/",
-    "lint": "semistandard src/**/*.js test/**/*.js --fix",
+    "lint": "standard src/**/*.js test/**/*.js --fix",
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --opts mocha.opts",
     "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
     "test": "npm run compile && npm run lint && npm run coverage",
@@ -41,7 +38,11 @@
     "start:service": "cd example/service && npm install && npm start",
     "start": "npm run compile && npm-run-all --parallel start:**"
   },
-  "semistandard": {
+  "standard": {
+    "parser": "babel-eslint",
+    "plugins": [
+      "html"
+    ],
     "sourceType": "module",
     "env": [
       "mocha"
@@ -75,15 +76,16 @@
     "chai-spies": "^0.7.1",
     "cpx": "^1.5.0",
     "cross-env": "^5.0.1",
+    "eslint-plugin-html": "^3.1.1",
     "feathers-hooks-common": "^4.10.0",
     "feathers-memory": "2.1.0",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^3.4.2",
     "mongodb": "^2.2.29",
     "npm-run-all": "^4.1.1",
-    "semistandard": "^11.0.0",
     "shx": "^0.2.2",
     "socket.io-client": "^2.0.3",
+    "standard": "^10.0.3",
     "superagent": "^5.0.6",
     "uuid": "^3.1.0"
   }
