@@ -282,26 +282,36 @@ describe('feathers-distributed', () => {
     try {
       await clientServices[gateway].find({})
     } catch (err) {
-      expect(err.code === 401).beTrue()
+      expect(err.code).to.equal(401)
     }
   })
 
   it('unauthenticated request should return 401 on local service with auth', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/users'
-    const response = await request.get(url)
+    try {
+      const response = await request.get(url)
+    } catch (err) {
+      expect(err.response.text.includes('NotAuthenticated')).beTrue()
+      expect(err.status).to.equal(401)
+    }
   })
 
   it('unauthenticated call should return 401 on remote service with auth', async () => {
     try {
       await clientServices[service1].find({})
     } catch (err) {
-      expect(err.code === 401).beTrue()
+      expect(err.code).to.equal(401)
     }
   })
 
   it('unauthenticated request should return 401 on remote service with auth', async () => {
     const url = 'http://localhost:' + (8080 + service1) + '/users'
-    const response = await request.get(url)
+    try {
+      const response = await request.get(url)
+    } catch (err) {
+      expect(err.response.text.includes('NotAuthenticated')).beTrue()
+      expect(err.status).to.equal(401)
+    }
   })
 
   it('authenticate should return token', async () => {

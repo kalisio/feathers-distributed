@@ -1,5 +1,6 @@
 import cote from 'cote'
 import makeDebug from 'debug'
+import { convert } from '@feathersjs/errors'
 
 const debug = makeDebug('feathers-distributed:service')
 
@@ -43,44 +44,68 @@ class RemoteService {
   // Perform requests to other nodes
   async find (params) {
     debug('Requesting find() remote service on path ' + this.path, params)
-    const result = await this.requester.send({ type: 'find', params })
-    debug('Successfully find() remote service on path ' + this.path)
-    return result
+    try {
+      const result = await this.requester.send({ type: 'find', params })
+      debug('Successfully find() remote service on path ' + this.path)
+      return result
+    } catch (error) {
+      throw convert(error)
+    }
   }
 
   async get (id, params) {
     debug('Requesting get() remote service on path ' + this.path, id, params)
-    const result = await this.requester.send({ type: 'get', id, params })
-    debug('Successfully get() remote service on path ' + this.path)
-    return result
+    try {
+      const result = await this.requester.send({ type: 'get', id, params })
+      debug('Successfully get() remote service on path ' + this.path)
+      return result
+    } catch (error) {
+      throw convert(error)
+    }
   }
 
   async create (data, params) {
     debug('Requesting create() remote service on path ' + this.path, data, params)
-    const result = await this.requester.send({ type: 'create', data, params })
-    debug('Successfully create() remote service on path ' + this.path)
-    return result
+    try {
+      const result = await this.requester.send({ type: 'create', data, params })
+      debug('Successfully create() remote service on path ' + this.path)
+      return result
+    } catch (error) {
+      throw convert(error)
+    }
   }
 
   async update (id, data, params) {
     debug('Requesting update() remote service on path ' + this.path, id, data, params)
-    const result = await this.requester.send({ type: 'update', id, data, params })
-    debug('Successfully update() remote service on path ' + this.path)
-    return result
+    try {
+      const result = await this.requester.send({ type: 'update', id, data, params })
+      debug('Successfully update() remote service on path ' + this.path)
+      return result
+    } catch (error) {
+      throw convert(error)
+    }
   }
 
   async patch (id, data, params) {
     debug('Requesting patch() remote service on path ' + this.path, id, data, params)
-    const result = await this.requester.send({ type: 'patch', id, data, params })
-    debug('Successfully patch() remote service on path ' + this.path)
-    return result
+    try {
+      const result = await this.requester.send({ type: 'patch', id, data, params })
+      debug('Successfully patch() remote service on path ' + this.path)
+      return result
+    } catch (error) {
+      throw convert(error)
+    }
   }
 
   async remove (id, params) {
     debug('Requesting remove() remote service on path ' + this.path, id, params)
-    const result = await this.requester.send({ type: 'remove', id, params })
-    debug('Successfully remove() remote service on path ' + this.path)
-    return result
+    try {
+      const result = await this.requester.send({ type: 'remove', id, params })
+      debug('Successfully remove() remote service on path ' + this.path)
+      return result
+    } catch (error) {
+      throw convert(error)
+    }
   }
 }
 

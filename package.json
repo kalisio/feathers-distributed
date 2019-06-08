@@ -64,6 +64,7 @@
     "@feathersjs/authentication-jwt": "^2.0.0",
     "@feathersjs/authentication-local": "^1.1.0",
     "@feathersjs/client": "^3.4.3",
+    "@feathersjs/errors": "^3.3.0",
     "@feathersjs/express": "^1.2.0",
     "@feathersjs/socketio": "^3.2.0",
     "babel-cli": "^6.24.1",
