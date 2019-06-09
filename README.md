@@ -71,6 +71,8 @@ What is done when your app is aware of a new remotely registered service is the 
 
 ## Configuration options
 
+### Local services
+
 By default all your services will be exposed, you can use the `services` option to indicate which services need to be published if you'd like to keep some available only internally:
 ```javascript
 app.configure(
@@ -82,6 +84,8 @@ app.configure(
   })
 )
 ```
+
+### Remote services
 
 By default all remote services will be consumed, you can use the `remoteServices` option to indicate which services need to be consumed if you don't want to be polluted by unused ones:
 ```javascript
@@ -95,7 +99,7 @@ app.configure(
 )
 ```
 
-You can add hooks to each registered remote service by using the `hooks` option:
+You can add hooks to each registered remote service by using the `hooks` option, this is typically useful to enforce authentication on a [gateway scenario](https://github.com/kalisio/feathers-distributed#api-gateway):
 ```javascript
 app.configure(
   distribution({
@@ -108,17 +112,20 @@ app.configure(
 );
 ```
 
-You can add middlewares to each registered remote service by using the `middlewares` option:
+You can add middlewares to each registered remote service by using the `middlewares` option, this is typically useful to enfore correct [error handling](https://docs.feathersjs.com/api/express.html#expresserrorhandler) on a [gateway scenario](https://github.com/kalisio/feathers-distributed#api-gateway):
 ```javascript
+const express = require('@feathersjs/express')
+
 app.configure(
   distribution({
     middlewares: {
       before: (req, res, next) => next(),
-      after: (req, res, next) => next()
+      after: express.errorHandler()
     },
   })
 );
 ```
+Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first but `feathers-distributed` dynamically adds new services during app lifecycle. You thus need to register middlewares whenever a new service pops up. 
 
 ## Example
 
