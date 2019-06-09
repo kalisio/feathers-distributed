@@ -115,6 +115,8 @@ export default function init (options) {
       const path = arguments[0]
       // Register the service normally first
       superUse.apply(app, arguments)
+      // With express apps we can directly register middlewares
+      if (typeof path !== 'string') return
       let service = app.service(path)
       // Note: middlewares are not supported
       // Also avoid infinite loop by registering already registered remote services
