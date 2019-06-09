@@ -157,7 +157,7 @@ describe('feathers-distributed', () => {
         promises.push(waitForService(apps, services, i))
       }
     }
-    const pathes = await Promise.all(promises)
+    await Promise.all(promises)
     promises = []
     for (let i = 0; i < nbApps; i++) {
       servers[i] = apps[i].listen(8080 + i)
@@ -226,7 +226,7 @@ describe('feathers-distributed', () => {
 
   it('ensure middleware can been called on local service', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/users'
-    const response = await request.get(url)
+    await request.get(url)
     expect(middleware).to.have.been.called()
   })
 
@@ -289,7 +289,7 @@ describe('feathers-distributed', () => {
   it('unauthenticated request should return 401 on local service with auth', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/users'
     try {
-      const response = await request.get(url)
+      await request.get(url)
     } catch (err) {
       expect(err.response.text.includes('NotAuthenticated')).beTrue()
       expect(err.status).to.equal(401)
@@ -307,7 +307,7 @@ describe('feathers-distributed', () => {
   it('unauthenticated request should return 401 on remote service with auth', async () => {
     const url = 'http://localhost:' + (8080 + service1) + '/users'
     try {
-      const response = await request.get(url)
+      await request.get(url)
     } catch (err) {
       expect(err.response.text.includes('NotAuthenticated')).beTrue()
       expect(err.status).to.equal(401)
@@ -433,4 +433,3 @@ describe('feathers-distributed', () => {
     }
   })
 })
-
