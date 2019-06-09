@@ -1,5 +1,24 @@
 # Changelog
 
+## [v0.4.0](https://github.com/kalisio/feathers-distributed/tree/v0.4.0) (2019-06-09)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.4...v0.4.0)
+
+**Implemented enhancements:**
+
+- Update code standard [\#27](https://github.com/kalisio/feathers-distributed/issues/27)
+- Ability to add middlewares to remote services [\#26](https://github.com/kalisio/feathers-distributed/issues/26)
+- Allow to define which remote services to be managed [\#23](https://github.com/kalisio/feathers-distributed/issues/23)
+
+**Fixed bugs:**
+
+- Errors from remote services not correctly formatted at endpoint level [\#25](https://github.com/kalisio/feathers-distributed/issues/25)
+- Does not work with middleware [\#13](https://github.com/kalisio/feathers-distributed/issues/13)
+
+**Closed issues:**
+
+- Distributed application with authentification \(Question\) [\#24](https://github.com/kalisio/feathers-distributed/issues/24)
+
 ## [v0.3.4](https://github.com/kalisio/feathers-distributed/tree/v0.3.4) (2019-05-29)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.3...v0.3.4)
