@@ -9,10 +9,6 @@
 
 > Distribute your Feathers services as microservices
 
-**This plugin is under development and currently in beta-test, updates will be pushed frequently.
-As a consequence it should be considered unstable, not yet ready for production use.
-Although we try to avoid this wherever possible, `0.x` versions on the master branch can promote breaking changes in the API.**
-
 The [`master`](https://github.com/kalisio/feathers-distributed) branch and >= 0.3.x version is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard).
 The [`auk`](https://github.com/kalisio/feathers-distributed/tree/auk) branch and 0.2.x version is expected to work with [Feathers v2](https://auk.docs.feathersjs.com/) (a.k.a. Auk).
 
