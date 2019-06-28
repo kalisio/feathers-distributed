@@ -28,6 +28,8 @@ with [Weave overlay networks](https://github.com/weaveworks/weave), eg on Docker
 
 You might find this [presentation](http://slides.com/armaganamcalar/apiconf-zero-conf-microservices#/) really helpful to understand it.
 
+You might also be interested in reading this typical [use case](https://blog.feathersjs.com/a-use-case-of-microservices-with-feathersjs-building-a-geospatial-platform-56373604db71).
+
 ## Installation
 
 ```
