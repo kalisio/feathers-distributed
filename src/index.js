@@ -2,6 +2,7 @@ import { stripSlashes } from '@feathersjs/commons'
 import makeCote from 'cote'
 import uuid from 'uuid/v4'
 import makeDebug from 'debug'
+import portfinder from 'portfinder'
 import { LocalService, RemoteService } from './service'
 
 const debug = makeDebug('feathers-distributed')
@@ -30,6 +31,8 @@ export default function init (options) {
     let app = this
     // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
     app.coteOptions = distributionOptions.cote || {}
+    // Change default base port for automated port finding
+    portfinder.basePort = app.coteOptions.basePort || 10000
     app.cote = (distributionOptions.cote ? makeCote(distributionOptions.cote) : makeCote())
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid()
