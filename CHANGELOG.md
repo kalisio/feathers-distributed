@@ -1,5 +1,17 @@
 # Changelog
 
+## [v0.4.1](https://github.com/kalisio/feathers-distributed/tree/v0.4.1) (2019-09-04)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.4.0...v0.4.1)
+
+**Implemented enhancements:**
+
+- Allow to control port range for cote [\#29](https://github.com/kalisio/feathers-distributed/issues/29)
+
+**Fixed bugs:**
+
+- Example needs to be updated to latest code version [\#28](https://github.com/kalisio/feathers-distributed/issues/28)
+
 ## [v0.4.0](https://github.com/kalisio/feathers-distributed/tree/v0.4.0) (2019-06-09)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.3.4...v0.4.0)
