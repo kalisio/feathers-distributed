@@ -116,7 +116,7 @@ class LocalService extends cote.Responder {
     const path = options.path
     super({ name: path + ' responder', namespace: path, respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove'] }, { log: false })
     debug('Responder created for local service on path ' + path)
-    let service = app.service(path)
+    const service = app.service(path)
 
     // Answer requests from other nodes
     this.on('find', async (req) => {

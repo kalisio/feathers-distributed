@@ -19,17 +19,17 @@ import plugin from '../src'
 // import restClient from 'feathers-rest/client';
 let startId = 6
 const store = {
-  '0': {
+  0: {
     name: 'Jane Doe',
     email: 'user@test.com',
     password: '$2a$12$97.pHfXj/1Eqn0..1V4ixOvAno7emZKTZgz.OYEHYqOOM2z.cftAu',
     id: 0
   },
-  '1': { name: 'Jack Doe', id: 1 },
-  '2': { name: 'John Doe', id: 2 },
-  '3': { name: 'Rick Doe', id: 3 },
-  '4': { name: 'Dick Doe', id: 4 },
-  '5': { name: 'Dork Doe', id: 5 }
+  1: { name: 'Jack Doe', id: 1 },
+  2: { name: 'John Doe', id: 2 },
+  3: { name: 'Rick Doe', id: 3 },
+  4: { name: 'Dick Doe', id: 4 },
+  5: { name: 'Dork Doe', id: 5 }
 }
 let beforeHook = (hook) => hook
 let afterHook = (hook) => hook
@@ -52,11 +52,11 @@ function clone (obj) {
 }
 
 describe('feathers-distributed', () => {
-  let apps = []
-  let servers = []
-  let services = []
-  let clients = []
-  let clientServices = []
+  const apps = []
+  const servers = []
+  const services = []
+  const clients = []
+  const clientServices = []
   let checkAuthentication = false
   let accessToken
   const nbApps = 3
@@ -65,11 +65,11 @@ describe('feathers-distributed', () => {
   const service2 = 2
 
   function createApp (index) {
-    let app = express(feathers())
+    const app = express(feathers())
     app.configure(socketio())
     app.configure(express.rest())
     app.configure(authentication({ secret: '1234' }))
-    let strategies = ['jwt']
+    const strategies = ['jwt']
     app.configure(jwt())
     // See https://github.com/kalisio/feathers-distributed/issues/3
     // app.use(express.notFound());
@@ -427,9 +427,9 @@ describe('feathers-distributed', () => {
     .timeout(5000)
 
   // Cleanup
-  after(() => {
+  after(async () => {
     for (let i = 0; i < nbApps; i++) {
-      servers[i].close()
+      await servers[i].close()
     }
   })
 })

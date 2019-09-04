@@ -28,7 +28,7 @@ export default function init (options) {
       if (typeof distributionOptions.remoteServices === 'function') return distributionOptions.remoteServices(service)
       else return distributionOptions.remoteServices.includes(service.path)
     }
-    let app = this
+    const app = this
     // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
     app.coteOptions = distributionOptions.cote || {}
     // Change default base port for automated port finding
@@ -80,7 +80,7 @@ export default function init (options) {
       // Do not register our own services
       if (serviceDescriptor.uuid === app.uuid) return
       // Skip already registered services
-      let service = app.service(serviceDescriptor.path)
+      const service = app.service(serviceDescriptor.path)
       if (service) {
         if (service instanceof RemoteService) {
           debug('Already registered service as remote on path ' + serviceDescriptor.path)
@@ -95,7 +95,7 @@ export default function init (options) {
         return
       }
       // Initialize our service by providing any required middleware
-      let args = [ serviceDescriptor.path ]
+      let args = [serviceDescriptor.path]
       if (distributionOptions.middlewares.before) args = args.concat(distributionOptions.middlewares.before)
       args.push(new RemoteService(serviceDescriptor))
       if (distributionOptions.middlewares.after) args = args.concat(distributionOptions.middlewares.after)
@@ -120,7 +120,7 @@ export default function init (options) {
       superUse.apply(app, arguments)
       // With express apps we can directly register middlewares
       if (typeof path !== 'string') return
-      let service = app.service(path)
+      const service = app.service(path)
       // Note: middlewares are not supported
       // Also avoid infinite loop by registering already registered remote services
       if (typeof service === 'object' && !service.remote) {
