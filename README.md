@@ -125,6 +125,21 @@ app.configure(
 ```
 Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first but `feathers-distributed` dynamically adds new services during app lifecycle. You thus need to register middlewares whenever a new service pops up. 
 
+## Hooks
+
+In some cases it can be useful to know in a hook if the method has been called from a remote service or a local one (e.g. in order to skip authentication). For this you can use the `fromRemote` flag in parameters:
+```
+services[i].hooks({
+  before: {
+    all: hook => {
+      // Do something specific in this case
+      if (hook.params.fromRemote) ...
+      return hook
+    }
+  }
+})
+```
+
 ## Example
 
 To launch the example:
