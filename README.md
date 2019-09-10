@@ -128,7 +128,7 @@ Indeed, Feathers does not allow to register new services after the app has been 
 ## Hooks
 
 In some cases it can be useful to know in a hook if the method has been called from a remote service or a local one (e.g. in order to skip authentication). For this you can use the `fromRemote` flag in parameters:
-```
+```javascript
 services[i].hooks({
   before: {
     all: hook => {
