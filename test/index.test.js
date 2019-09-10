@@ -162,13 +162,14 @@ describe('feathers-distributed', () => {
         // For remote services we have to wait they are registered
         promises.push(waitForService(apps, services, i))
       }
-      // See https://github.com/kalisio/feathers-distributed/issues/3
-      // apps[i].use(express.notFound());
-      apps[i].use(express.errorHandler())
     }
     await Promise.all(promises)
     promises = []
     for (let i = 0; i < nbApps; i++) {
+      // See https://github.com/kalisio/feathers-distributed/issues/3
+      // Now all services are registered setup handlers
+      apps[i].use(express.notFound())
+      apps[i].use(express.errorHandler())
       servers[i] = apps[i].listen(8080 + i)
       promises.push(waitForListen(servers[i]))
     }
@@ -347,6 +348,28 @@ describe('feathers-distributed', () => {
   })
     // Let enough time to process
     .timeout(5000)
+
+  it('not found request should return 404 on local service', async () => {
+    const url = 'http://localhost:' + (8080 + gateway) + '/xxx'
+    try {
+      await request.get(url)
+    } catch (err) {
+      // As external service call should use express handler
+      expect(err.response.text.includes('NotFound')).beTrue()
+      expect(err.status).to.equal(404)
+    }
+  })
+
+  it('not found request should return 404 on remote service', async () => {
+    const url = 'http://localhost:' + (8080 + service1) + '/xxx'
+    try {
+      await request.get(url)
+    } catch (err) {
+      // As external service call should use express handler
+      expect(err.response.text.includes('NotFound')).beTrue()
+      expect(err.status).to.equal(404)
+    }
+  })
 
   it('unauthenticated call should return 401 on local service with auth', async () => {
     checkAuthentication = true
