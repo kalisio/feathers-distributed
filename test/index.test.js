@@ -74,9 +74,6 @@ describe('feathers-distributed', () => {
     app.configure(authentication({ secret: '1234' }))
     const strategies = ['jwt']
     app.configure(jwt())
-    // See https://github.com/kalisio/feathers-distributed/issues/3
-    // app.use(express.notFound());
-    app.use(express.errorHandler())
     if (index === gateway) {
       strategies.push('local')
       app.configure(local())
@@ -165,6 +162,9 @@ describe('feathers-distributed', () => {
         // For remote services we have to wait they are registered
         promises.push(waitForService(apps, services, i))
       }
+      // See https://github.com/kalisio/feathers-distributed/issues/3
+      // apps[i].use(express.notFound());
+      apps[i].use(express.errorHandler())
     }
     await Promise.all(promises)
     promises = []
@@ -353,6 +353,7 @@ describe('feathers-distributed', () => {
     try {
       await socketClientServices[gateway].find({})
     } catch (err) {
+      // As internal service call should not use express handler
       expect(err.code).to.equal(401)
     }
   })
@@ -362,6 +363,7 @@ describe('feathers-distributed', () => {
     try {
       await request.get(url)
     } catch (err) {
+      // As external service call should use express handler
       expect(err.response.text.includes('NotAuthenticated')).beTrue()
       expect(err.status).to.equal(401)
     }
@@ -371,6 +373,7 @@ describe('feathers-distributed', () => {
     try {
       await socketClientServices[service1].find({})
     } catch (err) {
+      // As internal service call should not use express handler
       expect(err.code).to.equal(401)
     }
   })
@@ -380,6 +383,7 @@ describe('feathers-distributed', () => {
     try {
       await request.get(url)
     } catch (err) {
+      // As external service call should use express handler
       expect(err.response.text.includes('NotAuthenticated')).beTrue()
       expect(err.status).to.equal(401)
     }
