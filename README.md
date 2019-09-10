@@ -159,7 +159,7 @@ There are two scenarios:
 ### API gateway: 
 
 In this case you have to [install the authentication plugin](https://auk.docs.feathersjs.com/api/authentication/server.html#authentication) on your gateway and register a hook that will enforce authentication on each registered remote service by using the `hooks` option:
-```
+```javascript
 app.configure(
   distribution({
     hooks: {
