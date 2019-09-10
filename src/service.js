@@ -125,37 +125,37 @@ class LocalService extends cote.Responder {
     // Answer requests from other nodes
     this.on('find', async (req) => {
       debug('Responding find() local service on path ' + path, req)
-      const result = await service.find(req.params)
+      const result = await service.find(Object.assign({ fromRemote: true }, req.params))
       debug('Successfully find() local service on path ' + path)
       return result
     })
     this.on('get', async (req) => {
       debug('Responding get() local service on path ' + path, req)
-      const result = await service.get(req.id, req.params)
+      const result = await service.get(req.id, Object.assign({ fromRemote: true }, req.params))
       debug('Successfully get() local service on path ' + path)
       return result
     })
     this.on('create', async (req) => {
       debug('Responding create() local service on path ' + path, req)
-      const result = await service.create(req.data, req.params)
+      const result = await service.create(req.data, Object.assign({ fromRemote: true }, req.params))
       debug('Successfully create() local service on path ' + path)
       return result
     })
     this.on('update', async (req) => {
       debug('Responding update() local service on path ' + path, req)
-      const result = await service.update(req.id, req.data, req.params)
+      const result = await service.update(req.id, req.data, Object.assign({ fromRemote: true }, req.params))
       debug('Successfully update() local service on path ' + path)
       return result
     })
     this.on('patch', async (req) => {
       debug('Responding patch() local service on path ' + path, req)
-      const result = await service.patch(req.id, req.data, req.params)
+      const result = await service.patch(req.id, req.data, Object.assign({ fromRemote: true }, req.params))
       debug('Successfully patch() local service on path ' + path)
       return result
     })
     this.on('remove', async (req) => {
       debug('Responding remove() local service on path ' + path, req)
-      const result = await service.remove(req.id, req.params)
+      const result = await service.remove(req.id, Object.assign({ fromRemote: true }, req.params))
       debug('Successfully remove() local service on path ' + path)
       return result
     })

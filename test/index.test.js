@@ -33,6 +33,7 @@ const store = {
 let beforeHook = (hook) => hook
 let afterHook = (hook) => hook
 let middleware = (req, res, next) => next()
+let hookFromRemote
 
 function channels (app) {
   if (typeof app.channel !== 'function') {
@@ -148,6 +149,10 @@ describe('feathers-distributed', () => {
         services[i].hooks({
           before: {
             all: [
+              hook => {
+                hookFromRemote = hook.params.fromRemote
+                return hook
+              },
               commonHooks.when(
                 hook => hook.params.provider && checkAuthentication,
                 authentication.hooks.authenticate('jwt')
@@ -242,15 +247,19 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(5000)
 
+  it('ensure distribution hooks have been called on remote service', () => {
+    expect(beforeHook).to.have.been.called()
+    expect(afterHook).to.have.been.called()
+  })
+
+  it('ensure local service hooks have been called with the remote service flag', () => {
+    expect(hookFromRemote).beTrue()
+  })
+  
   it('ensure middleware can been called on local service', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/users'
     await request.get(url)
     expect(middleware).to.have.been.called()
-  })
-
-  it('ensure hooks have been called on remote service', () => {
-    expect(beforeHook).to.have.been.called()
-    expect(afterHook).to.have.been.called()
   })
 
   it('dispatch find socket service calls from remote to local without auth', async () => {
