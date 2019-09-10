@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.5.0](https://github.com/kalisio/feathers-distributed/tree/v0.5.0) (2019-09-10)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.4.1...v0.5.0)
+
+**Implemented enhancements:**
+
+- Make hooks aware of remote service calls [\#32](https://github.com/kalisio/feathers-distributed/issues/32)
+
+**Fixed bugs:**
+
+- Error type from remote services not correctly retrieved at endpoint level [\#33](https://github.com/kalisio/feathers-distributed/issues/33)
+- Does not work with REST client [\#30](https://github.com/kalisio/feathers-distributed/issues/30)
+
 ## [v0.4.1](https://github.com/kalisio/feathers-distributed/tree/v0.4.1) (2019-09-04)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.4.0...v0.4.1)
