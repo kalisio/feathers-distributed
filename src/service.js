@@ -27,15 +27,19 @@ class RemoteService {
       subscribesTo: ['created', 'updated', 'patched', 'removed']
     }, { log: false })
     this.serviceEventsSubscriber.on('created', object => {
+      debug('Dispatching created remote service event on path ' + path, object)
       this.emit('created', object)
     })
     this.serviceEventsSubscriber.on('updated', object => {
+      debug('Dispatching updated remote service event on path ' + path, object)
       this.emit('updated', object)
     })
     this.serviceEventsSubscriber.on('patched', object => {
+      debug('Dispatching patched remote service event on path ' + path, object)
       this.emit('patched', object)
     })
     this.serviceEventsSubscriber.on('removed', object => {
+      debug('Dispatching removed remote service event on path ' + path, object)
       this.emit('removed', object)
     })
     debug('Subscriber created for remote service events on path ' + this.path)
@@ -120,37 +124,37 @@ class LocalService extends cote.Responder {
 
     // Answer requests from other nodes
     this.on('find', async (req) => {
-      debug('Responding find() local service on path ' + path)
+      debug('Responding find() local service on path ' + path, req)
       const result = await service.find(req.params)
       debug('Successfully find() local service on path ' + path)
       return result
     })
     this.on('get', async (req) => {
-      debug('Responding get() local service on path ' + path)
+      debug('Responding get() local service on path ' + path, req)
       const result = await service.get(req.id, req.params)
       debug('Successfully get() local service on path ' + path)
       return result
     })
     this.on('create', async (req) => {
-      debug('Responding create() local service on path ' + path)
+      debug('Responding create() local service on path ' + path, req)
       const result = await service.create(req.data, req.params)
       debug('Successfully create() local service on path ' + path)
       return result
     })
     this.on('update', async (req) => {
-      debug('Responding update() local service on path ' + path)
+      debug('Responding update() local service on path ' + path, req)
       const result = await service.update(req.id, req.data, req.params)
       debug('Successfully update() local service on path ' + path)
       return result
     })
     this.on('patch', async (req) => {
-      debug('Responding patch() local service on path ' + path)
+      debug('Responding patch() local service on path ' + path, req)
       const result = await service.patch(req.id, req.data, req.params)
       debug('Successfully patch() local service on path ' + path)
       return result
     })
     this.on('remove', async (req) => {
-      debug('Responding remove() local service on path ' + path)
+      debug('Responding remove() local service on path ' + path, req)
       const result = await service.remove(req.id, req.params)
       debug('Successfully remove() local service on path ' + path)
       return result
@@ -163,15 +167,19 @@ class LocalService extends cote.Responder {
       broadcasts: ['created', 'updated', 'patched', 'removed']
     }, Object.assign({ log: false }, app.coteOptions))
     service.on('created', object => {
+      debug('Publishing created local service event on path ' + path, object)
       this.serviceEventsPublisher.publish('created', object)
     })
     service.on('updated', object => {
+      debug('Publishing updated local service event on path ' + path, object)
       this.serviceEventsPublisher.publish('updated', object)
     })
     service.on('patched', object => {
+      debug('Publishing patched local service event on path ' + path, object)
       this.serviceEventsPublisher.publish('patched', object)
     })
     service.on('removed', object => {
+      debug('Publishing removed local service event on path ' + path, object)
       this.serviceEventsPublisher.publish('removed', object)
     })
     debug('Publisher created for local service events on path ' + path)
