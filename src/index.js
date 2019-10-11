@@ -11,6 +11,10 @@ export default function init (options) {
   return function () {
     const distributionOptions = Object.assign(
       {
+        helloInterval: 10000,
+        checkInterval: 20000,
+        nodeTimeout: 30000,
+        masterTimeout: 60000,
         publicationDelay: 5000,
         middlewares: {}
       },
