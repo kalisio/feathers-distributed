@@ -135,6 +135,12 @@ describe('feathers-distributed', () => {
         middlewares: { after: express.errorHandler() },
         // Distribute only the users service
         services: (service) => service.path.endsWith('users'),
+        cote: { // Use cote defaults
+          helloInterval: 2000,
+          checkInterval: 4000,
+          nodeTimeout: 5000,
+          masterTimeout: 6000
+        }
       }))
       expect(apps[i].servicePublisher).toExist()
       expect(apps[i].serviceSubscriber).toExist()
