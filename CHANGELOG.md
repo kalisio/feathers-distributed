@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased](https://github.com/kalisio/feathers-distributed/tree/HEAD)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.5.0...HEAD)
+
+**Fixed bugs:**
+
+- CPU usage is high with more than 40 services [\#34](https://github.com/kalisio/feathers-distributed/issues/34)
+
 ## [v0.5.0](https://github.com/kalisio/feathers-distributed/tree/v0.5.0) (2019-09-10)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.4.1...v0.5.0)
