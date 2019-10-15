@@ -2,6 +2,8 @@
 
 ## [v0.5.2](https://github.com/kalisio/feathers-distributed/tree/v0.5.2) (2019-10-15)
 
+New packaging of v0.5.1 without unrequired files pushed by error.
+
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.5.1...v0.5.2)
 
 ## [v0.5.1](https://github.com/kalisio/feathers-distributed/tree/v0.5.1) (2019-10-15)
