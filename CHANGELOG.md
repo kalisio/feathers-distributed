@@ -1,8 +1,18 @@
 # Changelog
 
-## [v0.5.2](https://github.com/kalisio/feathers-distributed/tree/v0.5.2) (2019-10-15)
+## [v0.6.0](https://github.com/kalisio/feathers-distributed/tree/v0.6.0) (2019-10-21)
 
-New packaging of v0.5.1 without unrequired files pushed by error.
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.5.2...v0.6.0)
+
+**Implemented enhancements:**
+
+- Unecessary discovery layer [\#2](https://github.com/kalisio/feathers-distributed/issues/2)
+
+**Fixed bugs:**
+
+- Remote services are lost after a restart [\#35](https://github.com/kalisio/feathers-distributed/issues/35)
+
+## [v0.5.2](https://github.com/kalisio/feathers-distributed/tree/v0.5.2) (2019-10-15)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.5.1...v0.5.2)
 
