@@ -7,21 +7,21 @@ import { LocalService, RemoteService } from './service'
 
 const debug = makeDebug('feathers-distributed')
 
-export default function init (options) {
+export default function init (options = {}) {
   return function () {
-    const distributionOptions = Object.assign(
-      {
-        publicationDelay: 5000,
-        middlewares: {},
-        cote: {
-          helloInterval: 10000,
-          checkInterval: 20000,
-          nodeTimeout: 30000,
-          masterTimeout: 60000
-        }
-      },
-      options
-    )
+    const app = this
+    app.coteOptions = Object.assign({
+      helloInterval: 10000,
+      checkInterval: 20000,
+      nodeTimeout: 30000,
+      masterTimeout: 60000,
+      log: false,
+      basePort: 10000
+    }, options.cote)
+    const distributionOptions = Object.assign({
+      publicationDelay: 10000,
+      middlewares: {}
+    }, options)
     const isInternalService = service => {
       // Default is to expose all services
       if (!distributionOptions.services) return false
@@ -34,57 +34,29 @@ export default function init (options) {
       if (typeof distributionOptions.remoteServices === 'function') return distributionOptions.remoteServices(service)
       else return distributionOptions.remoteServices.includes(service.path)
     }
-    const app = this
-    // Because options are forwarded and assigned to defaults options of services allocate an empty object if nothing is provided
-    app.coteOptions = distributionOptions.cote || {}
     // Change default base port for automated port finding
-    portfinder.basePort = app.coteOptions.basePort || 10000
-    app.cote = (distributionOptions.cote ? makeCote(distributionOptions.cote) : makeCote())
+    portfinder.basePort = app.coteOptions.basePort
+    // Setup cote with options
+    app.cote = makeCote(app.coteOptions)
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid()
-    debug('Initializing feathers-distributed')
+    debug('Initializing feathers-distributed with cote options', app.coteOptions)
 
-    // This publisher publishes an event each time a local app service is registered
-    app.servicePublisher = new app.cote.Publisher(
-      {
-        name: 'feathers services publisher',
-        namespace: 'services',
-        broadcasts: ['service']
-      },
-      Object.assign({ log: false }, app.coteOptions)
-    )
-    // Also each time a new node pops up so that it does not depend of the initialization order of the apps
-    app.servicePublisher.on('cote:added', data => {
-      // console.log(data)
-      // Add a timeout so that the subscriber has been initialized on the node
-      setTimeout(_ => {
-        Object.getOwnPropertyNames(app.services).forEach(path => {
-          const service = app.services[path]
-          if (service.remote) return
-          const serviceDescriptor = { uuid: app.uuid, path }
-          // Skip internal services
-          if (isInternalService(serviceDescriptor)) {
-            debug('Ignoring local service on path ' + serviceDescriptor.path)
-            return
-          }
-          app.servicePublisher.publish('service', { uuid: app.uuid, path })
-          debug('Republished local service on path ' + path)
-        })
-      }, distributionOptions.publicationDelay)
-    })
     // This subscriber listen to an event each time a remote app service has been registered
-    app.serviceSubscriber = new app.cote.Subscriber(
-      {
-        name: 'feathers services subscriber',
-        namespace: 'services',
-        subscribesTo: ['service']
-      },
-      Object.assign({ log: false }, app.coteOptions)
-    )
+    app.serviceSubscriber = new app.cote.Subscriber({
+      name: 'feathers services subscriber',
+      namespace: 'services',
+      key: 'services',
+      subscribesTo: ['application', 'service']
+    }, app.coteOptions)
+    debug('Services subscriber ready for app with uuid ' + app.uuid)
     // When a remote service is declared create the local proxy interface to it
     app.serviceSubscriber.on('service', serviceDescriptor => {
       // Do not register our own services
-      if (serviceDescriptor.uuid === app.uuid) return
+      if (serviceDescriptor.uuid === app.uuid) {
+        debug('Ignoring local service registration on path ' + serviceDescriptor.path)
+        return
+      }
       // Skip already registered services
       const service = app.service(serviceDescriptor.path)
       if (service) {
@@ -117,6 +89,41 @@ export default function init (options) {
       // dispatch an event internally through node so that async processes can run
       app.emit('service', serviceDescriptor)
     })
+    // This publisher publishes an event each time a local app or service is registered
+    app.servicePublisher = new app.cote.Publisher({
+      name: 'feathers services publisher',
+      namespace: 'services',
+      key: 'services',
+      broadcasts: ['application', 'service']
+    }, app.coteOptions)
+    debug('Services publisher ready for app with uuid ' + app.uuid)
+    // Also each time a new app pops up so that it does not depend of the initialization order of the apps
+    app.serviceSubscriber.on('application', applicationDescriptor => {
+      // Not required for our own app
+      if (applicationDescriptor.uuid === app.uuid) {
+        debug('Ignoring local services republication for app ' + app.uuid)
+        return
+      }
+      debug('Republishing local services of app ' + app.uuid + ' for remote app ' + applicationDescriptor.uuid)
+      Object.getOwnPropertyNames(app.services).forEach(path => {
+        const service = app.services[path]
+        if (service.remote) return
+        const serviceDescriptor = { uuid: app.uuid, path }
+        // Skip internal services
+        if (isInternalService(serviceDescriptor)) {
+          debug('Ignoring local service republication on path ' + serviceDescriptor.path)
+          return
+        }
+        app.servicePublisher.publish('service', serviceDescriptor)
+        debug('Republished local service on path ' + path)
+      })
+    })
+    // Tell others apps I'm here
+    // Add a timeout so that the publisher/subscriber has been initialized on the node
+    setTimeout(_ => {
+      app.servicePublisher.publish('application', { uuid: app.uuid })
+      debug('Published local app with uuid ' + app.uuid)
+    }, distributionOptions.publicationDelay)
 
     // We replace the use method to inject service publisher/responder
     const superUse = app.use

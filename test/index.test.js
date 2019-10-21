@@ -135,6 +135,7 @@ describe('feathers-distributed', () => {
         middlewares: { after: express.errorHandler() },
         // Distribute only the users service
         services: (service) => service.path.endsWith('users'),
+        publicationDelay: 5000,
         cote: { // Use cote defaults
           helloInterval: 2000,
           checkInterval: 4000,
@@ -262,7 +263,7 @@ describe('feathers-distributed', () => {
   it('ensure local service hooks have been called with the remote service flag', () => {
     expect(hookFromRemote).beTrue()
   })
-  
+
   it('ensure middleware can been called on local service', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/users'
     await request.get(url)

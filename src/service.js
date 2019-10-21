@@ -16,16 +16,18 @@ class RemoteService {
     this.requester = new app.cote.Requester({
       name: path + ' requester',
       namespace: path,
+      key: path,
       requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
-    }, Object.assign({ log: false }, app.coteOptions))
+    }, app.coteOptions)
     this.path = path
     debug('Requester created for remote service on path ' + this.path)
     // Create the subscriber to listen to events from other nodes
     this.serviceEventsSubscriber = new app.cote.Subscriber({
       name: path + ' events subscriber',
       namespace: path,
+      key: path,
       subscribesTo: ['created', 'updated', 'patched', 'removed']
-    }, { log: false })
+    }, app.coteOptions)
     this.serviceEventsSubscriber.on('created', object => {
       debug('Dispatching created remote service event on path ' + path, object)
       this.emit('created', object)
@@ -118,7 +120,12 @@ class LocalService extends cote.Responder {
   constructor (options) {
     const app = options.app
     const path = options.path
-    super({ name: path + ' responder', namespace: path, respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove'] }, { log: false })
+    super({
+      name: path + ' responder',
+      namespace: path,
+      key: path,
+      respondsTo: ['find', 'get', 'create', 'update', 'patch', 'remove']
+    }, app.coteOptions)
     debug('Responder created for local service on path ' + path)
     const service = app.service(path)
 
@@ -164,8 +171,9 @@ class LocalService extends cote.Responder {
     this.serviceEventsPublisher = new app.cote.Publisher({
       name: path + ' events publisher',
       namespace: path,
+      key: path,
       broadcasts: ['created', 'updated', 'patched', 'removed']
-    }, Object.assign({ log: false }, app.coteOptions))
+    }, app.coteOptions)
     service.on('created', object => {
       debug('Publishing created local service event on path ' + path, object)
       this.serviceEventsPublisher.publish('created', object)
