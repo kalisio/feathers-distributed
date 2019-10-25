@@ -55,7 +55,7 @@ function clone (obj) {
 describe('feathers-distributed', () => {
   let apps = []
   let servers = []
-  let services = []
+  let services
   let customServices = []
   let restClients = []
   let restClientServices = []
