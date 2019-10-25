@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import feathers from '@feathersjs/feathers'
 import socketio from '@feathersjs/socketio'
 import request from 'superagent'
+import utils from 'util'
 import chai, { expect, util } from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
@@ -52,13 +53,15 @@ function clone (obj) {
 }
 
 describe('feathers-distributed', () => {
-  const apps = []
-  const servers = []
-  const services = []
-  const restClients = []
-  const restClientServices = []
-  const socketClients = []
-  const socketClientServices = []
+  let apps = []
+  let servers = []
+  let services = []
+  let customServices = []
+  let restClients = []
+  let restClientServices = []
+  let socketClients = []
+  let socketClientServices = []
+  let socketClientCustomServices = []
   let checkAuthentication = false
   let accessToken
   const nbApps = 3
@@ -110,14 +113,13 @@ describe('feathers-distributed', () => {
     expect(typeof plugin).to.equal('function')
   })
 
-  function waitForService (apps, services, i) {
+  function waitForService (app, path) {
     return new Promise((resolve, reject) => {
-      apps[i].on('service', data => {
-        console.log(data)
-        if (data.path === 'users') {
-          services[i] = apps[i].service('users')
-          expect(services[i]).toExist()
-          resolve(data.path)
+      app.on('service', data => {
+        if (data.path === path) {
+          const service = app.service(path)
+          expect(service).toExist()
+          resolve(service)
         }
       })
     })
@@ -134,8 +136,8 @@ describe('feathers-distributed', () => {
       apps[i].configure(plugin({
         hooks: { before: { all: beforeHook }, after: { all: afterHook } },
         middlewares: { after: express.errorHandler() },
-        // Distribute only the users service
-        services: (service) => service.path.endsWith('users'),
+        // Distribute only the test services
+        services: (service) => service.path.endsWith('users') || service.path.endsWith('custom'),
         publicationDelay: 5000,
         coteDelay: 5000,
         cote: { // Use cote defaults
@@ -150,9 +152,10 @@ describe('feathers-distributed', () => {
       apps[i].configure(channels)
       // Only the first app has a local service
       if (i === gateway) {
-        apps[i].use('users', middleware, memory({ store: clone(store), startId }))
-        services[i] = apps[i].service('users')
-        services[i].hooks({
+        apps[gateway].use('users', middleware, memory({ store: clone(store), startId }))
+        let userService = apps[gateway].service('users')
+        expect(userService).toExist()
+        userService.hooks({
           before: {
             all: [
               hook => {
@@ -166,13 +169,13 @@ describe('feathers-distributed', () => {
             ]
           }
         })
-        expect(services[i]).toExist()
+        promises.push(Promise.resolve(userService))
       } else {
         // For remote services we have to wait they are registered
-        promises.push(waitForService(apps, services, i))
+        promises.push(waitForService(apps[i], 'users'))
       }
     }
-    await Promise.all(promises)
+    services = await Promise.all(promises)
     promises = []
     for (let i = 0; i < nbApps; i++) {
       // See https://github.com/kalisio/feathers-distributed/issues/3
@@ -357,6 +360,67 @@ describe('feathers-distributed', () => {
   })
     // Let enough time to process
     .timeout(5000)
+
+  it('dynamically register a custom service', async () => {
+    let customService = memory()
+    // Ensure we can filter events and only send custom ones
+    customService.events = ['custom']
+    customService.distributedEvents = ['created', 'custom']
+    apps[gateway].use('custom', customService)
+    // Retrieve service with mixins
+    customServices.push(apps[gateway].service('custom'))
+    customServices.push(await waitForService(apps[service1], 'custom'))
+    customServices.push(await waitForService(apps[service2], 'custom'))
+    expect(customServices[gateway]).toExist()
+    expect(customServices[service1]).toExist()
+    expect(customServices[service2]).toExist()
+    socketClientCustomServices.push(socketClients[gateway].service('custom'))
+    socketClientCustomServices.push(socketClients[service1].service('custom'))
+    socketClientCustomServices.push(socketClients[service2].service('custom'))
+    expect(socketClientCustomServices[gateway]).toExist()
+    expect(socketClientCustomServices[service1]).toExist()
+    expect(socketClientCustomServices[service2]).toExist()
+  })
+    // Let enough time to process
+    .timeout(5000)
+
+  it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
+    let createdCount = 0
+    let customCount = 0
+    // Ensure we can filter events and only send custom ones
+    customServices[service1].on('created', user => {
+      expect(user.id === 0).beTrue()
+      createdCount++
+      if ((createdCount === 2) & (customCount === 2)) done()
+    })
+    customServices[service2].on('updated', user => {
+      expect(false).beTrue()
+    })
+    customServices[service1].on('custom', data => {
+      expect(data.payload === 'Donald Doe').beTrue()
+      customCount++
+      if ((createdCount === 2) & (customCount === 2)) done()
+    })
+    customServices[service2].on('created', user => {
+      expect(user.id === 0).beTrue()
+      createdCount++
+      if ((createdCount === 2) & (customCount === 2)) done()
+    })
+    customServices[service2].on('updated', user => {
+      expect(false).beTrue()
+    })
+    customServices[service1].on('custom', data => {
+      expect(data.payload === 'Donald Doe').beTrue()
+      customCount++
+      if ((createdCount === 2) & (customCount === 2)) done()
+    })
+    utils.promisify(setTimeout)(5000) // Wait until publisher/subscribers are ready
+    .then(_ => customServices[gateway].create({ name: 'Donald Doe' }))
+    .then(_ => customServices[gateway].update(0, { name: 'Donald Dover' }))
+    .then(_ => customServices[gateway].emit('custom', { payload: 'Donald Doe' }))
+  })
+    // Let enough time to process
+    .timeout(15000)
 
   it('not found request should return 404 on local service', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/xxx'

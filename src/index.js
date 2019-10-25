@@ -25,8 +25,13 @@ function publishApplication (app) {
   debug('Published local app with uuid ' + app.uuid)
 }
 
-function publishService (app, serviceDescriptor) {
-  const service = app.service(serviceDescriptor.path)
+function publishService (app, path) {
+  const service = app.service(path)
+  const serviceDescriptor = {
+    uuid: app.uuid,
+    path: stripSlashes(path),
+    events: service.distributedEvents || service._serviceEvents
+  }
   if (!service || (typeof service !== 'object')) return
   if (service.remote) {
     debug('Ignoring remote service publication on path ' + serviceDescriptor.path + ' for app with uuid ' + app.uuid)
@@ -38,7 +43,7 @@ function publishService (app, serviceDescriptor) {
     return
   }
   // Register the responder to handle remote calls to the service
-  if (!service.responder) service.responder = new LocalService({ app, path: serviceDescriptor.path })
+  if (!service.responder) service.responder = new LocalService(Object.assign({ app }, serviceDescriptor))
   // Publish new local service
   app.servicePublisher.publish('service', serviceDescriptor)
   debug('Published local service on path ' + serviceDescriptor.path + ' for app with uuid ' + app.uuid)
@@ -111,7 +116,7 @@ function initializeCote (app) {
   // Also each time a new app pops up so that it does not depend of the initialization order of the apps
   app.serviceSubscriber.on('application', applicationDescriptor => {
     Object.getOwnPropertyNames(app.services).forEach(path => {
-      publishService(app, { uuid: app.uuid, path })
+      publishService(app, path)
     })
   })
   // Tell others apps I'm here
@@ -150,12 +155,13 @@ export default function init (options = {}) {
     app.use = function () {
       const path = arguments[0]
       // Register the service normally first
-      superUse.apply(app, arguments)
+      const superReturn = superUse.apply(app, arguments)
       // Check if cote has already been initialized
-      if (!app.cote) return
+      if (!app.cote) return superReturn
       // With express apps we can directly register middlewares: not supported
-      if (typeof path !== 'string') return
-      publishService(app, { uuid: app.uuid, path: stripSlashes(path) })
+      if (typeof path !== 'string') return superReturn
+      publishService(app, path)
+      return superReturn
     }
   }
 }

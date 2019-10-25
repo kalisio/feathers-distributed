@@ -9,6 +9,7 @@ class RemoteService {
   constructor (options) {
     // This flag indicates to the plugin this is a remote service
     this.remote = true
+    this.remoteEvents = options.events || ['created', 'updated', 'patched', 'removed']
   }
 
   setup (app, path) {
@@ -26,25 +27,15 @@ class RemoteService {
       name: path + ' events subscriber',
       namespace: path,
       key: path,
-      subscribesTo: ['created', 'updated', 'patched', 'removed']
+      subscribesTo: this.remoteEvents
     }, app.coteOptions)
-    this.serviceEventsSubscriber.on('created', object => {
-      debug('Dispatching created remote service event on path ' + path, object)
-      this.emit('created', object)
+    this.remoteEvents.forEach(event => {
+      this.serviceEventsSubscriber.on(event, object => {
+        debug(`Dispatching ${event} remote service event on path ` + path, object)
+        this.emit(event, object)
+      })
     })
-    this.serviceEventsSubscriber.on('updated', object => {
-      debug('Dispatching updated remote service event on path ' + path, object)
-      this.emit('updated', object)
-    })
-    this.serviceEventsSubscriber.on('patched', object => {
-      debug('Dispatching patched remote service event on path ' + path, object)
-      this.emit('patched', object)
-    })
-    this.serviceEventsSubscriber.on('removed', object => {
-      debug('Dispatching removed remote service event on path ' + path, object)
-      this.emit('removed', object)
-    })
-    debug('Subscriber created for remote service events on path ' + this.path)
+    debug('Subscriber created for remote service events on path ' + this.path, this.remoteEvents)
   }
 
   // Perform requests to other nodes
@@ -172,25 +163,15 @@ class LocalService extends cote.Responder {
       name: path + ' events publisher',
       namespace: path,
       key: path,
-      broadcasts: ['created', 'updated', 'patched', 'removed']
+      broadcasts: options.events
     }, app.coteOptions)
-    service.on('created', object => {
-      debug('Publishing created local service event on path ' + path, object)
-      this.serviceEventsPublisher.publish('created', object)
+    options.events.forEach(event => {
+      service.on(event, object => {
+        debug(`Publishing ${event} local service event on path ` + path, object)
+        this.serviceEventsPublisher.publish(event, object)
+      })
     })
-    service.on('updated', object => {
-      debug('Publishing updated local service event on path ' + path, object)
-      this.serviceEventsPublisher.publish('updated', object)
-    })
-    service.on('patched', object => {
-      debug('Publishing patched local service event on path ' + path, object)
-      this.serviceEventsPublisher.publish('patched', object)
-    })
-    service.on('removed', object => {
-      debug('Publishing removed local service event on path ' + path, object)
-      this.serviceEventsPublisher.publish('removed', object)
-    })
-    debug('Publisher created for local service events on path ' + path)
+    debug('Publisher created for local service events on path ' + path, options.events)
   }
 }
 
