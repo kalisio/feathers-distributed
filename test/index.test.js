@@ -55,7 +55,6 @@ function clone (obj) {
 describe('feathers-distributed', () => {
   let apps = []
   let servers = []
-  let services
   let customServices = []
   let restClients = []
   let restClientServices = []
@@ -175,7 +174,7 @@ describe('feathers-distributed', () => {
         promises.push(waitForService(apps[i], 'users'))
       }
     }
-    services = await Promise.all(promises)
+    await Promise.all(promises)
     promises = []
     for (let i = 0; i < nbApps; i++) {
       // See https://github.com/kalisio/feathers-distributed/issues/3
