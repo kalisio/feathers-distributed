@@ -123,7 +123,11 @@ app.configure(
   })
 );
 ```
-Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first but `feathers-distributed` dynamically adds new services during app lifecycle. You thus need to register middlewares whenever a new service pops up. 
+Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first but `feathers-distributed` dynamically adds new services during app lifecycle. You thus need to register middlewares whenever a new service pops up.
+
+### Events
+
+By default all [real-time events](https://docs.feathersjs.com/api/events.html) from local services are distributed to remote ones but you can customize the events to be dispatched by providing the list in the `distributedEvents` property of your service.
 
 ## Hooks
 
