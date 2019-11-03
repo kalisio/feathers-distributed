@@ -1,5 +1,18 @@
 # Changelog
 
+## [v0.7.0](https://github.com/kalisio/feathers-distributed/tree/v0.7.0) (2019-11-03)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.6.0...v0.7.0)
+
+**Implemented enhancements:**
+
+- Allow to select which events to be distributed [\#37](https://github.com/kalisio/feathers-distributed/issues/37)
+
+**Fixed bugs:**
+
+- Custom service events are not propagated [\#38](https://github.com/kalisio/feathers-distributed/issues/38)
+- Initialization delay before starting cote [\#36](https://github.com/kalisio/feathers-distributed/issues/36)
+
 ## [v0.6.0](https://github.com/kalisio/feathers-distributed/tree/v0.6.0) (2019-10-21)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.5.2...v0.6.0)
