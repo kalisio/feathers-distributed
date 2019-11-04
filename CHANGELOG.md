@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.7.1](https://github.com/kalisio/feathers-distributed/tree/v0.7.1) (2019-11-04)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.7.0...v0.7.1)
+
 ## [v0.7.0](https://github.com/kalisio/feathers-distributed/tree/v0.7.0) (2019-11-03)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.6.0...v0.7.0)
