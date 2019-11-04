@@ -33,7 +33,8 @@ const store = {
 }
 let beforeHook = (hook) => hook
 let afterHook = (hook) => hook
-let middleware = (req, res, next) => next()
+let serviceMiddleware = (req, res, next) => next()
+let appMiddleware = (req, res, next) => res.json({})
 let hookFromRemote
 
 function channels (app) {
@@ -53,14 +54,14 @@ function clone (obj) {
 }
 
 describe('feathers-distributed', () => {
-  let apps = []
-  let servers = []
-  let customServices = []
-  let restClients = []
-  let restClientServices = []
-  let socketClients = []
-  let socketClientServices = []
-  let socketClientCustomServices = []
+  const apps = []
+  const servers = []
+  const customServices = []
+  const restClients = []
+  const restClientServices = []
+  const socketClients = []
+  const socketClientServices = []
+  const socketClientCustomServices = []
   let checkAuthentication = false
   let accessToken
   const nbApps = 3
@@ -102,7 +103,8 @@ describe('feathers-distributed', () => {
     chai.use(spies)
     beforeHook = chai.spy(beforeHook)
     afterHook = chai.spy(afterHook)
-    middleware = chai.spy(middleware)
+    serviceMiddleware = chai.spy(serviceMiddleware)
+    appMiddleware = chai.spy(appMiddleware)
     for (let i = 0; i < nbApps; i++) {
       apps[i] = createApp(i)
     }
@@ -146,13 +148,14 @@ describe('feathers-distributed', () => {
           masterTimeout: 6000
         }
       }))
-      //expect(apps[i].servicePublisher).toExist()
-      //expect(apps[i].serviceSubscriber).toExist()
+      // expect(apps[i].servicePublisher).toExist()
+      // expect(apps[i].serviceSubscriber).toExist()
       apps[i].configure(channels)
       // Only the first app has a local service
       if (i === gateway) {
-        apps[gateway].use('users', middleware, memory({ store: clone(store), startId }))
-        let userService = apps[gateway].service('users')
+        apps[gateway].use('/middleware', appMiddleware)
+        apps[gateway].use('users', serviceMiddleware, memory({ store: clone(store), startId }))
+        const userService = apps[gateway].service('users')
         expect(userService).toExist()
         userService.hooks({
           before: {
@@ -217,6 +220,14 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(5000)
 
+  it('ensure middleware can been called on app', async () => {
+    const url = 'http://localhost:' + (8080 + gateway) + '/middleware'
+    await request.get(url)
+    expect(appMiddleware).to.have.been.called()
+  })
+    // Let enough time to process
+    .timeout(5000)
+
   it('dispatch find rest service calls from remote to local without auth', async () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
@@ -271,7 +282,7 @@ describe('feathers-distributed', () => {
   it('ensure middleware can been called on local service', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/users'
     await request.get(url)
-    expect(middleware).to.have.been.called()
+    expect(serviceMiddleware).to.have.been.called()
   })
 
   it('dispatch find socket service calls from remote to local without auth', async () => {
@@ -361,7 +372,7 @@ describe('feathers-distributed', () => {
     .timeout(5000)
 
   it('dynamically register a custom service', async () => {
-    let customService = memory()
+    const customService = memory()
     // Ensure we can filter events and only send custom ones
     customService.events = ['custom']
     customService.distributedEvents = ['created', 'custom']
@@ -414,9 +425,9 @@ describe('feathers-distributed', () => {
       if ((createdCount === 2) & (customCount === 2)) done()
     })
     utils.promisify(setTimeout)(5000) // Wait until publisher/subscribers are ready
-    .then(_ => customServices[gateway].create({ name: 'Donald Doe' }))
-    .then(_ => customServices[gateway].update(0, { name: 'Donald Dover' }))
-    .then(_ => customServices[gateway].emit('custom', { payload: 'Donald Doe' }))
+      .then(_ => customServices[gateway].create({ name: 'Donald Doe' }))
+      .then(_ => customServices[gateway].update(0, { name: 'Donald Dover' }))
+      .then(_ => customServices[gateway].emit('custom', { payload: 'Donald Doe' }))
   })
     // Let enough time to process
     .timeout(15000)

@@ -27,15 +27,15 @@ function publishApplication (app) {
 
 function publishService (app, path) {
   const service = app.service(path)
+  if (!service || (typeof service !== 'object')) return
+  if (service.remote) {
+    debug('Ignoring remote service publication on path ' + path + ' for app with uuid ' + app.uuid)
+    return
+  }
   const serviceDescriptor = {
     uuid: app.uuid,
     path: stripSlashes(path),
     events: service.distributedEvents || service._serviceEvents
-  }
-  if (!service || (typeof service !== 'object')) return
-  if (service.remote) {
-    debug('Ignoring remote service publication on path ' + serviceDescriptor.path + ' for app with uuid ' + app.uuid)
-    return
   }
   // Skip internal services
   if (isInternalService(app, serviceDescriptor)) {
