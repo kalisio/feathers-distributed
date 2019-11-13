@@ -392,7 +392,7 @@ describe('feathers-distributed', () => {
     expect(socketClientCustomServices[service2]).toExist()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
