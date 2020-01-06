@@ -138,7 +138,8 @@ export default function init (options = {}) {
     app.distributionOptions = Object.assign({
       publicationDelay: process.env.PUBLICATION_DELAY || 10000,
       coteDelay: process.env.COTE_DELAY,
-      middlewares: {}
+      middlewares: {},
+      publishEvents: true
     }, options)
 
     debug('Initializing feathers-distributed with options', app.distributionOptions)

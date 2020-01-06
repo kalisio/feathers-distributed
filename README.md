@@ -127,7 +127,7 @@ Indeed, Feathers does not allow to register new services after the app has been 
 
 ### Events
 
-By default all [real-time events](https://docs.feathersjs.com/api/events.html) from local services are distributed to remote ones but you can customize the events to be dispatched by providing the list in the `distributedEvents` property of your service.
+By default all [real-time events](https://docs.feathersjs.com/api/events.html) from local services are distributed to remote ones but you can customize the events to be dispatched by providing the list in the `distributedEvents` property of your service or disable all events publishing with the `publishEvents` boolean option.
 
 ## Hooks
 
