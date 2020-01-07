@@ -22,20 +22,23 @@ class RemoteService {
     }, app.coteOptions)
     this.path = path
     debug('Requester created for remote service on path ' + this.path)
-    // Create the subscriber to listen to events from other nodes
-    this.serviceEventsSubscriber = new app.cote.Subscriber({
-      name: path + ' events subscriber',
-      namespace: path,
-      key: path,
-      subscribesTo: this.remoteEvents
-    }, app.coteOptions)
-    this.remoteEvents.forEach(event => {
-      this.serviceEventsSubscriber.on(event, object => {
-        debug(`Dispatching ${event} remote service event on path ` + path, object)
-        this.emit(event, object)
+
+    if (app.distributionOptions.publishEvents && this.remoteEvents.length) {
+      // Create the subscriber to listen to events from other nodes
+      this.serviceEventsSubscriber = new app.cote.Subscriber({
+        name: path + ' events subscriber',
+        namespace: path,
+        key: path,
+        subscribesTo: this.remoteEvents
+      }, app.coteOptions)
+      this.remoteEvents.forEach(event => {
+        this.serviceEventsSubscriber.on(event, object => {
+          debug(`Dispatching ${event} remote service event on path ` + path, object)
+          this.emit(event, object)
+        })
       })
-    })
-    debug('Subscriber created for remote service events on path ' + this.path, this.remoteEvents)
+      debug('Subscriber created for remote service events on path ' + this.path, this.remoteEvents)
+    }
   }
 
   // Perform requests to other nodes
@@ -158,20 +161,22 @@ class LocalService extends cote.Responder {
       return result
     })
 
-    // Dispatch events to other nodes
-    this.serviceEventsPublisher = new app.cote.Publisher({
-      name: path + ' events publisher',
-      namespace: path,
-      key: path,
-      broadcasts: options.events
-    }, app.coteOptions)
-    options.events.forEach(event => {
-      service.on(event, object => {
-        debug(`Publishing ${event} local service event on path ` + path, object)
-        this.serviceEventsPublisher.publish(event, object)
+    if (app.distributionOptions.publishEvents && options.events.length) {
+      // Dispatch events to other nodes
+      this.serviceEventsPublisher = new app.cote.Publisher({
+        name: path + ' events publisher',
+        namespace: path,
+        key: path,
+        broadcasts: options.events
+      }, app.coteOptions)
+      options.events.forEach(event => {
+        service.on(event, object => {
+          debug(`Publishing ${event} local service event on path ` + path, object)
+          this.serviceEventsPublisher.publish(event, object)
+        })
       })
-    })
-    debug('Publisher created for local service events on path ' + path, options.events)
+      debug('Publisher created for local service events on path ' + path, options.events)
+    }
   }
 }
 
