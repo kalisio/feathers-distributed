@@ -64,10 +64,11 @@ describe('feathers-distributed', () => {
   const socketClientCustomServices = []
   let checkAuthentication = false
   let accessToken
-  const nbApps = 3
+  const nbApps = 4
   const gateway = 0
   const service1 = 1
   const service2 = 2
+  const noEventsService = 3
 
   function createApp (index) {
     const app = express(feathers())
@@ -138,9 +139,10 @@ describe('feathers-distributed', () => {
         hooks: { before: { all: beforeHook }, after: { all: afterHook } },
         middlewares: { after: express.errorHandler() },
         // Distribute only the test services
-        services: (service) => service.path.endsWith('users') || service.path.endsWith('custom'),
+        services: (service) => service.path.endsWith('users') || service.path.endsWith('custom') || service.path.endsWith('no-events'),
         publicationDelay: 5000,
         coteDelay: 5000,
+        publishEvents: Boolean(i !== noEventsService),
         cote: { // Use cote defaults
           helloInterval: 2000,
           checkInterval: 4000,
@@ -151,7 +153,7 @@ describe('feathers-distributed', () => {
       // expect(apps[i].servicePublisher).toExist()
       // expect(apps[i].serviceSubscriber).toExist()
       apps[i].configure(channels)
-      // Only the first app has a local service
+      // Only the first (gateway) & noEventsService apps have local services
       if (i === gateway) {
         apps[gateway].use('/middleware', appMiddleware)
         apps[gateway].use('users', serviceMiddleware, memory({ store: clone(store), startId }))
@@ -172,6 +174,9 @@ describe('feathers-distributed', () => {
           }
         })
         promises.push(Promise.resolve(userService))
+      } else if (i === noEventsService) {
+        apps[noEventsService].use('no-events', memory())
+        promises.push(waitForService(apps[i], 'users'))
       } else {
         // For remote services we have to wait they are registered
         promises.push(waitForService(apps[i], 'users'))
@@ -676,6 +681,14 @@ describe('feathers-distributed', () => {
   })
     // Let enough time to process
     .timeout(5000)
+
+  it('disable events publishing & subscribing globally', done => {
+    expect(apps[gateway].services.users.responder.serviceEventsPublisher).toExist()
+    expect(apps[service2].services.users.serviceEventsSubscriber).toExist()
+    expect(apps[noEventsService].services.users.serviceEventsSubscriber).beUndefined()
+    expect(apps[noEventsService].services['no-events'].responder.serviceEventsPublisher).beUndefined()
+    done()
+  })
 
   // Cleanup
   after(async () => {

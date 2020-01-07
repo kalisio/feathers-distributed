@@ -23,7 +23,7 @@ class RemoteService {
     this.path = path
     debug('Requester created for remote service on path ' + this.path)
 
-    if (this.remoteEvents.length) {
+    if (app.distributionOptions.publishEvents && this.remoteEvents.length) {
       // Create the subscriber to listen to events from other nodes
       this.serviceEventsSubscriber = new app.cote.Subscriber({
         name: path + ' events subscriber',
