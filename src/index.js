@@ -144,8 +144,9 @@ export default function init (options = {}) {
     }, options)
 
     debug('Initializing feathers-distributed with options', app.distributionOptions)
-    // Change default base port for automated port finding
+    // Change default base/highest port for automated port finding
     portfinder.basePort = app.coteOptions.basePort
+    portfinder.highestPort = app.coteOptions.highestPort
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid()
     // Setup cote with options and required delay
