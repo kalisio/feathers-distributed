@@ -133,12 +133,12 @@ export default function init (options = {}) {
       nodeTimeout: 30000,
       masterTimeout: 60000,
       log: (process.env.COTE_LOG ? true : false),
-      basePort: process.env.BASE_PORT || 10000,
-      highestPort: process.env.HIGHEST_PORT || 20000
+      basePort: (process.env.BASE_PORT ? Number(process.env.BASE_PORT) : 10000),
+      highestPort: (process.env.HIGHEST_PORT ? Number(process.env.HIGHEST_PORT) : 20000)
     }, options.cote)
     app.distributionOptions = Object.assign({
-      publicationDelay: process.env.PUBLICATION_DELAY || 10000,
-      coteDelay: process.env.COTE_DELAY,
+      publicationDelay: (process.env.PUBLICATION_DELAY ? Number(process.env.PUBLICATION_DELAY) : 10000),
+      coteDelay: (process.env.COTE_DELAY ? Number(process.env.COTE_DELAY) : undefined),
       middlewares: {},
       publishEvents: true
     }, options)
