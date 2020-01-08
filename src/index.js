@@ -132,7 +132,7 @@ export default function init (options = {}) {
       checkInterval: 20000,
       nodeTimeout: 30000,
       masterTimeout: 60000,
-      log: false,
+      log: (process.env.COTE_LOG ? true : false),
       basePort: process.env.BASE_PORT || 10000
     }, options.cote)
     app.distributionOptions = Object.assign({
