@@ -190,6 +190,25 @@ Our [tests](https://github.com/kalisio/feathers-distributed/blob/master/test/ind
 
 > To make it work all nodes must share the same authentication configuration (i.e. secret)
 
+## Tips
+
+### Initialization
+
+1) The library overrides `app.use()` to **automatically publish any new service** defined, so that you can usually safely initialize it before registering your services like others feathers plugins (transport, configuration, etc.). However, you might also configure some middlewares with `options.middlewares` and in this case you probably need to initialize the express plugin beforehand.
+
+2) The library immediately initializes the underlying cote module **unless you intentionally add some delay** (`coteDelay` option in ms, defaults to none). This delay can be required because it appears that in some scenarios, e.g. [Docker deployment](https://github.com/kalisio/feathers-distributed/issues/36) the network setup takes some time and cote is not able to correctly initialize (e.g. allocate ports or reach Redis) before.
+
+3) As the library also relies on cote components to publish/subscribe events, and **these components take some time to initialize**, there is also a publication delay (`publicationDelay` option in ms, defaults to 10s) that is respected before publishing app services once initialized.
+
+### Environment variables
+
+Some options can be directly provided as environment variables:
+* `COTE_LOG` to activate logging for all underlying cote components
+* `BASE_PORT` to select the starting port of the port range to be used by cote
+* `HIGHEST_PORT` to select the ending port of the port range to be used by cote
+* `COTE_DELAY` (ms) to define the delay before initializing cote
+* `PUBLICATION_DELAY` (ms) to define the delay before publishing services
+
 ## License
 
 Copyright (c) 2017 Kalisio
