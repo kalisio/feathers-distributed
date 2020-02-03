@@ -88,7 +88,7 @@ function registerService (app, serviceDescriptor) {
   app.emit('service', serviceDescriptor)
 }
 
-function initializeCote (app) {
+export function initialize (app) {
   debug('Initializing cote with options', app.coteOptions)
   // Setup cote with options
   app.cote = makeCote(app.coteOptions)
@@ -121,7 +121,25 @@ function initializeCote (app) {
   })
   // Tell others apps I'm here
   // Add a timeout so that the publisher/subscriber has been initialized on the node
-  setTimeout(_ => { publishApplication(app) }, app.distributionOptions.publicationDelay)
+  app.applicationPublicationTimeout = setTimeout(_ => { publishApplication(app) }, app.distributionOptions.publicationDelay)
+}
+
+export function finalize (app) {
+  debug('Finalizing cote')
+  Object.getOwnPropertyNames(app.services).forEach(path => {
+    let service = app.service(path)
+    if (service) {
+      if (service.responder) {
+        service.responder.close()
+        if (service.responder.serviceEventsPublisher) service.responder.serviceEventsPublisher.close()
+      }
+      if (service.serviceEventsSubscriber) service.serviceEventsSubscriber.close()
+    }
+  })
+  if (app.serviceSubscriber) app.serviceSubscriber.close()
+  if (app.servicePublisher) app.servicePublisher.close()
+  if (app.applicationPublicationTimeout) clearTimeout(app.applicationPublicationTimeout)
+  if (app.coteInitializationTimeout) clearTimeout(app.coteInitializationTimeout)
 }
 
 export default function init (options = {}) {
@@ -150,8 +168,14 @@ export default function init (options = {}) {
     // We need to uniquely identify the app to avoid infinite loop by registering our own services
     app.uuid = uuid()
     // Setup cote with options and required delay
-    if (app.distributionOptions.coteDelay) setTimeout(_ => { initializeCote(app) }, app.distributionOptions.coteDelay)
-    else initializeCote(app)
+    if (app.distributionOptions.coteDelay) {
+      // -1 means the caller wants to initialize byitself
+      if (app.distributionOptions.coteDelay > 0) {
+        app.coteInitializationTimeout = setTimeout(_ => { initialize(app) }, app.distributionOptions.coteDelay)
+      }
+    } else {
+      initialize(app)
+    }
 
     // We replace the use method to inject service publisher/responder
     const superUse = app.use
@@ -171,3 +195,5 @@ export default function init (options = {}) {
 
 init.RemoteService = RemoteService
 init.LocalService = LocalService
+init.initialize = initialize
+init.finalize = finalize

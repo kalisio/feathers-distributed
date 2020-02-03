@@ -51,6 +51,15 @@ app.configure(distribution());
 ...
 ```
 
+If you are not running a long-lived server and want to use distribution in your test suite for instance, you can clean it up gracefully like this: 
+```javascript
+const distribution = require('@kalisio/feathers-distributed');
+...
+server.on('close', () => distribution.finalize(app));
+server.close();
+...
+```
+
 ## Documentation
 
 ![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)

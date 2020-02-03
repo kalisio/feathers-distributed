@@ -685,18 +685,18 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(5000)
 
-  it('disable events publishing & subscribing globally', done => {
+  it('disable events publishing & subscribing globally', () => {
     expect(apps[gateway].services.users.responder.serviceEventsPublisher).toExist()
     expect(apps[service2].services.users.serviceEventsSubscriber).toExist()
     expect(apps[noEventsService].services.users.serviceEventsSubscriber).beUndefined()
     expect(apps[noEventsService].services['no-events'].responder.serviceEventsPublisher).beUndefined()
-    done()
   })
 
   // Cleanup
   after(async () => {
     for (let i = 0; i < nbApps; i++) {
       await servers[i].close()
+      plugin.finalize(apps[i])
     }
   })
 })
