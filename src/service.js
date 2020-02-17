@@ -13,13 +13,17 @@ class RemoteService {
   }
 
   setup (app, path) {
+    const options = app.coteOptions && app.coteOptions.stopDispatchRemoteServices ? 
+      Object.assign({}, app.coteOptions, { client: true, server: false }) : 
+      app.coteOptions;
+
     // Create the request manager to remote ones for this service
     this.requester = new app.cote.Requester({
       name: path + ' requester',
       namespace: path,
       key: path,
       requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
-    }, app.coteOptions)
+    }, options)
     this.path = path
     debug('Requester created for remote service on path ' + this.path)
 
@@ -30,7 +34,7 @@ class RemoteService {
         namespace: path,
         key: path,
         subscribesTo: this.remoteEvents
-      }, app.coteOptions)
+      }, options)
       this.remoteEvents.forEach(event => {
         this.serviceEventsSubscriber.on(event, object => {
           debug(`Dispatching ${event} remote service event on path ` + path, object)
