@@ -9,8 +9,9 @@
 
 > Distribute your Feathers services as microservices
 
-The [`master`](https://github.com/kalisio/feathers-distributed) branch and >= 0.3.x version is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard).
-The [`auk`](https://github.com/kalisio/feathers-distributed/tree/auk) branch and 0.2.x version is expected to work with [Feathers v2](https://auk.docs.feathersjs.com/) (a.k.a. Auk).
+The [`master`](https://github.com/kalisio/feathers-distributed) branch and >= 0.3.x version is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard) and [Feathers v4](https://docs.feathersjs.com/) (a.k.a. Crow).
+
+The [`auk`](https://github.com/kalisio/feathers-distributed/tree/auk) branch and 0.2.x version is expected to work with [Feathers v2](https://auk.docs.feathersjs.com/) (a.k.a. Auk) **but it is deprecated**.
 
 This plugin relies on [cote](https://github.com/dashersw/cote) and takes benefits of it:
 - **Zero-configuration:** no IP addresses, no ports, no routing to configure
