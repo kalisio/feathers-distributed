@@ -14,7 +14,7 @@ class RemoteService {
 
   setup (app, path) {
     const options = app.coteOptions && app.coteOptions.stopDispatchRemoteServices ? 
-      Object.assign(app.coteOptions, { client: true, server: false }) : 
+      Object.assign({}, app.coteOptions, { client: true, server: false }) : 
       app.coteOptions;
 
     // Create the request manager to remote ones for this service
