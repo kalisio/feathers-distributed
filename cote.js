@@ -29,7 +29,12 @@ Create a dedicated network and add --network your_network when deploying app to 
 docker network create -d overlay --attachable your_network
 */
 
+const portfinder = require ('portfinder')
 const cote = require('cote')
+
+// Change default base/highest port for automated port finding
+portfinder.basePort = 10000
+portfinder.highestPort = 20000
 
 if (process.env.REQUESTER) {
 	const requester = new cote.Requester({ name: process.env.REQUESTER })
