@@ -4,17 +4,29 @@
 
 Run this command to build the container image:
 
-docker build -t kalisio/cote -f .\dockerfile.cote .
+docker build -t kalisio/cote -f dockerfile.cote .
 
 Then launch multiple instances like this to see if everything works fine in your network:
 
 docker run -d --rm --name app1 -e "RESPONDER=service1" -e "DEBUG=portfinder*" kalisio/cote
 docker run -d --rm --name app2 -e "REQUESTER=service1" -e "RESPONDER=service2" -e "DEBUG=portfinder*" kalisio/cote
 docker run -d --rm --name app3 -e "REQUESTER=service1" -e "REQUESTER=service2" -e "DEBUG=portfinder*" kalisio/cote
-
 docker logs -f app1/app2/app3
-
 docker stop app1/app2/app3
+
+In a swarm:
+
+docker service create --replicas 1 --name app1 -e "RESPONDER=service1" -e "DEBUG=portfinder*" kalisio/cote
+docker service create --replicas 1 --name app2 -e "REQUESTER=service1" -e "RESPONDER=service2" -e "DEBUG=portfinder*" kalisio/cote
+docker service create --replicas 1 --name app3 -e "REQUESTER=service1" -e "REQUESTER=service2" -e "DEBUG=portfinder*" kalisio/cote
+docker service logs -f app1/app2/app3
+docker service rm app1/app2/app3
+
+Launch a redis service and add -e "COTE_DISCOVERY_REDIS_URL=redis://redis:6379" when launching app for centralized discovery
+docker service create --replicas 1 --name redis redis:5
+
+Create a dedicated network and add --network your_network when deploying app to segregate communication:
+docker network create -d overlay --attachable your_network
 */
 
 const cote = require('cote')
