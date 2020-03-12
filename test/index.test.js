@@ -1,3 +1,4 @@
+const log = require('why-is-node-running')
 import authentication from '@feathersjs/authentication'
 import auth from '@feathersjs/authentication-client'
 import jwt from '@feathersjs/authentication-jwt'
@@ -59,6 +60,7 @@ describe('feathers-distributed', () => {
   const customServices = []
   const restClients = []
   const restClientServices = []
+  const sockets = []
   const socketClients = []
   const socketClientServices = []
   const socketClientCustomServices = []
@@ -68,7 +70,7 @@ describe('feathers-distributed', () => {
   const gateway = 0
   const service1 = 1
   const service2 = 2
-  const noEventsService = 3
+  const noEvents = 3
 
   function createApp (index) {
     const app = express(feathers())
@@ -139,10 +141,14 @@ describe('feathers-distributed', () => {
         hooks: { before: { all: beforeHook }, after: { all: afterHook } },
         middlewares: { after: express.errorHandler() },
         // Distribute only the test services
-        services: (service) => service.path.endsWith('users') || service.path.endsWith('custom') || service.path.endsWith('no-events'),
+        services: (service) => service.path.endsWith('users') ||
+                  service.path.endsWith('custom') ||
+                  service.path.endsWith('no-events'),
+        key: i.toString(),
         publicationDelay: 5000,
         coteDelay: 5000,
-        publishEvents: Boolean(i !== noEventsService),
+        publishEvents: (i !== noEvents),
+        distributedEvents: ['created', 'updated', 'patched', 'removed', 'custom'],
         cote: { // Use cote defaults
           helloInterval: 2000,
           checkInterval: 4000,
@@ -156,7 +162,7 @@ describe('feathers-distributed', () => {
       // expect(apps[i].servicePublisher).toExist()
       // expect(apps[i].serviceSubscriber).toExist()
       apps[i].configure(channels)
-      // Only the first (gateway) & noEventsService apps have local services
+      // Only the first (gateway) & noEvents apps have local services
       if (i === gateway) {
         apps[gateway].use('/middleware', appMiddleware)
         apps[gateway].use('users', serviceMiddleware, memory({ store: clone(store), startId }))
@@ -177,8 +183,8 @@ describe('feathers-distributed', () => {
           }
         })
         promises.push(Promise.resolve(userService))
-      } else if (i === noEventsService) {
-        apps[noEventsService].use('no-events', memory())
+      } else if (i === noEvents) {
+        apps[noEvents].use('no-events', memory({ events: ['custom'] }))
         promises.push(waitForService(apps[i], 'users'))
       } else {
         // For remote services we have to wait they are registered
@@ -198,7 +204,7 @@ describe('feathers-distributed', () => {
     await Promise.all(promises)
   })
     // Let enough time to process
-    .timeout(20000)
+    .timeout(30000)
 
   it('initiate the rest clients', () => {
     for (let i = 0; i < nbApps; i++) {
@@ -217,8 +223,9 @@ describe('feathers-distributed', () => {
   it('initiate the socket clients', () => {
     for (let i = 0; i < nbApps; i++) {
       const url = 'http://localhost:' + (8080 + i)
+      sockets[i] = io(url)
       socketClients[i] = client()
-        .configure(client.socketio(io(url)))
+        .configure(client.socketio(sockets[i]))
         .configure(auth())
       expect(socketClients[i]).toExist()
       socketClientServices[i] = socketClients[i].service('users')
@@ -419,15 +426,15 @@ describe('feathers-distributed', () => {
       customCount++
       if ((createdCount === 2) & (customCount === 2)) done()
     })
-    customServices[service2].on('created', user => {
+    socketClientCustomServices[service1].on('created', user => {
       expect(user.id === 0).beTrue()
       createdCount++
       if ((createdCount === 2) & (customCount === 2)) done()
     })
-    customServices[service2].on('updated', user => {
+    socketClientCustomServices[service2].on('updated', user => {
       expect(false).beTrue()
     })
-    customServices[service1].on('custom', data => {
+    socketClientCustomServices[service1].on('custom', data => {
       expect(data.payload === 'Donald Doe').beTrue()
       customCount++
       if ((createdCount === 2) & (customCount === 2)) done()
@@ -685,11 +692,10 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(5000)
 
-  it('disable events publishing & subscribing globally', () => {
-    expect(apps[gateway].services.users.responder.serviceEventsPublisher).toExist()
-    expect(apps[service2].services.users.serviceEventsSubscriber).toExist()
-    expect(apps[noEventsService].services.users.serviceEventsSubscriber).beUndefined()
-    expect(apps[noEventsService].services['no-events'].responder.serviceEventsPublisher).beUndefined()
+  it('disable events publishing globally', () => {
+    expect(apps[gateway].serviceEventsPublisher).toExist()
+    expect(apps[service2].serviceEventsPublisher).toExist()
+    expect(apps[noEvents].serviceEventsPublisher).beUndefined()
   })
 
   // Cleanup
@@ -697,6 +703,8 @@ describe('feathers-distributed', () => {
     for (let i = 0; i < nbApps; i++) {
       await servers[i].close()
       plugin.finalize(apps[i])
+      await sockets[i].close()
     }
+    //log()
   })
 })

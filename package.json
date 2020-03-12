@@ -31,7 +31,7 @@
     "compile": "shx rm -rf lib/ && babel -d lib/ src/ && cpx \"lib/**\" example/gateway/lib && cpx \"lib/**\" example/service/lib",
     "watch": "babel --watch -d lib/ src/",
     "lint": "standard src/**/*.js test/**/*.js --fix",
-    "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --require babel-core/register",
+    "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --inspect --require babel-core/register",
     "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --exit --require babel-core/register",
     "test": "npm run compile && npm run lint && npm run coverage",
     "start:gateway": "cd example/gateway && npm install && npm start",
@@ -85,6 +85,7 @@
     "socket.io-client": "^2.0.3",
     "standard": "^14.0.0",
     "superagent": "^5.1.0",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "why-is-node-running": "^2.1.0"
   }
 }
