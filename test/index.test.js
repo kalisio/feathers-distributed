@@ -145,6 +145,8 @@ describe('feathers-distributed', () => {
                   service.path.endsWith('custom') ||
                   service.path.endsWith('no-events'),
         key: i.toString(),
+        coteDelay: 5000,
+        publicationDelay: 5000,
         publishEvents: (i !== noEvents),
         distributedEvents: ['created', 'updated', 'patched', 'removed', 'custom'],
         cote: { // Use cote defaults
