@@ -145,8 +145,6 @@ describe('feathers-distributed', () => {
                   service.path.endsWith('custom') ||
                   service.path.endsWith('no-events'),
         key: i.toString(),
-        publicationDelay: 5000,
-        coteDelay: 5000,
         publishEvents: (i !== noEvents),
         distributedEvents: ['created', 'updated', 'patched', 'removed', 'custom'],
         cote: { // Use cote defaults
@@ -204,7 +202,7 @@ describe('feathers-distributed', () => {
     await Promise.all(promises)
   })
     // Let enough time to process
-    .timeout(30000)
+    .timeout(60000)
 
   it('initiate the rest clients', () => {
     for (let i = 0; i < nbApps; i++) {
@@ -407,7 +405,7 @@ describe('feathers-distributed', () => {
     expect(socketClientCustomServices[service2]).toExist()
   })
     // Let enough time to process
-    .timeout(10000)
+    .timeout(30000)
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
