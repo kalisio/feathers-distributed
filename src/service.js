@@ -1,4 +1,3 @@
-import cote from 'cote'
 import makeDebug from 'debug'
 import { convert } from '@feathersjs/errors'
 

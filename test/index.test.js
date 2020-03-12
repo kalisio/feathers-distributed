@@ -1,4 +1,4 @@
-const log = require('why-is-node-running')
+//const log = require('why-is-node-running')
 import authentication from '@feathersjs/authentication'
 import auth from '@feathersjs/authentication-client'
 import jwt from '@feathersjs/authentication-jwt'
