@@ -154,9 +154,7 @@ describe('feathers-distributed', () => {
           checkInterval: 4000,
           nodeTimeout: 5000,
           masterTimeout: 6000,
-          // 10 ports should be enough, will speed-up init
-          basePort: 10000,
-          highestPort: 10010
+          basePort: 10000
         }
       }))
       // expect(apps[i].servicePublisher).toExist()
