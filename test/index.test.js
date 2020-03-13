@@ -216,7 +216,7 @@ describe('feathers-distributed', () => {
     }
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('initiate the socket clients', () => {
     for (let i = 0; i < nbApps; i++) {
@@ -231,7 +231,7 @@ describe('feathers-distributed', () => {
     }
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('ensure middleware can been called on app', async () => {
     const url = 'http://localhost:' + (8080 + gateway) + '/middleware'
@@ -239,49 +239,49 @@ describe('feathers-distributed', () => {
     expect(appMiddleware).to.have.been.called()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch find rest service calls from remote to local without auth', async () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch get rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch create rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch update rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch patch rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch remove rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('ensure distribution hooks have been called on remote service', () => {
     expect(beforeHook).to.have.been.called()
@@ -303,14 +303,14 @@ describe('feathers-distributed', () => {
     expect(users.length > 0).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch get socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch create socket service calls from remote to local without auth', async () => {
     // Jump to next user
@@ -319,40 +319,42 @@ describe('feathers-distributed', () => {
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch update socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch patch socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch remove socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch create socket service events from local to remote without auth', done => {
     // Jump to next user
     startId += 1
     socketClientServices[service2].once('created', user => {
+      console.log(user)
+      expect(user.name === 'Donald Doe').beTrue()
       expect(user.id === startId).beTrue()
       done()
     })
     socketClientServices[gateway].create({ name: 'Donald Doe' })
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch update socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('updated', user => {
@@ -362,7 +364,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch patch socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('patched', user => {
@@ -372,7 +374,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch remove socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('removed', user => {
@@ -382,7 +384,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].remove(startId)
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dynamically register a custom service', async () => {
     const customService = memory()
@@ -565,14 +567,14 @@ describe('feathers-distributed', () => {
     expect(users.length > 0).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch get rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch create rest service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -581,21 +583,21 @@ describe('feathers-distributed', () => {
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch update rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch patch rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch remove rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].remove(startId)
@@ -609,14 +611,14 @@ describe('feathers-distributed', () => {
     expect(users.length > 0).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch get socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch create socket service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -625,28 +627,28 @@ describe('feathers-distributed', () => {
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch update socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch patch socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch remove socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch create socket service events from local to remote with auth', done => {
     // Jump to next user
@@ -658,7 +660,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].create({ name: 'Donald Doe' })
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch update socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('updated', user => {
@@ -668,7 +670,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch patch socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('patched', user => {
@@ -678,7 +680,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('dispatch remove socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('removed', user => {
@@ -688,7 +690,7 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].remove(startId)
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(10000)
 
   it('disable events publishing globally', () => {
     expect(apps[gateway].serviceEventsPublisher).toExist()

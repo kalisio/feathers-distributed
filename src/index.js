@@ -24,6 +24,8 @@ const isDiscoveredService = (app, serviceDescriptor) => {
 }
 
 function publishService (app, path) {
+  // App not yet initialized, publishing will occur again once done
+  if (!app.servicePublisher) return
   const service = app.service(path)
   if (!service || (typeof service !== 'object')) return
   if (service.remote) {
