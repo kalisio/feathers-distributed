@@ -1,3 +1,4 @@
+import { promisify } from 'util'
 import { stripSlashes } from '@feathersjs/commons'
 import makeCote from 'cote'
 import uuid from 'uuid/v4'
@@ -73,10 +74,10 @@ function publishServices (app) {
     // Reset timeout so that next queued publication will be scheduled
     app.applicationPublicationTimeout = null
   }, app.distributionOptions.publicationDelay)
-  debug('Publishing local services for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
+  debug('Scheduled local services publishing for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
 }
 
-function registerApplication (app, applicationDescriptor) {
+async function registerApplication (app, applicationDescriptor) {
   // Create the request/events manager for remote services only
   if (applicationDescriptor.uuid === app.uuid) {
     debug('Ignoring service requester/events publisher creation for local app with uuid ' + app.uuid)
@@ -98,6 +99,8 @@ function registerApplication (app, applicationDescriptor) {
     requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
   }, app.coteOptions)
   debug('Service requester ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key)
+  // Wait before instanciating new component to avoid too much concurrency on port allocation
+  await promisify(setTimeout)(app.distributionOptions.componentDelay)
   // Subscriber to listen to events from other nodes
   const events = app.distributionOptions.distributedEvents
   app.serviceEventsSubscribers[key] = new app.cote.Subscriber({
@@ -161,7 +164,7 @@ function registerService (app, serviceDescriptor) {
   app.emit('service', serviceDescriptor)
 }
 
-export function initialize (app) {
+export async function initialize (app) {
   debug('Initializing cote with options', app.coteOptions)
   // Setup cote with options
   app.cote = makeCote(app.coteOptions)
@@ -176,12 +179,14 @@ export function initialize (app) {
   }, app.coteOptions)
   debug('Services subscriber ready for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
   // When a remote service is declared create the local proxy interface to it
-  app.serviceSubscriber.on('service', serviceDescriptor => {
+  app.serviceSubscriber.on('service', async serviceDescriptor => {
     // When a new app pops up create the required proxy to it first
-    registerApplication(app, serviceDescriptor)
+    await registerApplication(app, serviceDescriptor)
     registerService(app, serviceDescriptor)
   })
-  
+
+  // Wait before instanciating new component to avoid too much concurrency on port allocation
+  await promisify(setTimeout)(app.distributionOptions.componentDelay)
   // This publisher publishes an event each time a local app or service is registered
   app.servicePublisher = new app.cote.Publisher({
     name: 'feathers services publisher',
@@ -196,6 +201,8 @@ export function initialize (app) {
   // FIXME: we should manage apps going offline
   app.servicePublisher.on('cote:removed', (data) => { })
   
+  // Wait before instanciating new component to avoid too much concurrency on port allocation
+  await promisify(setTimeout)(app.distributionOptions.componentDelay)
   // Create the response manager for local services
   app.serviceResponder = new app.cote.Responder({
     name: 'feathers services responder',
@@ -254,6 +261,8 @@ export function initialize (app) {
 
   // Dispatcher of service events to other nodes) {
   if (app.distributionOptions.publishEvents) {
+    // Wait before instanciating new component to avoid too much concurrency on port allocation
+    await promisify(setTimeout)(app.distributionOptions.componentDelay)
     app.serviceEventsPublisher = new app.cote.Publisher({
       name: 'feathers service events publisher',
       namespace: app.distributionKey,
@@ -295,6 +304,7 @@ export default function init (options = {}) {
     }, options.cote)
     app.distributionOptions = Object.assign({
       publicationDelay: (process.env.PUBLICATION_DELAY ? Number(process.env.PUBLICATION_DELAY) : 10000),
+      componentDelay: (process.env.COMPONENT_DELAY ? Number(process.env.COMPONENT_DELAY) : 1000),
       coteDelay: (process.env.COTE_DELAY ? Number(process.env.COTE_DELAY) : undefined),
       middlewares: {},
       publishEvents: true,
