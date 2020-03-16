@@ -200,6 +200,8 @@ describe('feathers-distributed', () => {
       promises.push(waitForListen(servers[i]))
     }
     await Promise.all(promises)
+    // Wait before all cote components have been discovered
+    await utils.promisify(setTimeout)(10000)
   })
     // Let enough time to process
     .timeout(60000)
@@ -405,6 +407,8 @@ describe('feathers-distributed', () => {
     expect(socketClientCustomServices[gateway]).toExist()
     expect(socketClientCustomServices[service1]).toExist()
     expect(socketClientCustomServices[service2]).toExist()
+    // Wait before all cote components have been discovered
+    await utils.promisify(setTimeout)(10000)
   })
     // Let enough time to process
     .timeout(30000)

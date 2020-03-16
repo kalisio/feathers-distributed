@@ -52,7 +52,9 @@ function publishService (app, path) {
       service.on(event, object => {
         debug(`Publishing ${event} local service event on path ` + serviceDescriptor.path +
               ' for app with uuid ' + app.uuid + ' and key ' + app.distributionKey, object)
-        app.serviceEventsPublisher.publish(event, Object.assign({ path: serviceDescriptor.path }, object))
+        app.serviceEventsPublisher.publish(event, Object.assign({
+          path: serviceDescriptor.path, key: app.distributionKey
+        }, object))
       })
       // Tag service so that we will not install listeners twice
       service[EVENT_LISTENER_KEY] = true
@@ -100,7 +102,8 @@ async function registerApplication (app, applicationDescriptor) {
     key,
     requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
   }, app.coteOptions)
-  debug('Service requester ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key)
+  debug('Service requester ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key +
+        ' for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
   // Wait before instanciating new component to avoid too much concurrency on port allocation
   await promisify(setTimeout)(app.distributionOptions.componentDelay)
   // Subscriber to listen to events from other nodes
@@ -118,7 +121,8 @@ async function registerApplication (app, applicationDescriptor) {
       service.emit(event, object)
     })
   })
-  debug('Service events subscriber ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key)
+  debug('Service events subscriber ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key +
+        ' for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
 }
 
 function registerService (app, serviceDescriptor) {
@@ -196,7 +200,7 @@ export async function initialize (app) {
     key: 'services',
     broadcasts: ['service']
   }, app.coteOptions)
-  debug('Services publisher ready for app with uuid ' + app.uuid)
+  debug('Services publisher ready for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
   // Each time a new app pops up we republish local services so that
   // service distribution does not depend on the initialization order of the apps
   app.servicePublisher.on('cote:added', (data) => { publishServices(app) })
@@ -212,7 +216,7 @@ export async function initialize (app) {
     key: app.distributionKey,
     requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
   }, app.coteOptions)
-  debug('Service responder ready for local app with uuid ' + app.uuid)
+  debug('Service responder ready for local app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
   // Answer requests from other nodes
   app.serviceResponder.on('find', async (req) => {
     const service = app.service(req.path)
