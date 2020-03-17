@@ -118,7 +118,7 @@ async function registerApplication (app, applicationDescriptor) {
     app.serviceEventsSubscribers[key].on(event, object => {
       debug(`Dispatching ${event} remote service event on path ` + object.path, object)
       const service = app.service(object.path)
-      service.emit(event, object)
+      if (service) service.emit(event, object)
     })
   })
   debug('Service events subscriber ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key +
