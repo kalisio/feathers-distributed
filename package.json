@@ -51,7 +51,7 @@
   "dependencies": {
     "@feathersjs/commons": "^1.4.0",
     "@feathersjs/errors": "^3.3.0",
-    "cote": "^0.20.0",
+    "cote": "^1.0.0",
     "debug": "^4.1.0"
   },
   "devDependencies": {
