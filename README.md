@@ -65,17 +65,21 @@ server.close();
 
 ![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
 
-When the plugin initializes the following is done for your app:
-* creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other nodes. 
-* creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other nodes. 
+When the plugin initializes the following is done for your local app:
+* creates a local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other apps. 
+* creates a local [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other apps. 
+* creates a local [responder](https://github.com/dashersw/cote#creating-a-responder) to handle *incoming requests from other apps* to locally registered services.
+* creates a local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch locally registered services events to *remote apps*.
 
 What is done by overriding `app.use` is the following: 
-* each *local* Feathers service of your app creates a [responder](https://github.com/dashersw/cote#creating-a-responder) to handle incoming requests from other nodes.
-* each *local* Feathers service of your app creates a [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch service-level events to other nodes.
+* each *local* Feathers service of your app is published using the local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to remote apps.
+
+What is done when your app is aware of a new remotely registered app is the following: 
+* creates a local [requester](https://github.com/dashersw/cote#creating-a-requester) to send requests to the remote [responder](https://github.com/dashersw/cote#creating-a-responder) for remote services operations.
+* creates a local [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service events sent by the remote events [publisher](https://github.com/dashersw/cote#creating-a-publisher) for remote services.
 
 What is done when your app is aware of a new remotely registered service is the following: 
-* creates a local Feathers service *acting as a proxy* to the remote one by creating a [requester](https://github.com/dashersw/cote#creating-a-requester) to send incoming requests to other nodes.
-* this proxy service also creates a [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service-level events coming from other nodes.
+* creates a local Feathers service *acting as a proxy* to the remote one by using the local [requester](https://github.com/dashersw/cote#creating-a-requester).
 
 ## Configuration options
 
