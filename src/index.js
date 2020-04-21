@@ -284,11 +284,35 @@ export async function initialize (app) {
 
 export function finalize (app) {
   debug('Finalizing cote')
-  if (app.serviceRequesters) Object.getOwnPropertyNames(app.serviceRequesters).forEach(key => app.serviceRequesters[key].close())
-  if (app.serviceEventsSubscribers) Object.getOwnPropertyNames(app.serviceEventsSubscribers).forEach(key => app.serviceEventsSubscribers[key].close())
-  if (app.serviceSubscriber) app.serviceSubscriber.close()
-  if (app.servicePublisher) app.servicePublisher.close()
-  if (app.serviceResponder) app.serviceResponder.close()
+  if (app.serviceRequesters) {
+    Object.getOwnPropertyNames(app.serviceRequesters).forEach(key => {
+      debug(`Finalizing service requester for remote app with key ${key}`)
+      app.serviceRequesters[key].close()
+    })
+    delete app.serviceRequesters
+  }
+  if (app.serviceEventsSubscribers) {
+    Object.getOwnPropertyNames(app.serviceEventsSubscribers).forEach(key => {
+      debug(`Finalizing service event subscriber for remote app with key ${key}`)
+      app.serviceEventsSubscribers[key].close()
+    })
+    delete app.serviceEventsSubscribers
+  }
+  if (app.serviceSubscriber) {
+    debug(`Finalizing service subscriber for local app with key ${app.distributionKey}`)
+    app.serviceSubscriber.close()
+    delete app.serviceSubscriber
+  }
+  if (app.servicePublisher) {
+    debug(`Finalizing service publisher for local app with key ${app.distributionKey}`)
+    app.servicePublisher.close()
+    delete app.servicePublisher
+  }
+  if (app.serviceResponder) {
+    debug(`Finalizing service responder for local app with key ${app.distributionKey}`)
+    app.serviceResponder.close()
+    delete app.serviceResponder
+  }
   if (app.applicationPublicationTimeout) clearTimeout(app.applicationPublicationTimeout)
   if (app.coteInitializationTimeout) clearTimeout(app.coteInitializationTimeout)
 }
