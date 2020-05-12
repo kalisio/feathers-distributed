@@ -1,4 +1,4 @@
-//const log = require('why-is-node-running')
+// const log = require('why-is-node-running')
 import authentication from '@feathersjs/authentication'
 import auth from '@feathersjs/authentication-client'
 import jwt from '@feathersjs/authentication-jwt'
@@ -196,7 +196,7 @@ describe('feathers-distributed', () => {
       // Now all services are registered setup handlers
       apps[i].use(express.notFound())
       apps[i].use(express.errorHandler())
-      servers[i] = apps[i].listen(8080 + i)
+      servers[i] = apps[i].listen(3030 + i)
       promises.push(waitForListen(servers[i]))
     }
     await Promise.all(promises)
@@ -208,7 +208,7 @@ describe('feathers-distributed', () => {
 
   it('initiate the rest clients', () => {
     for (let i = 0; i < nbApps; i++) {
-      const url = 'http://localhost:' + (8080 + i)
+      const url = 'http://localhost:' + (3030 + i)
       restClients[i] = client()
         .configure(client.rest(url).superagent(request))
         .configure(auth())
@@ -222,7 +222,7 @@ describe('feathers-distributed', () => {
 
   it('initiate the socket clients', () => {
     for (let i = 0; i < nbApps; i++) {
-      const url = 'http://localhost:' + (8080 + i)
+      const url = 'http://localhost:' + (3030 + i)
       sockets[i] = io(url)
       socketClients[i] = client()
         .configure(client.socketio(sockets[i]))
@@ -236,7 +236,7 @@ describe('feathers-distributed', () => {
     .timeout(10000)
 
   it('ensure middleware can been called on app', async () => {
-    const url = 'http://localhost:' + (8080 + gateway) + '/middleware'
+    const url = 'http://localhost:' + (3030 + gateway) + '/middleware'
     await request.get(url)
     expect(appMiddleware).to.have.been.called()
   })
@@ -295,7 +295,7 @@ describe('feathers-distributed', () => {
   })
 
   it('ensure middleware can been called on local service', async () => {
-    const url = 'http://localhost:' + (8080 + gateway) + '/users'
+    const url = 'http://localhost:' + (3030 + gateway) + '/users'
     await request.get(url)
     expect(serviceMiddleware).to.have.been.called()
   })
@@ -411,7 +411,7 @@ describe('feathers-distributed', () => {
     await utils.promisify(setTimeout)(10000)
   })
     // Let enough time to process
-    .timeout(30000)
+    .timeout(60000)
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
@@ -449,10 +449,10 @@ describe('feathers-distributed', () => {
       .then(_ => customServices[gateway].emit('custom', { payload: 'Donald Doe' }))
   })
     // Let enough time to process
-    .timeout(15000)
+    .timeout(20000)
 
   it('not found request should return 404 on local service', async () => {
-    const url = 'http://localhost:' + (8080 + gateway) + '/xxx'
+    const url = 'http://localhost:' + (3030 + gateway) + '/xxx'
     try {
       await request.get(url)
     } catch (err) {
@@ -463,7 +463,7 @@ describe('feathers-distributed', () => {
   })
 
   it('not found request should return 404 on remote service', async () => {
-    const url = 'http://localhost:' + (8080 + service1) + '/xxx'
+    const url = 'http://localhost:' + (3030 + service1) + '/xxx'
     try {
       await request.get(url)
     } catch (err) {
@@ -484,7 +484,7 @@ describe('feathers-distributed', () => {
   })
 
   it('unauthenticated request should return 401 on local service with auth', async () => {
-    const url = 'http://localhost:' + (8080 + gateway) + '/users'
+    const url = 'http://localhost:' + (3030 + gateway) + '/users'
     try {
       await request.get(url)
     } catch (err) {
@@ -504,7 +504,7 @@ describe('feathers-distributed', () => {
   })
 
   it('unauthenticated request should return 401 on remote service with auth', async () => {
-    const url = 'http://localhost:' + (8080 + service1) + '/users'
+    const url = 'http://localhost:' + (3030 + service1) + '/users'
     try {
       await request.get(url)
     } catch (err) {
@@ -709,6 +709,6 @@ describe('feathers-distributed', () => {
       plugin.finalize(apps[i])
       await sockets[i].close()
     }
-    //log()
+    // log()
   })
 })

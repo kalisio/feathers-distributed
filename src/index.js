@@ -87,7 +87,7 @@ async function registerApplication (app, applicationDescriptor) {
     debug('Ignoring service requester/events publisher creation for local app with uuid ' + app.uuid)
     return
   }
-  
+
   const key = applicationDescriptor.key
   // Already registered
   if (app.serviceRequesters[key]) {
@@ -136,7 +136,7 @@ function registerService (app, serviceDescriptor) {
   const service = app.service(serviceDescriptor.path)
   if (service) {
     if (service instanceof RemoteService) {
-      debug('Already registered service as remote on path ' + serviceDescriptor.path + ' for app with uuid ' + 
+      debug('Already registered service as remote on path ' + serviceDescriptor.path + ' for app with uuid ' +
             app.uuid + ' and key ' + app.distributionKey)
     } else {
       debug('Already registered local service on path ' + serviceDescriptor.path + ' for app with uuid ' +
@@ -206,7 +206,7 @@ export async function initialize (app) {
   app.servicePublisher.on('cote:added', (data) => { publishServices(app) })
   // FIXME: we should manage apps going offline
   app.servicePublisher.on('cote:removed', (data) => { })
-  
+
   // Wait before instanciating new component to avoid too much concurrency on port allocation
   await promisify(setTimeout)(app.distributionOptions.componentDelay)
   // Create the response manager for local services
@@ -273,7 +273,7 @@ export async function initialize (app) {
       name: 'feathers service events publisher',
       namespace: app.distributionKey,
       key: app.distributionKey,
-      broadcasts:  app.distributionOptions.distributedEvents || ['created', 'updated', 'patched', 'removed']
+      broadcasts: app.distributionOptions.distributedEvents || ['created', 'updated', 'patched', 'removed']
     }, app.coteOptions)
     debug('Service events publisher ready for local app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
   }
@@ -328,7 +328,7 @@ export default function init (options = {}) {
       checkInterval: 20000,
       nodeTimeout: 30000,
       masterTimeout: 60000,
-      log: (process.env.COTE_LOG ? true : false),
+      log: (!!process.env.COTE_LOG),
       basePort: (process.env.BASE_PORT ? Number(process.env.BASE_PORT) : 10000),
       highestPort: (process.env.HIGHEST_PORT ? Number(process.env.HIGHEST_PORT) : 20000)
     }, options.cote)
@@ -345,7 +345,7 @@ export default function init (options = {}) {
     // Change default base/highest port for automated port finding
     portfinder.basePort = app.coteOptions.basePort
     portfinder.highestPort = app.coteOptions.highestPort
-    
+
     // Setup cote with options and required delay
     if (app.distributionOptions.coteDelay) {
       // -1 means the caller wants to initialize byitself
