@@ -1,5 +1,37 @@
 # Changelog
 
+## [v1.0.1](https://github.com/kalisio/feathers-distributed/tree/v1.0.1) (2020-05-12)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.0...v1.0.1)
+
+## [v1.0.0](https://github.com/kalisio/feathers-distributed/tree/v1.0.0) (2020-05-12)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.7.1...v1.0.0)
+
+**Implemented enhancements:**
+
+- Performance overhead with a large number of services [\#48](https://github.com/kalisio/feathers-distributed/issues/48)
+- Upgrade to latest Node.js LTS [\#42](https://github.com/kalisio/feathers-distributed/issues/42)
+
+**Fixed bugs:**
+
+- Race condition on service discovery [\#49](https://github.com/kalisio/feathers-distributed/issues/49)
+- Port allocation seems to fail in a Docker Swarm without port binding [\#45](https://github.com/kalisio/feathers-distributed/issues/45)
+- Crash in v0.7 when registering middlewares [\#39](https://github.com/kalisio/feathers-distributed/issues/39)
+
+**Closed issues:**
+
+- Publishing a new NPM version [\#52](https://github.com/kalisio/feathers-distributed/issues/52)
+- Mac OS is crashing when debugger stops on a breakpoint [\#47](https://github.com/kalisio/feathers-distributed/issues/47)
+- When to initialized the library [\#46](https://github.com/kalisio/feathers-distributed/issues/46)
+- npm install is not copying necessary files. [\#41](https://github.com/kalisio/feathers-distributed/issues/41)
+
+**Merged pull requests:**
+
+- Allows app to disable hello logs for the remote services [\#50](https://github.com/kalisio/feathers-distributed/pull/50) ([superdevofficial](https://github.com/superdevofficial))
+- Events Publisher/Subscriber creation [\#44](https://github.com/kalisio/feathers-distributed/pull/44) ([dekelev](https://github.com/dekelev))
+- Bump extend from 3.0.1 to 3.0.2 [\#40](https://github.com/kalisio/feathers-distributed/pull/40) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v0.7.1](https://github.com/kalisio/feathers-distributed/tree/v0.7.1) (2019-11-04)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.7.0...v0.7.1)
@@ -10,7 +42,7 @@
 
 **Implemented enhancements:**
 
-- Allow to select which events to be distributed [\#37](https://github.com/kalisio/feathers-distributed/issues/37)
+- Allow to select statically which events to be distributed [\#37](https://github.com/kalisio/feathers-distributed/issues/37)
 
 **Fixed bugs:**
 
