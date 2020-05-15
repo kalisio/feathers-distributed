@@ -11,6 +11,8 @@
 
 The [`master`](https://github.com/kalisio/feathers-distributed) branch and >= 0.3.x version is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard) and [Feathers v4](https://docs.feathersjs.com/) (a.k.a. Crow).
 
+> Please note that the underlying architecture has been changed from one requester/publisher and responder/subscriber per service to one requester/publisher and responder/subscriber per application between v0.7 and v1.x. This **breaking change** has been required to improve performances and reliability by simplifying the underlying mesh network (see for instance [#48](https://github.com/kalisio/feathers-distributed/issues/48) or [#49](https://github.com/kalisio/feathers-distributed/issues/49)). As a consequence, applications running under v1.x will not be compatible with applications running prior versions.
+
 The [`auk`](https://github.com/kalisio/feathers-distributed/tree/auk) branch and 0.2.x version is expected to work with [Feathers v2](https://auk.docs.feathersjs.com/) (a.k.a. Auk) **but it is deprecated**.
 
 This plugin relies on [cote](https://github.com/dashersw/cote) and takes benefits of it:
