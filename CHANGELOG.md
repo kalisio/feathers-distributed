@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.0.2](https://github.com/kalisio/feathers-distributed/tree/v1.0.2) (2020-05-15)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.1...v1.0.2)
+
+**Closed issues:**
+
+- Babel compile for target above NodeJS 10 [\#55](https://github.com/kalisio/feathers-distributed/issues/55)
+
 ## [v1.0.1](https://github.com/kalisio/feathers-distributed/tree/v1.0.1) (2020-05-12)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.0...v1.0.1)
