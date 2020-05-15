@@ -170,7 +170,7 @@ function registerService (app, serviceDescriptor) {
   app.emit('service', serviceDescriptor)
 }
 
-export async function initialize (app) {
+async function initialize (app) {
   debug('Initializing cote with options', app.coteOptions)
   // Setup cote with options
   app.cote = makeCote(app.coteOptions)
@@ -282,7 +282,7 @@ export async function initialize (app) {
   publishServices(app)
 }
 
-export function finalize (app) {
+function finalize (app) {
   debug('Finalizing cote')
   if (app.serviceRequesters) {
     Object.getOwnPropertyNames(app.serviceRequesters).forEach(key => {

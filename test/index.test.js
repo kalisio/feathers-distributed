@@ -1,4 +1,5 @@
 // const log = require('why-is-node-running')
+import path from 'path'
 import authentication from '@feathersjs/authentication'
 import auth from '@feathersjs/authentication-client'
 import jwt from '@feathersjs/authentication-jwt'
@@ -16,7 +17,7 @@ import spies from 'chai-spies'
 import commonHooks from 'feathers-hooks-common'
 import memory from 'feathers-memory'
 import io from 'socket.io-client'
-import plugin from '../src'
+import plugin, { finalize } from '../src'
 
 let startId = 6
 const store = {
@@ -113,8 +114,15 @@ describe('feathers-distributed', () => {
     }
   })
 
-  it('is CommonJS compatible', () => {
+  it('is ES6 compatible', () => {
+    expect(typeof finalize).to.equal('function')
     expect(typeof plugin).to.equal('function')
+  })
+
+  it('is CommonJS compatible', () => {
+    const lib = require(path.join(__dirname, '..', 'lib'))
+    expect(typeof lib).to.equal('function')
+    expect(typeof lib.finalize).to.equal('function')
   })
 
   function waitForService (app, path) {
@@ -706,7 +714,7 @@ describe('feathers-distributed', () => {
   after(async () => {
     for (let i = 0; i < nbApps; i++) {
       await servers[i].close()
-      plugin.finalize(apps[i])
+      finalize(apps[i])
       await sockets[i].close()
     }
     // log()
