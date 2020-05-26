@@ -79,7 +79,7 @@
     "feathers-memory": "2.1.0",
     "istanbul": "^1.1.0-alpha.1",
     "mocha": "^6.2.0",
-    "mongodb": "^2.2.29",
+    "mongodb": "^3.5.7",
     "npm-run-all": "^4.1.1",
     "shx": "^0.3.2",
     "socket.io-client": "^2.0.3",
