@@ -1,5 +1,6 @@
 # feathers-distributed
 
+[![Latest Release](https://img.shields.io/github/v/tag/kalisio/feathers-distributed?sort=semver&label=latest)](https://github.com/kalisio/feathers-distributed/releases)
 [![Build Status](https://travis-ci.org/kalisio/feathers-distributed.png?branch=master)](https://travis-ci.org/kalisio/feathers-distributed)
 [![Code Climate](https://codeclimate.com/github/kalisio/feathers-distributed/badges/gpa.svg)](https://codeclimate.com/github/kalisio/feathers-distributed)
 [![Test Coverage](https://codeclimate.com/github/kalisio/feathers-distributed/badges/coverage.svg)](https://codeclimate.com/github/kalisio/feathers-distributed/coverage)
