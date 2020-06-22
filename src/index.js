@@ -174,7 +174,7 @@ async function initialize (app) {
   debug('Initializing cote with options', app.coteOptions)
   // Setup cote with options
   app.cote = makeCote(app.coteOptions)
-  app.distributionKey = app.distributionOptions.key || app.uuid
+  app.distributionKey = app.distributionOptions.key || 'default'
 
   // This subscriber listen to an event each time a remote app service has been registered
   app.serviceSubscriber = new app.cote.Subscriber({

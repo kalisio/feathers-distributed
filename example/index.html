@@ -25,16 +25,20 @@
       password: 'password'
     }).then(function(result){
       console.log('Authenticated!', result);
+      var appElement = document.getElementById('app')
       todoService.find({})
       .then(function(todos){
-        var appElement = document.getElementById('app')
-        html = '<p>Authenticated call to the TODO service gives this result:</p><ul>'
+        var html = '<p>Authenticated call to the TODO service gives this result:</p><ul>'
         for (var i = 0; i < todos.total; i++) {
           html += '<li>' + todos.data[i].title + ' with ID ' + todos.data[i]._id + ' : ' + todos.data[i].description + '</li>'
         }
         html += '</ul>'
         appElement.innerHTML += html
       })
+      .catch(function(error){
+        appElement.innerHTML += '<p>Authenticated call to the TODO service failed with this error:</p><pre>' + error + '</pre>'
+        console.error('Error accessing service!', error);
+      });
     }).catch(function(error){
       console.error('Error authenticating!', error);
     });

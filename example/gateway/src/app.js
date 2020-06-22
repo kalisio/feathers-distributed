@@ -36,7 +36,9 @@ app.configure(express.rest());
 app.configure(socketio());
 app.configure(distribution({
 	hooks: { before: { all: [authenticate('jwt')] } },
-	middlewares: { after: express.errorHandler() }
+	middlewares: { after: express.errorHandler() },
+	// We don't produce services we only consume
+    services: (service) => false
 }));
 
 // Configure other middleware (see `middleware/index.js`)
