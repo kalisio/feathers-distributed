@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.0.3](https://github.com/kalisio/feathers-distributed/tree/v1.0.3) (2020-06-22)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.2...v1.0.3)
+
+**Closed issues:**
+
+- Not Working With REST API [\#69](https://github.com/kalisio/feathers-distributed/issues/69)
+- Migrating multiple Feathers apps from v0.x to v1.x [\#56](https://github.com/kalisio/feathers-distributed/issues/56)
+
 ## [v1.0.2](https://github.com/kalisio/feathers-distributed/tree/v1.0.2) (2020-05-15)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.1...v1.0.2)
