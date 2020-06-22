@@ -54,6 +54,8 @@ app.configure(distribution());
 ...
 ```
 
+> A common problem with distribution is that it can register new remote services to your app after it has been configured and started, which typically causes 404 errors, read [the documentation](https://github.com/kalisio/feathers-distributed#remote-services) about this issue.
+
 If you are not running a long-lived server and want to use distribution in your test suite for instance, you can clean it up gracefully like this: 
 ```javascript
 const distribution = require('@kalisio/feathers-distributed');
@@ -139,7 +141,7 @@ app.configure(
   })
 );
 ```
-Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first but `feathers-distributed` dynamically adds new services during app lifecycle. You thus need to register middlewares whenever a new service pops up.
+Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first. However, `feathers-distributed` dynamically adds new services during app lifecycle. As a consequence, you should not register these middlewares at app level and register them whenever a new service pops up using this option.
 
 ### Events
 
