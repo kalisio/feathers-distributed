@@ -147,6 +147,10 @@ Indeed, Feathers does not allow to register new services after the app has been 
 
 By default all [real-time events](https://docs.feathersjs.com/api/events.html) from local services are distributed to remote ones but you can customize the events to be dispatched by providing the list in the `distributedEvents` property of your service or disable all events publishing with the `publishEvents` boolean option.
 
+### Partition keys
+
+By default the same [partition key](https://github.com/dashersw/cote#keys) is used for all distributed apps, so that there is no communication segregation. Sometimes it is better for security, maintenance or performance purpose to segregate services by following the principles of domain-driven design. In that case you can always define your own partition key for each application using the `key` string options (defaults to `'default'`). 
+
 ## Hooks
 
 In some cases it can be useful to know in a hook if the method has been called from a remote service or a local one (e.g. in order to skip authentication). For this you can use the `fromRemote` flag in parameters:
