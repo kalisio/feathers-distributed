@@ -65,7 +65,7 @@ server.close();
 ...
 ```
 
-## Documentation
+## Architecture
 
 ![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
 
@@ -230,6 +230,12 @@ Some options can be directly provided as environment variables:
 * `HIGHEST_PORT` to select the ending port of the port range to be used by cote
 * `COTE_DELAY` (ms) to define the delay before initializing cote
 * `PUBLICATION_DELAY` (ms) to define the delay before publishing services
+
+### Cloud deployment
+
+Cloud providers don't (and they probably won't) support broadcast/multicast out of the box as required to be a zero-configuration module. In this case, the most simple approach is usually to rely on a centralized discovery based on [Redis](https://redis.io/) instance. More details can be found in the [cote documentation](https://github.com/dashersw/cote#using-centralized-discovery-tools) but you can have a look to our [Kargo](https://kalisio.github.io/kargo/) solution for a working configuration.
+
+More specifically check the [docker compose files](https://github.com/kalisio/kargo/tree/master/deploy) of our Redis instance and one of our app running `feathers-distributed`like [Kano](https://kalisio.github.io/kano/). You will see that you need to open at least some port to make it work and take care of initialization delay if you'd like to add a healthcheck.
 
 ## License
 
