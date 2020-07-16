@@ -1,7 +1,7 @@
 import { promisify } from 'util'
 import { stripSlashes } from '@feathersjs/commons'
 import makeCote from 'cote'
-import uuid from 'uuid/v4'
+import { v4 as uuid } from 'uuid'
 import makeDebug from 'debug'
 import portfinder from 'portfinder'
 import RemoteService from './service'
