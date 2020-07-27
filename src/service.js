@@ -23,7 +23,6 @@ class RemoteService {
       debug('Successfully find() remote service on path ' + this.path + ' with key ' + this.key)
       return result
     } catch (error) {
-      console.log(error)
       throw convert(error)
     }
   }
