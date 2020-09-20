@@ -1,5 +1,6 @@
 import { promisify } from 'util'
 import { stripSlashes } from '@feathersjs/commons'
+import { NotFound } from '@feathersjs/errors'
 import makeCote from 'cote'
 import { v4 as uuid } from 'uuid'
 import makeDebug from 'debug'
@@ -100,7 +101,7 @@ async function registerApplication (app, applicationDescriptor) {
     name: 'feathers services requester',
     namespace: key,
     key,
-    requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
+    requests: ['find', 'get', 'create', 'update', 'patch', 'remove', 'healthcheck']
   }, app.coteOptions)
   debug('Service requester ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key +
         ' for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
@@ -214,7 +215,7 @@ async function initialize (app) {
     name: 'feathers services responder',
     namespace: app.distributionKey,
     key: app.distributionKey,
-    requests: ['find', 'get', 'create', 'update', 'patch', 'remove']
+    requests: ['find', 'get', 'create', 'update', 'patch', 'remove', 'healthcheck']
   }, app.coteOptions)
   debug('Service responder ready for local app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
   // Answer requests from other nodes
@@ -260,7 +261,10 @@ async function initialize (app) {
     debug('Successfully remove() local service on path ' + req.path + ' with key ' + req.key)
     return result
   })
-
+  app.serviceResponder.on('healthcheck', async (req) => {
+    debug('Responding to healthcheck for key ' + req.key, req)
+    return {}
+  })
   // Placeholder for request/events managers for remote services
   app.serviceRequesters = {}
   app.serviceEventsSubscribers = {}
@@ -355,6 +359,36 @@ export default function init (options = {}) {
     } else {
       initialize(app)
     }
+
+    // Healthcheck endpoint(s)
+    app.use((options.healthcheckPath || '/distribution/healthcheck/') + ':key', async (req, res, next) => {
+      res.set('Content-Type', 'application/json')
+      const key = req.params.key || 'default'
+      // Not yet registered
+      if (!app.serviceRequesters[key]) {
+        const error = new NotFound(`No app registered with key ${key}`)
+        res.status(error.code)
+        res.json(Object.assign({}, error.toJSON()))
+        return
+      }
+      let response = {}
+      try {
+        response = await app.serviceRequesters[key].send({ type: 'healthcheck', key })
+      } catch (_) {
+        const error = new GeneralError (`No app responding with key ${key}`)
+        res.status(error.code)
+        res.json(Object.assign({}, error.toJSON()))
+        return
+      }
+      // List all available services
+      Object.getOwnPropertyNames(app.services).forEach(path => {
+        const service = app.service(path)
+        if (service && (service.key === key)) {
+          Object.assign(response, { [path]: true })
+        }
+      })
+      res.json(response)
+    })
 
     // We replace the use method to inject service publisher/responder
     const superUse = app.use

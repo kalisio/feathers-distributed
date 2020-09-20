@@ -243,6 +243,22 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(10000)
 
+  it('ensure healthcheck can been called on apps', async () => {
+    // Service 1 & 2 should see the gateway 0
+    let url = 'http://localhost:' + (3030 + service1) + '/distribution/healthcheck/0'
+    let response = await request.get(url)
+    expect(response.body).to.deep.equal({ users: true })
+    url = 'http://localhost:' + (3030 + service2) + '/distribution/healthcheck/0'
+    response = await request.get(url)
+    expect(response.body).to.deep.equal({ users: true })
+    // Gateway should see the no-events app 3
+    url = 'http://localhost:' + (3030 + gateway) + '/distribution/healthcheck/3'
+    response = await request.get(url)
+    expect(response.body).to.deep.equal({ 'no-events': true })
+  })
+    // Let enough time to process
+    .timeout(10000)
+
   it('ensure middleware can been called on app', async () => {
     const url = 'http://localhost:' + (3030 + gateway) + '/middleware'
     await request.get(url)

@@ -159,6 +159,17 @@ app.configure(distributed({
 }))
 ```
 
+### Healthcheck
+
+By default the module adds an express middleware on the `/distribution/healthcheck/:key` route. You can perform a healthcheck status for each available partition key using this route and a GET HTTP method, the following responses are possible:
+* HTTP code 200 with the list of registered remote services for this key
+* HTTP code 404 if no application has been registered for this key
+* HTTP code 500 if the none remote application responds to the healthcheck signal
+
+If you don't use partition keys you can omit the key request parameter as it will default to the `'default'` value.
+
+You can change the healthcheck endpoint URL using the `healthcheckPath` option.
+
 ## Hooks
 
 In some cases it can be useful to know in a hook if the method has been called from a remote service or a local one (e.g. in order to skip authentication). For this you can use the `fromRemote` flag in parameters:
