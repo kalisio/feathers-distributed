@@ -1,6 +1,6 @@
 import { promisify } from 'util'
 import { stripSlashes } from '@feathersjs/commons'
-import { NotFound } from '@feathersjs/errors'
+import { NotFound, GeneralError } from '@feathersjs/errors'
 import makeCote from 'cote'
 import { v4 as uuid } from 'uuid'
 import makeDebug from 'debug'
