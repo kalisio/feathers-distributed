@@ -1,5 +1,26 @@
 # Changelog
 
+## [v1.0.4](https://github.com/kalisio/feathers-distributed/tree/v1.0.4) (2020-09-21)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.3...v1.0.4)
+
+**Implemented enhancements:**
+
+- Add healthcheck endpoint\(s\) [\#79](https://github.com/kalisio/feathers-distributed/issues/79)
+
+**Closed issues:**
+
+- Remove console.log from source-code [\#75](https://github.com/kalisio/feathers-distributed/issues/75)
+- ERROR install if npm uuid package is already a dependency [\#72](https://github.com/kalisio/feathers-distributed/issues/72)
+- Working app or example of per-service authentication? [\#71](https://github.com/kalisio/feathers-distributed/issues/71)
+
+**Merged pull requests:**
+
+- Update package.json [\#76](https://github.com/kalisio/feathers-distributed/pull/76) ([THEJean-Kevin](https://github.com/THEJean-Kevin))
+- Bump lodash from 4.17.5 to 4.17.19 [\#73](https://github.com/kalisio/feathers-distributed/pull/73) ([dependabot[bot]](https://github.com/apps/dependabot))
+- \[Security\] Bump lodash.merge from 4.6.1 to 4.6.2 [\#63](https://github.com/kalisio/feathers-distributed/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
 ## [v1.0.3](https://github.com/kalisio/feathers-distributed/tree/v1.0.3) (2020-06-22)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.2...v1.0.3)
