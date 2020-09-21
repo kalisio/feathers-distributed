@@ -361,7 +361,9 @@ export default function init (options = {}) {
     }
 
     // Healthcheck endpoint(s)
-    app.use((options.healthcheckPath || '/distribution/healthcheck/') + ':key', async (req, res, next) => {
+    const healthcheckRoute = (options.healthcheckPath || '/distribution/healthcheck/') + ':key?'
+    debug('Initializing feathers-distributed healthcheck route', healthcheckRoute)
+    app.use(healthcheckRoute, async (req, res, next) => {
       res.set('Content-Type', 'application/json')
       const key = req.params.key || 'default'
       // Not yet registered
@@ -383,7 +385,7 @@ export default function init (options = {}) {
       // List all available services
       Object.getOwnPropertyNames(app.services).forEach(path => {
         const service = app.service(path)
-        if (service && (service.key === key)) {
+        if (service && service.remote && (service.key === key)) {
           Object.assign(response, { [path]: true })
         }
       })
