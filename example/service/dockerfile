@@ -1,4 +1,4 @@
-FROM  node:7
+FROM  node:12-buster
 
 MAINTAINER Luc Claustres <luc.claustres@kalisio.xyz>
 
