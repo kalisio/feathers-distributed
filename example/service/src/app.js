@@ -31,7 +31,11 @@ app.use('/', express.static(app.get('public')));
 
 app.configure(express.rest());
 app.configure(socketio());
-app.configure(distribution());
+// Don't consume any remote service in any cas we'd like to replicate
+app.configure(distribution({
+	// We don't consume services we only produce
+  remoteServices: (service) => false
+}));
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);

@@ -12,6 +12,11 @@
       .configure(feathers.authentication({ storage: window.localStorage }));
     var todoService = client.service('todos');
     todoService.timeout = 10000;
+    todoService.on('created', function(data) {
+      var appElement = document.getElementById('app')
+      appElement.innerHTML += '<p>Received created TODO service event:</p><pre>' + data.title + '</pre>'
+      console.log('todos:created', data.title)
+    })
     // This one should fail
     todoService.find({})
     .catch(error => {

@@ -119,7 +119,8 @@ async function registerApplication (app, applicationDescriptor) {
     app.serviceEventsSubscribers[key].on(event, object => {
       debug(`Dispatching ${event} remote service event on path ` + object.path, object)
       const service = app.service(object.path)
-      if (service) service.emit(event, object)
+      // Ensure we don't have any local service with the same name to avoid infinite looping
+      if (service && service.remote) service.emit(event, object)
     })
   })
   debug('Service events subscriber ready for remote app with uuid ' + applicationDescriptor.uuid + ' and key ' + key +
@@ -377,7 +378,7 @@ export default function init (options = {}) {
       try {
         response = await app.serviceRequesters[key].send({ type: 'healthcheck', key })
       } catch (_) {
-        const error = new GeneralError (`No app responding with key ${key}`)
+        const error = new GeneralError(`No app responding with key ${key}`)
         res.status(error.code)
         res.json(Object.assign({}, error.toJSON()))
         return
