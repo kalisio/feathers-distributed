@@ -1,5 +1,19 @@
 # Changelog
 
+## [v1.0.5](https://github.com/kalisio/feathers-distributed/tree/v1.0.5) (2021-03-23)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.4...v1.0.5)
+
+**Closed issues:**
+
+- Infinite event propagation [\#84](https://github.com/kalisio/feathers-distributed/issues/84)
+- Realtime micro-services [\#83](https://github.com/kalisio/feathers-distributed/issues/83)
+- Cannot read property 'find' of undefined [\#74](https://github.com/kalisio/feathers-distributed/issues/74)
+
+**Merged pull requests:**
+
+- Bump ini from 1.3.5 to 1.3.7 [\#81](https://github.com/kalisio/feathers-distributed/pull/81) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.0.4](https://github.com/kalisio/feathers-distributed/tree/v1.0.4) (2020-09-21)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.3...v1.0.4)
