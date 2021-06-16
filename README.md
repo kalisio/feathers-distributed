@@ -191,7 +191,20 @@ To launch the example:
 ```
 npm start
 ```
-Wait a couple of seconds so that each app is aware of other apps on the network. Open the *example/index.html* file in your browser, you should see a TODO coming from a microservice.
+Wait a couple of seconds so that each app is aware of other apps on the network. Open the *example/index.html* file in your browser, you should see a TODO coming from a microservice, exposed through a gateway.
+
+A more complex example is available based on a Docker compose file:
+```
+cd ./example
+// Start
+docker-compose up -d
+// Stop when you've finished
+docker-compose down -v
+```
+
+This launches a gateway ( `gateway` Docker service) and two replicas of the microservice (`service1` and `service2` Docker services). If you open the *example/index.html* file in your browser, then refresh it regularly, you should see a TODO coming from a different microservice in a random way (i.e. its ID should be different sometimes).
+
+You can then try to kill one of the service replicas, e.g. `docker-compose stop service1`. Now if you refresh the page regularly you should always see the same TODO as the failed service should not be contacted anymore.
 
 Look for details into the [example folder](./example).
 
@@ -258,6 +271,6 @@ More specifically check the [docker compose files](https://github.com/kalisio/ka
 
 ## License
 
-Copyright (c) 2017 Kalisio
+Copyright (c) 2017-20xx Kalisio
 
 Licensed under the [MIT license](LICENSE).
