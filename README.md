@@ -206,6 +206,8 @@ This launches a gateway ( `gateway` Docker service) and two replicas of the micr
 
 You can then try to kill one of the service replicas, e.g. `docker-compose stop service1`. Now if you refresh the page regularly you should always see the same TODO as the failed service should not be contacted anymore.
 
+If you kill the latest service replica, e.g. `docker-compose stop service2`, you should see a timeout on refresh. Then if you restart the service, e.g. `docker-compose start service2`, the TODO should come back on refresh.
+
 Look for details into the [example folder](./example).
 
 ## Authentication
