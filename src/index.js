@@ -1,5 +1,6 @@
 import { promisify } from 'util'
 import { stripSlashes } from '@feathersjs/commons'
+import { getServiceOptions } from '@feathersjs/feathers'
 import { NotFound, GeneralError } from '@feathersjs/errors'
 import makeCote from 'cote'
 import { v4 as uuid } from 'uuid'
@@ -38,7 +39,7 @@ function publishService (app, path) {
     uuid: app.uuid,
     key: app.distributionKey,
     path: stripSlashes(path),
-    events: service.distributedEvents || service._serviceEvents
+    events: service.distributedEvents || getServiceOptions(service).events
   }
   // Skip internal services
   if (isInternalService(app, serviceDescriptor)) {
@@ -127,7 +128,7 @@ async function registerApplication (app, applicationDescriptor) {
         ' for app with uuid ' + app.uuid + ' and key ' + app.distributionKey)
 }
 
-function registerService (app, serviceDescriptor) {
+export function registerService (app, serviceDescriptor) {
   // Do not register our own services
   if (serviceDescriptor.uuid === app.uuid) {
     debug('Ignoring local service registration on path ' + serviceDescriptor.path + ' for app with uuid ' +
@@ -172,7 +173,7 @@ function registerService (app, serviceDescriptor) {
   app.emit('service', serviceDescriptor)
 }
 
-async function initialize (app) {
+export async function initialize (app) {
   debug('Initializing cote with options', app.coteOptions)
   // Setup cote with options
   app.cote = makeCote(app.coteOptions)
@@ -409,6 +410,4 @@ export default function init (options = {}) {
   }
 }
 
-init.RemoteService = RemoteService
-init.initialize = initialize
-init.finalize = finalize
+export { RemoteService, finalize }

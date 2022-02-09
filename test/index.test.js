@@ -1,9 +1,8 @@
 // const log = require('why-is-node-running')
 import path from 'path'
-import authentication from '@feathersjs/authentication'
+import { authenticate, AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import auth from '@feathersjs/authentication-client'
-import jwt from '@feathersjs/authentication-jwt'
-import local from '@feathersjs/authentication-local'
+import { LocalStrategy } from '@feathersjs/authentication-local'
 import client from '@feathersjs/client'
 import express from '@feathersjs/express'
 import bodyParser from 'body-parser'
@@ -75,30 +74,29 @@ describe('feathers-distributed', () => {
 
   function createApp (index) {
     const app = express(feathers())
+
     app.use(bodyParser.json())
     app.configure(socketio())
     app.configure(express.rest())
-    app.configure(authentication({ secret: '1234' }))
-    const strategies = ['jwt']
-    app.configure(jwt())
-    if (index === gateway) {
-      strategies.push('local')
-      app.configure(local())
-    }
-    // The `authentication` service is used to create a JWT.
-    // The before `create` hook registers strategies that can be used
-    // to create a new valid JWT (e.g. local or oauth2)
-    app.service('authentication').hooks({
-      before: {
-        create: [authentication.hooks.authenticate(strategies)],
-        remove: [authentication.hooks.authenticate('jwt')]
+    app.set('authentication', {
+      secret: '1234',
+      authStrategies: ['jwt', 'local'],
+      local: {
+        usernameField: 'email',
+        passwordField: 'password'
       }
     })
-    /*
-    app.hooks({
-      before: { all: plugin.hooks.dispatch }
-    });
-    */
+
+    const authService = new AuthenticationService(app)
+
+    authService.register('jwt', new JWTStrategy())
+
+    if (index === gateway) {
+      authService.register('local', new LocalStrategy())
+    }
+
+    app.use('/authentication', authService)
+
     return app
   }
 
@@ -142,7 +140,7 @@ describe('feathers-distributed', () => {
     })
   }
 
-  it('registers the plugin with options and services', async () => {
+  it.only('registers the plugin with options and services', async () => {
     let promises = []
     for (let i = 0; i < nbApps; i++) {
       apps[i].configure(plugin({
@@ -183,7 +181,7 @@ describe('feathers-distributed', () => {
               },
               commonHooks.when(
                 hook => hook.params.provider && checkAuthentication,
-                authentication.hooks.authenticate('jwt')
+                authenticate('jwt')
               )
             ]
           }
