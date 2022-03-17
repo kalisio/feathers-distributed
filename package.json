@@ -22,6 +22,9 @@
   "bugs": {
     "url": "https://github.com/kalisio/feathers-distributed/issues"
   },
+  "engines": {
+    "node": ">= 16.0.0"
+  },
   "scripts": {
     "publish": "git push origin --tags && npm run changelog && git push origin",
     "release:patch": "npm version patch && npm publish",
