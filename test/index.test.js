@@ -1,12 +1,8 @@
-// const log = require('why-is-node-running')
-import path from 'path'
-import authentication from '@feathersjs/authentication'
+import { authenticate, AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
+import { LocalStrategy } from '@feathersjs/authentication-local'
 import auth from '@feathersjs/authentication-client'
-import jwt from '@feathersjs/authentication-jwt'
-import local from '@feathersjs/authentication-local'
 import client from '@feathersjs/client'
 import express from '@feathersjs/express'
-import bodyParser from 'body-parser'
 import feathers from '@feathersjs/feathers'
 import socketio from '@feathersjs/socketio'
 import request from 'superagent'
@@ -17,7 +13,7 @@ import spies from 'chai-spies'
 import commonHooks from 'feathers-hooks-common'
 import memory from 'feathers-memory'
 import io from 'socket.io-client'
-import plugin, { finalize } from '../src'
+import plugin, { finalize } from '../lib/index.js'
 
 let startId = 6
 const store = {
@@ -75,76 +71,51 @@ describe('feathers-distributed', () => {
 
   function createApp (index) {
     const app = express(feathers())
-    app.use(bodyParser.json())
-    app.configure(socketio())
-    app.configure(express.rest())
-    app.configure(authentication({ secret: '1234' }))
-    const strategies = ['jwt']
-    app.configure(jwt())
-    if (index === gateway) {
-      strategies.push('local')
-      app.configure(local())
-    }
-    // The `authentication` service is used to create a JWT.
-    // The before `create` hook registers strategies that can be used
-    // to create a new valid JWT (e.g. local or oauth2)
-    app.service('authentication').hooks({
-      before: {
-        create: [authentication.hooks.authenticate(strategies)],
-        remove: [authentication.hooks.authenticate('jwt')]
+    const authService = new AuthenticationService(app)
+
+    app.set('authentication', {
+      secret: '1234',
+      entity: 'user',
+      service: 'users',
+      entityId: 'id',
+      authStrategies: [ 'jwt', 'local' ],
+      local: {
+        usernameField: 'email',
+        passwordField: 'password'
+      },
+      jwtOptions: {
+        header: { typ: 'access' },
+        audience: 'https://yourdomain.com',
+        issuer: 'feathers',
+        algorithm: 'HS256',
+        expiresIn: '1d'
       }
     })
-    /*
-    app.hooks({
-      before: { all: plugin.hooks.dispatch }
-    });
-    */
+    authService.register('jwt', new JWTStrategy())
+
+    if (index === gateway) {
+      authService.register('local', new LocalStrategy())
+    }
+
+    app.use(express.json())
+    app.configure(socketio())
+    app.configure(express.rest())
+    app.use('/authentication', authService)
+    
     return app
   }
 
-  before(() => {
+  before(async () => {
     chailint(chai, util)
     chai.use(spies)
     beforeHook = chai.spy(beforeHook)
     afterHook = chai.spy(afterHook)
     serviceMiddleware = chai.spy(serviceMiddleware)
     appMiddleware = chai.spy(appMiddleware)
+    let promises = []
+
     for (let i = 0; i < nbApps; i++) {
       apps[i] = createApp(i)
-    }
-  })
-
-  it('is ES6 compatible', () => {
-    expect(typeof finalize).to.equal('function')
-    expect(typeof plugin).to.equal('function')
-  })
-
-  it('is CommonJS compatible', () => {
-    const lib = require(path.join(__dirname, '..', 'lib'))
-    expect(typeof lib).to.equal('function')
-    expect(typeof lib.finalize).to.equal('function')
-  })
-
-  function waitForService (app, path) {
-    return new Promise((resolve, reject) => {
-      app.on('service', data => {
-        if (data.path === path) {
-          const service = app.service(path)
-          expect(service).toExist()
-          resolve(service)
-        }
-      })
-    })
-  }
-  function waitForListen (server) {
-    return new Promise((resolve, reject) => {
-      server.once('listening', _ => resolve())
-    })
-  }
-
-  it('registers the plugin with options and services', async () => {
-    let promises = []
-    for (let i = 0; i < nbApps; i++) {
       apps[i].configure(plugin({
         hooks: { before: { all: beforeHook }, after: { all: afterHook } },
         middlewares: { after: express.errorHandler() },
@@ -183,7 +154,7 @@ describe('feathers-distributed', () => {
               },
               commonHooks.when(
                 hook => hook.params.provider && checkAuthentication,
-                authentication.hooks.authenticate('jwt')
+                authenticate('jwt')
               )
             ]
           }
@@ -197,6 +168,7 @@ describe('feathers-distributed', () => {
         promises.push(waitForService(apps[i], 'users'))
       }
     }
+
     await Promise.all(promises)
     promises = []
     for (let i = 0; i < nbApps; i++) {
@@ -207,41 +179,65 @@ describe('feathers-distributed', () => {
       servers[i] = apps[i].listen(3030 + i)
       promises.push(waitForListen(servers[i]))
     }
-    await Promise.all(promises)
-    // Wait before all cote components have been discovered
-    await utils.promisify(setTimeout)(10000)
-  })
-    // Let enough time to process
-    .timeout(60000)
 
-  it('initiate the rest clients', () => {
+    await Promise.all(promises)
+
     for (let i = 0; i < nbApps; i++) {
       const url = 'http://localhost:' + (3030 + i)
       restClients[i] = client()
         .configure(client.rest(url).superagent(request))
         .configure(auth())
+
+      sockets[i] = io(url)
+      socketClients[i] = client()
+          .configure(client.socketio(sockets[i]))
+          .configure(auth())
+    }
+
+    // Wait before all cote components have been discovered
+    await utils.promisify(setTimeout)(10000)
+  })
+
+  function waitForService (app, path) {
+    return new Promise((resolve, reject) => {
+      app.on('service', data => {
+        if (data.path === path) {
+          const service = app.service(path)
+          expect(service).toExist()
+          resolve(service)
+        }
+      })
+    })
+  }
+  function waitForListen (server) {
+    return new Promise((resolve, reject) => {
+      server.once('listening', _ => resolve())
+    })
+  }
+
+  it('is ES6 compatible', () => {
+    expect(typeof finalize).to.equal('function')
+    expect(typeof plugin).to.equal('function')
+  })
+
+
+  it('initiate the rest clients', () => {
+    for (let i = 0; i < nbApps; i++) {
       expect(restClients[i]).toExist()
       restClientServices[i] = restClients[i].service('users')
       expect(restClientServices[i]).toExist()
     }
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('initiate the socket clients', () => {
     for (let i = 0; i < nbApps; i++) {
-      const url = 'http://localhost:' + (3030 + i)
-      sockets[i] = io(url)
-      socketClients[i] = client()
-        .configure(client.socketio(sockets[i]))
-        .configure(auth())
       expect(socketClients[i]).toExist()
       socketClientServices[i] = socketClients[i].service('users')
       expect(socketClientServices[i]).toExist()
     }
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('ensure healthcheck can been called on apps', async () => {
     // Service 1 & 2 should see the gateway 0
@@ -256,58 +252,50 @@ describe('feathers-distributed', () => {
     response = await request.get(url)
     expect(response.body).to.deep.equal({ 'no-events': true })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('ensure middleware can been called on app', async () => {
     const url = 'http://localhost:' + (3030 + gateway) + '/middleware'
     await request.get(url)
     expect(appMiddleware).to.have.been.called()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch find rest service calls from remote to local without auth', async () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch get rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch create rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch update rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch patch rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch remove rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('ensure distribution hooks have been called on remote service', () => {
     expect(beforeHook).to.have.been.called()
@@ -328,15 +316,13 @@ describe('feathers-distributed', () => {
     const users = await socketClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch get socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch create socket service calls from remote to local without auth', async () => {
     // Jump to next user
@@ -344,29 +330,25 @@ describe('feathers-distributed', () => {
     const user = await socketClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch update socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch patch socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch remove socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch create socket service events from local to remote without auth', done => {
     // Jump to next user
@@ -379,8 +361,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].create({ name: 'Donald Doe' })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch update socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('updated', user => {
@@ -389,8 +370,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch patch socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('patched', user => {
@@ -399,8 +379,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch remove socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('removed', user => {
@@ -409,10 +388,9 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].remove(startId)
   })
-    // Let enough time to process
-    .timeout(10000)
 
-  it('dynamically register a custom service', async () => {
+
+  it.skip('dynamically register a custom service', async () => {
     const customService = memory()
     // Ensure we can filter events and only send custom ones
     customService.events = ['custom']
@@ -437,7 +415,7 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(60000)
 
-  it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
+  it.skip('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
     let customCount = 0
     // Ensure we can filter events and only send custom ones
@@ -594,15 +572,13 @@ describe('feathers-distributed', () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch get rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch create rest service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -610,22 +586,19 @@ describe('feathers-distributed', () => {
     const user = await restClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch update rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch patch rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch remove rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].remove(startId)
@@ -638,15 +611,13 @@ describe('feathers-distributed', () => {
     const users = await socketClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch get socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch create socket service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -654,29 +625,25 @@ describe('feathers-distributed', () => {
     const user = await socketClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch update socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch patch socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch remove socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch create socket service events from local to remote with auth', done => {
     // Jump to next user
@@ -687,8 +654,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].create({ name: 'Donald Doe' })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch update socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('updated', user => {
@@ -697,8 +663,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch patch socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('patched', user => {
@@ -707,8 +672,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('dispatch remove socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('removed', user => {
@@ -717,8 +681,7 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].remove(startId)
   })
-    // Let enough time to process
-    .timeout(10000)
+
 
   it('disable events publishing globally', () => {
     expect(apps[gateway].serviceEventsPublisher).toExist()
