@@ -525,11 +525,10 @@ describe('feathers-distributed', () => {
     })
     accessToken = response.accessToken
     expect(accessToken).toExist()
-    // Local auth on service
+    // JWT auth on service using JWT from gateway
     response = await restClients[service1].authenticate({
-      strategy: 'local',
-      email: 'user@test.com',
-      password: 'password'
+      strategy: 'jwt',
+      accessToken
     })
     accessToken = response.accessToken
     expect(accessToken).toExist()
@@ -551,11 +550,10 @@ describe('feathers-distributed', () => {
     })
     accessToken = response.accessToken
     expect(accessToken).toExist()
-    // Local auth on service
+    // JWT auth on service using JWT from gateway
     response = await socketClients[service1].authenticate({
-      strategy: 'local',
-      email: 'user@test.com',
-      password: 'password'
+      strategy: 'jwt',
+      accessToken
     })
     accessToken = response.accessToken
     expect(accessToken).toExist()
