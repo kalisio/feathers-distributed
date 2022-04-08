@@ -170,17 +170,15 @@ describe('feathers-distributed', () => {
     }
 
     await Promise.all(promises)
-    promises = []
+    
     for (let i = 0; i < nbApps; i++) {
       // See https://github.com/kalisio/feathers-distributed/issues/3
       // Now all services are registered setup handlers
       apps[i].use(express.notFound())
       apps[i].use(express.errorHandler())
-      servers[i] = apps[i].listen(3030 + i)
-      promises.push(waitForListen(servers[i]))
+      servers[i] = await apps[i].listen(3030 + i)
+      promises.push(servers[i])
     }
-
-    await Promise.all(promises)
 
     for (let i = 0; i < nbApps; i++) {
       const url = 'http://localhost:' + (3030 + i)
@@ -207,11 +205,6 @@ describe('feathers-distributed', () => {
           resolve(service)
         }
       })
-    })
-  }
-  function waitForListen (server) {
-    return new Promise((resolve, reject) => {
-      server.once('listening', _ => resolve())
     })
   }
 
