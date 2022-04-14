@@ -3,7 +3,7 @@
   "description": "Distribute your Feathers services as microservices",
   "version": "1.0.5",
   "homepage": "https://github.com/kalisio/feathers-distributed",
-  "main": "lib/",
+  "main": "lib/index.js",
   "type": "module",
   "keywords": [
     "feathers",
@@ -33,11 +33,11 @@
     "changelog": "github_changelog_generator -u kalisio -p feathers-distributed && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "lint": "standard src/**/*.js test/**/*.js --fix",
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --timeout 30000",
-    "coverage": "cross-env NODE_CONFIG_DIR=./test/config/ istanbul cover node_modules/mocha/bin/_mocha -- --timeout 60000 --exit",
+    "coverage": "c8 npm run mocha",
     "test": "npm run coverage",
     "start:gateway": "cd example/gateway && npm install && npm start",
     "start:service": "cd example/service && npm install && npm start",
-    "start": "npm run compile && npm-run-all --parallel start:**"
+    "start": "npm-run-all --parallel start:**"
   },
   "standard": {
     "parser": "babel-eslint",
@@ -65,13 +65,13 @@
     "@feathersjs/errors": "^5.0.0-pre.17",
     "@feathersjs/express": "^5.0.0-pre.17",
     "@feathersjs/socketio": "^5.0.0-pre.17",
+    "c8": "^7.11.0",
     "chai": "^4.3.6",
     "chai-lint": "^0.1.1",
     "chai-spies": "^1.0.0",
     "cross-env": "^7.0.3",
     "feathers-hooks-common": "^5.0.6",
     "feathers-memory": "4.1.0",
-    "istanbul": "^1.1.0-alpha.1",
     "mocha": "^9.2.2",
     "mongodb": "^4.5.0",
     "npm-run-all": "^4.1.5",
