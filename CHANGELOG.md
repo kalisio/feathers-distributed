@@ -1,5 +1,28 @@
 # Changelog
 
+## [v2.0.0](https://github.com/kalisio/feathers-distributed/tree/v2.0.0) (2022-06-28)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.5...v2.0.0)
+
+**Implemented enhancements:**
+
+- Upgrade NodeJS to v16 [\#90](https://github.com/kalisio/feathers-distributed/issues/90)
+- Upgrade Feathers to v5 [\#31](https://github.com/kalisio/feathers-distributed/issues/31)
+
+**Merged pull requests:**
+
+- Bump async from 2.6.3 to 2.6.4 [\#97](https://github.com/kalisio/feathers-distributed/pull/97) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Upgrade to Feathers v5 [\#96](https://github.com/kalisio/feathers-distributed/pull/96) ([daffl](https://github.com/daffl))
+- Bump minimist from 1.2.5 to 1.2.6 [\#95](https://github.com/kalisio/feathers-distributed/pull/95) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Update plugin infrastructure and dependencies [\#94](https://github.com/kalisio/feathers-distributed/pull/94) ([daffl](https://github.com/daffl))
+- Bump pathval from 1.1.0 to 1.1.1 [\#92](https://github.com/kalisio/feathers-distributed/pull/92) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump shelljs from 0.8.3 to 0.8.5 [\#91](https://github.com/kalisio/feathers-distributed/pull/91) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.5 to 1.0.7 [\#89](https://github.com/kalisio/feathers-distributed/pull/89) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump tar from 2.2.1 to 2.2.2 [\#88](https://github.com/kalisio/feathers-distributed/pull/88) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump hosted-git-info from 2.6.0 to 2.8.9 [\#87](https://github.com/kalisio/feathers-distributed/pull/87) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump lodash from 4.17.19 to 4.17.21 [\#86](https://github.com/kalisio/feathers-distributed/pull/86) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump handlebars from 4.0.11 to 4.7.7 [\#85](https://github.com/kalisio/feathers-distributed/pull/85) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.0.5](https://github.com/kalisio/feathers-distributed/tree/v1.0.5) (2021-03-23)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.4...v1.0.5)
@@ -22,6 +45,11 @@
 
 - Add healthcheck endpoint\(s\) [\#79](https://github.com/kalisio/feathers-distributed/issues/79)
 
+**Security fixes:**
+
+- \[Security\] Bump lodash.merge from 4.6.1 to 4.6.2 [\#63](https://github.com/kalisio/feathers-distributed/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
 **Closed issues:**
 
 - Remove console.log from source-code [\#75](https://github.com/kalisio/feathers-distributed/issues/75)
@@ -32,8 +60,6 @@
 
 - Update package.json [\#76](https://github.com/kalisio/feathers-distributed/pull/76) ([THEJean-Kevin](https://github.com/THEJean-Kevin))
 - Bump lodash from 4.17.5 to 4.17.19 [\#73](https://github.com/kalisio/feathers-distributed/pull/73) ([dependabot[bot]](https://github.com/apps/dependabot))
-- \[Security\] Bump lodash.merge from 4.6.1 to 4.6.2 [\#63](https://github.com/kalisio/feathers-distributed/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 ## [v1.0.3](https://github.com/kalisio/feathers-distributed/tree/v1.0.3) (2020-06-22)
 
@@ -69,7 +95,6 @@
 
 - Race condition on service discovery [\#49](https://github.com/kalisio/feathers-distributed/issues/49)
 - Port allocation seems to fail in a Docker Swarm without port binding [\#45](https://github.com/kalisio/feathers-distributed/issues/45)
-- Crash in v0.7 when registering middlewares [\#39](https://github.com/kalisio/feathers-distributed/issues/39)
 
 **Closed issues:**
 
@@ -88,6 +113,10 @@
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.7.0...v0.7.1)
 
+**Fixed bugs:**
+
+- Crash in v0.7 when registering middlewares [\#39](https://github.com/kalisio/feathers-distributed/issues/39)
+
 ## [v0.7.0](https://github.com/kalisio/feathers-distributed/tree/v0.7.0) (2019-11-03)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.6.0...v0.7.0)
@@ -95,11 +124,11 @@
 **Implemented enhancements:**
 
 - Allow to select statically which events to be distributed [\#37](https://github.com/kalisio/feathers-distributed/issues/37)
+- Initialization delay before starting cote [\#36](https://github.com/kalisio/feathers-distributed/issues/36)
 
 **Fixed bugs:**
 
 - Custom service events are not propagated [\#38](https://github.com/kalisio/feathers-distributed/issues/38)
-- Initialization delay before starting cote [\#36](https://github.com/kalisio/feathers-distributed/issues/36)
 
 ## [v0.6.0](https://github.com/kalisio/feathers-distributed/tree/v0.6.0) (2019-10-21)
 
@@ -121,7 +150,7 @@
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v0.5.0...v0.5.1)
 
-**Fixed bugs:**
+**Implemented enhancements:**
 
 - CPU usage is high with more than 40 services [\#34](https://github.com/kalisio/feathers-distributed/issues/34)
 
@@ -233,4 +262,4 @@
 
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
