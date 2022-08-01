@@ -402,7 +402,7 @@ describe('feathers-distributed', () => {
     expect(socketClientCustomServices[service1]).toExist()
     expect(socketClientCustomServices[service2]).toExist()
     // Wait before all cote components have been discovered
-    await utils.promisify(setTimeout)(10000)
+    await utils.promisify(setTimeout)(30000)
   })
     // Let enough time to process
     .timeout(60000)
