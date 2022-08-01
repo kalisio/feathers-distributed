@@ -121,8 +121,8 @@ app.configure(
     hooks: {
       before: {
         all: [authenticate('jwt')]
-      },
-    },
+      }
+    }
   })
 );
 ```
@@ -136,11 +136,22 @@ app.configure(
     middlewares: {
       before: (req, res, next) => next(),
       after: express.errorHandler()
-    },
+    }
   })
 );
 ```
 Indeed, Feathers does not allow to register new services after the app has been setup so that application middlewares like [not found](https://docs.feathersjs.com/api/express.html#expressnotfoundoptions) or [error handler](https://docs.feathersjs.com/api/express.html#appuseexpresserrorhandleroptions) will be hit first. However, `feathers-distributed` dynamically adds new services during app lifecycle. As a consequence, you should not register these middlewares at app level and register them whenever a new service pops up using this option.
+
+Last but not least, you can change the default 20 seconds [service requester timout](https://github.com/dashersw/cote#timeout) like this:
+```javascript
+const express = require('@feathersjs/express')
+
+app.configure(
+  distribution({
+    timeout: 30000 // 30s
+  })
+);
+```
 
 ### Events
 
@@ -165,7 +176,7 @@ app.configure(distributed({
 By default the module adds an express middleware on the `/distribution/healthcheck/:key` route. You can perform a healthcheck status for each available partition key using this route and a GET HTTP method, the following responses are possible:
 * HTTP code 200 with the list of registered remote services for this key
 * HTTP code 404 if no application has been registered for this key
-* HTTP code 500 if the none remote application responds to the healthcheck signal
+* HTTP code 503 if some remote services do not respond to the healthcheck signal
 
 If you don't use partition keys you can omit the key request parameter as it will default to the `'default'` value.
 

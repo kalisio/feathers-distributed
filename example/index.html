@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <title>feathers-distributed</title>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-  <script type="text/javascript" src="https://unpkg.com/feathers-client@2.4.0/dist/feathers.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/@feathersjs/client@^5.0.0-pre.22/dist/feathers.js"></script>
   <script type="text/javascript">
-    var socket = io('http://localhost:3030');
-    var client = feathers()
-      .configure(feathers.hooks())
+    var socket = io('http://localhost:3030', {
+      transports: ['websocket'],
+      path: ''
+    });
+    var client = feathers.default()
       .configure(feathers.socketio(socket))
       .configure(feathers.authentication({ storage: window.localStorage }));
     var todoService = client.service('todos');

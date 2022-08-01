@@ -1,6 +1,6 @@
-const assert = require('assert');
-const rp = require('request-promise');
-const app = require('../src/app');
+import assert from 'assert';
+import rp from 'request-promise';
+import app from '../src/app.js';
 
 describe('Feathers application tests', () => {
   before(function(done) {

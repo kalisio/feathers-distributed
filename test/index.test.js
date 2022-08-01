@@ -208,7 +208,7 @@ describe('feathers-distributed', () => {
     })
   }
 
-  it('is ES6 compatible', () => {
+  it('is ES module compatible', () => {
     expect(typeof finalize).to.equal('function')
     expect(typeof plugin).to.equal('function')
   })
@@ -347,7 +347,6 @@ describe('feathers-distributed', () => {
     // Jump to next user
     startId += 1
     socketClientServices[service2].once('created', user => {
-      console.log(user)
       expect(user.name === 'Donald Doe').beTrue()
       expect(user.id === startId).beTrue()
       done()
@@ -382,12 +381,12 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].remove(startId)
   })
 
-
   it.skip('dynamically register a custom service', async () => {
-    const customService = memory()
+    const customService = memory({
+      events: ['custom'],
+      distributedEvents: ['created', 'custom']
+    })
     // Ensure we can filter events and only send custom ones
-    customService.events = ['custom']
-    customService.distributedEvents = ['created', 'custom']
     apps[gateway].use('custom', customService)
     // Retrieve service with mixins
     customServices.push(apps[gateway].service('custom'))
@@ -412,28 +411,28 @@ describe('feathers-distributed', () => {
     let createdCount = 0
     let customCount = 0
     // Ensure we can filter events and only send custom ones
-    customServices[service1].on('created', user => {
+    customServices[service1].once('created', user => {
       expect(user.id === 0).beTrue()
       createdCount++
       if ((createdCount === 2) & (customCount === 2)) done()
     })
-    customServices[service2].on('updated', user => {
+    customServices[service2].once('updated', user => {
       expect(false).beTrue()
     })
-    customServices[service1].on('custom', data => {
+    customServices[service1].once('custom', data => {
       expect(data.payload === 'Donald Doe').beTrue()
       customCount++
       if ((createdCount === 2) & (customCount === 2)) done()
     })
-    socketClientCustomServices[service1].on('created', user => {
+    socketClientCustomServices[service1].once('created', user => {
       expect(user.id === 0).beTrue()
       createdCount++
       if ((createdCount === 2) & (customCount === 2)) done()
     })
-    socketClientCustomServices[service2].on('updated', user => {
+    socketClientCustomServices[service2].once('updated', user => {
       expect(false).beTrue()
     })
-    socketClientCustomServices[service1].on('custom', data => {
+    socketClientCustomServices[service1].once('custom', data => {
       expect(data.payload === 'Donald Doe').beTrue()
       customCount++
       if ((createdCount === 2) & (customCount === 2)) done()

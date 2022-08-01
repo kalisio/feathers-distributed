@@ -1,19 +1,18 @@
-const path = require('path');
-const favicon = require('serve-favicon');
-const compress = require('compression');
-const cors = require('cors');
-const helmet = require('helmet');
+import path from 'path';
+import favicon from 'serve-favicon';
+import compress from 'compression';
+import cors from 'cors';
+import helmet from 'helmet';
 
-const feathers = require('@feathersjs/feathers');
-const express = require('@feathersjs/express');
-const configuration = require('@feathersjs/configuration');
-const socketio = require('@feathersjs/socketio');
-const distribution = require('../lib');
-
-const middleware = require('./middleware');
-const services = require('./services');
-const appHooks = require('./app.hooks');
-const channels = require('./channels');
+import feathers from '@feathersjs/feathers';
+import express from '@feathersjs/express';
+import configuration from '@feathersjs/configuration';
+import socketio from '@feathersjs/socketio';
+import distribution from '../../../lib/index.js';
+import middleware from './middleware/index.js';
+import services from './services/index.js';
+import appHooks from './app.hooks.js';
+import channels from './channels.js';
 
 const app = express(feathers());
 
@@ -33,8 +32,9 @@ app.configure(express.rest());
 app.configure(socketio());
 // Don't consume any remote service in any cas we'd like to replicate
 app.configure(distribution({
-	// We don't consume services we only produce
-  remoteServices: (service) => false
+  // We don't consume services we only produce
+  remoteServices: (service) => false,
+  key: 'services'
 }));
 
 // Configure other middleware (see `middleware/index.js`)
@@ -51,4 +51,4 @@ app.configure(channels);
 
 app.hooks(appHooks);
 
-module.exports = app;
+export default app;

@@ -1,9 +1,9 @@
 // Initializes the `todos` service on path `/todos`
-const createService = require('feathers-nedb');
-const createModel = require('../../models/todos.model');
-const hooks = require('./todos.hooks');
+import createService from 'feathers-nedb';
+import createModel from '../../models/todos.model.js';
+import hooks from './todos.hooks.js';
 
-module.exports = function () {
+export default function () {
   const app = this;
   const Model = createModel(app);
   const paginate = app.get('paginate');

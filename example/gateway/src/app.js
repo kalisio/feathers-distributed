@@ -1,23 +1,25 @@
-const path = require('path');
-const favicon = require('serve-favicon');
-const compress = require('compression');
-const cors = require('cors');
-const helmet = require('helmet');
+import path from 'path';
+import favicon from 'serve-favicon';
+import compress from 'compression';
+import cors from 'cors';
+import helmet from 'helmet';
 
-const feathers = require('@feathersjs/feathers');
-const express = require('@feathersjs/express');
-const configuration = require('@feathersjs/configuration');
-const socketio = require('@feathersjs/socketio');
-const distribution = require('../lib');
+import feathers from '@feathersjs/feathers';
+import express from '@feathersjs/express';
+import configuration from '@feathersjs/configuration';
+import socketio from '@feathersjs/socketio';
+import authentication from '@feathersjs/authentication'
+import distribution from '../../../lib/index.js';
 
-const middleware = require('./middleware');
-const services = require('./services');
-const appHooks = require('./app.hooks');
-const channels = require('./channels');
+import middleware from './middleware/index.js';
+import services from './services/index.js';
+import appHooks from './app.hooks.js';
+import channels from './channels.js';
 
-const authentication = require('./authentication');
+import auth from './authentication.js';
 
-const { authenticate } = require('@feathersjs/authentication').hooks;
+const { authenticate } = authentication.hooks;
+
 const app = express(feathers());
 
 // Load app configuration
@@ -35,15 +37,16 @@ app.use('/', express.static(app.get('public')));
 app.configure(express.rest());
 app.configure(socketio());
 app.configure(distribution({
-	hooks: { before: { all: [authenticate('jwt')] } },
-	middlewares: { after: express.errorHandler() },
-	// We don't produce services we only consume
-    services: (service) => false
+  hooks: { before: { all: [authenticate('jwt')] } },
+  middlewares: { after: express.errorHandler() },
+  // We don't produce services we only consume
+  services: (service) => false,
+  timeout: 5000
 }));
 
 // Configure other middleware (see `middleware/index.js`)
 app.configure(middleware);
-app.configure(authentication);
+app.configure(auth);
 // Set up our services (see `services/index.js`)
 app.configure(services);
 // Set up channels
@@ -56,4 +59,4 @@ app.configure(channels);
 
 app.hooks(appHooks);
 
-module.exports = app;
+export default app;

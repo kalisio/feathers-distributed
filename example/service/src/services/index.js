@@ -1,5 +1,6 @@
-const todos = require('./todos/todos.service.js');
-module.exports = function () {
+import todos from './todos/todos.service.js';
+
+export default function () {
   const app = this; // eslint-disable-line no-unused-vars
   app.configure(todos);
   // Initialize default data
