@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.0.1](https://github.com/kalisio/feathers-distributed/tree/v2.0.1) (2022-08-01)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v2.0.0...v2.0.1)
+
+**Closed issues:**
+
+- Healthchecks do not have a timeout [\#100](https://github.com/kalisio/feathers-distributed/issues/100)
+
 ## [v2.0.0](https://github.com/kalisio/feathers-distributed/tree/v2.0.0) (2022-06-28)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v1.0.5...v2.0.0)
@@ -129,6 +137,7 @@
 **Fixed bugs:**
 
 - Custom service events are not propagated [\#38](https://github.com/kalisio/feathers-distributed/issues/38)
+- Remote services are lost after a restart [\#35](https://github.com/kalisio/feathers-distributed/issues/35)
 
 ## [v0.6.0](https://github.com/kalisio/feathers-distributed/tree/v0.6.0) (2019-10-21)
 
@@ -137,10 +146,6 @@
 **Implemented enhancements:**
 
 - Unecessary discovery layer [\#2](https://github.com/kalisio/feathers-distributed/issues/2)
-
-**Fixed bugs:**
-
-- Remote services are lost after a restart [\#35](https://github.com/kalisio/feathers-distributed/issues/35)
 
 ## [v0.5.2](https://github.com/kalisio/feathers-distributed/tree/v0.5.2) (2019-10-15)
 
