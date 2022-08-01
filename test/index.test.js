@@ -161,7 +161,7 @@ describe('feathers-distributed', () => {
         })
         promises.push(Promise.resolve(userService))
       } else if (i === noEvents) {
-        apps[noEvents].use('no-events', memory({ events: ['custom'] }))
+        apps[noEvents].use('no-events', memory(), { events: ['custom'] })
         promises.push(waitForService(apps[i], 'users'))
       } else {
         // For remote services we have to wait they are registered
@@ -381,13 +381,13 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].remove(startId)
   })
 
-  it.skip('dynamically register a custom service', async () => {
-    const customService = memory({
+  it('dynamically register a custom service', async () => {
+    const customService = memory()
+    // Ensure we can filter events and only send custom ones
+    apps[gateway].use('custom', customService, {
       events: ['custom'],
       distributedEvents: ['created', 'custom']
     })
-    // Ensure we can filter events and only send custom ones
-    apps[gateway].use('custom', customService)
     // Retrieve service with mixins
     customServices.push(apps[gateway].service('custom'))
     customServices.push(await waitForService(apps[service1], 'custom'))
@@ -407,35 +407,54 @@ describe('feathers-distributed', () => {
     // Let enough time to process
     .timeout(60000)
 
-  it.skip('dispatch custom events and ignore the ones not configured for distribution', (done) => {
+  it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
+    let updatedCount = 0
     let customCount = 0
+    const removeListeners = () => {
+      customServices[service1].removeAllListeners('created')
+      customServices[service2].removeAllListeners('updated')
+      customServices[service1].removeAllListeners('custom')
+      socketClientCustomServices[service1].removeAllListeners('created')
+      socketClientCustomServices[service2].removeAllListeners('updated')
+      socketClientCustomServices[service1].removeAllListeners('custom')
+    }
+    const checkIsDone = () => {
+      if ((createdCount === 2) && (updatedCount === 0) && (customCount === 2)) {
+        removeListeners()
+        done()
+      }
+    }
     // Ensure we can filter events and only send custom ones
     customServices[service1].once('created', user => {
       expect(user.id === 0).beTrue()
       createdCount++
-      if ((createdCount === 2) & (customCount === 2)) done()
+      checkIsDone()
     })
     customServices[service2].once('updated', user => {
+      // Should not occur so cleanup
+      removeListeners()
       expect(false).beTrue()
     })
     customServices[service1].once('custom', data => {
       expect(data.payload === 'Donald Doe').beTrue()
       customCount++
-      if ((createdCount === 2) & (customCount === 2)) done()
+      checkIsDone()
     })
     socketClientCustomServices[service1].once('created', user => {
       expect(user.id === 0).beTrue()
       createdCount++
-      if ((createdCount === 2) & (customCount === 2)) done()
+      checkIsDone()
     })
     socketClientCustomServices[service2].once('updated', user => {
+      // Should not occur so cleanup
+      removeListeners()
       expect(false).beTrue()
     })
     socketClientCustomServices[service1].once('custom', data => {
       expect(data.payload === 'Donald Doe').beTrue()
       customCount++
-      if ((createdCount === 2) & (customCount === 2)) done()
+      checkIsDone()
     })
     utils.promisify(setTimeout)(5000) // Wait until publisher/subscribers are ready
       .then(_ => customServices[gateway].create({ name: 'Donald Doe' }))
