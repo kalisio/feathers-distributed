@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.2](https://github.com/kalisio/feathers-distributed/tree/v2.0.2) (2022-09-01)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v2.0.1...v2.0.2)
+
 ## [v2.0.1](https://github.com/kalisio/feathers-distributed/tree/v2.0.1) (2022-08-01)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v2.0.0...v2.0.1)
@@ -56,7 +60,6 @@
 **Security fixes:**
 
 - \[Security\] Bump lodash.merge from 4.6.1 to 4.6.2 [\#63](https://github.com/kalisio/feathers-distributed/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
-- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 **Closed issues:**
 
@@ -104,6 +107,10 @@
 - Race condition on service discovery [\#49](https://github.com/kalisio/feathers-distributed/issues/49)
 - Port allocation seems to fail in a Docker Swarm without port binding [\#45](https://github.com/kalisio/feathers-distributed/issues/45)
 
+**Security fixes:**
+
+- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+
 **Closed issues:**
 
 - Publishing a new NPM version [\#52](https://github.com/kalisio/feathers-distributed/issues/52)
@@ -137,7 +144,6 @@
 **Fixed bugs:**
 
 - Custom service events are not propagated [\#38](https://github.com/kalisio/feathers-distributed/issues/38)
-- Remote services are lost after a restart [\#35](https://github.com/kalisio/feathers-distributed/issues/35)
 
 ## [v0.6.0](https://github.com/kalisio/feathers-distributed/tree/v0.6.0) (2019-10-21)
 
@@ -146,6 +152,10 @@
 **Implemented enhancements:**
 
 - Unecessary discovery layer [\#2](https://github.com/kalisio/feathers-distributed/issues/2)
+
+**Fixed bugs:**
+
+- Remote services are lost after a restart [\#35](https://github.com/kalisio/feathers-distributed/issues/35)
 
 ## [v0.5.2](https://github.com/kalisio/feathers-distributed/tree/v0.5.2) (2019-10-15)
 
