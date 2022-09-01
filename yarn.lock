@@ -63,14 +63,14 @@
   resolved "https://registry.npmjs.org/@feathers-plus/batch-loader/-/batch-loader-0.3.6.tgz"
   integrity sha512-r+n31iZ/B5Rl1mLkC9/S20UI445MdkZvE3VBmjupep2t8OuyTYHPkFEgR25HY6khH+RothK1VL3B5eumk9N2QQ==
 
-"@feathersjs/adapter-commons@^4.3.6":
-  version "4.5.12"
-  resolved "https://registry.npmjs.org/@feathersjs/adapter-commons/-/adapter-commons-4.5.12.tgz"
-  integrity sha512-5UTo3M0WARIAUSOWFrHuf668pVewuQyOBuZXvvOa76SKe6/n31HulKFlXI2+FmBascOhaJibVBsP7jfcoQ6HfQ==
+"@feathersjs/adapter-commons@^5.0.0-pre.28":
+  version "5.0.0-pre.28"
+  resolved "https://registry.yarnpkg.com/@feathersjs/adapter-commons/-/adapter-commons-5.0.0-pre.28.tgz#a75ecaac11e99ebe26365b4d8db80bb36c203905"
+  integrity sha512-ocOSQIGxmQs8Lrb2BNSCthlMDy96BoqeCl7WsYKWPiD8QHYcwvkzUA7wlyKP232YnL8WWYGAMvld9Kwfg5ZMlg==
   dependencies:
-    "@feathersjs/commons" "^4.5.12"
-    "@feathersjs/errors" "^4.5.12"
-    "@feathersjs/feathers" "^4.5.12"
+    "@feathersjs/commons" "^5.0.0-pre.28"
+    "@feathersjs/errors" "^5.0.0-pre.28"
+    "@feathersjs/feathers" "^5.0.0-pre.28"
 
 "@feathersjs/authentication-client@^5.0.0-pre.28":
   version "5.0.0-pre.28"
@@ -121,7 +121,7 @@
     "@feathersjs/rest-client" "^5.0.0-pre.28"
     "@feathersjs/socketio-client" "^5.0.0-pre.28"
 
-"@feathersjs/commons@^4.3.0", "@feathersjs/commons@^4.5.11", "@feathersjs/commons@^4.5.12":
+"@feathersjs/commons@^4.5.11", "@feathersjs/commons@^4.5.12":
   version "4.5.12"
   resolved "https://registry.npmjs.org/@feathersjs/commons/-/commons-4.5.12.tgz"
   integrity sha512-ss3yyk8HurmOCSD+wvENIrT9iSa8vg9SmikoP5c9JaLkbtMmKpH88jCjgRl7jiO54f2+UcjW3PqccNgUGSNSDQ==
@@ -131,7 +131,7 @@
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-5.0.0-pre.28.tgz#9feeab633ce9941c452051ea457eca90f252cb0a"
   integrity sha512-NDSBVK+N4HMrpYbaf51lrDl0MXktCQWioMUg7AG5sNrFM1BkPvTCGm2/W39ZYLA10ROIpHtV2kgcbffF5uKJ1w==
 
-"@feathersjs/errors@^4.3.4", "@feathersjs/errors@^4.5.11", "@feathersjs/errors@^4.5.12":
+"@feathersjs/errors@^4.5.11":
   version "4.5.12"
   resolved "https://registry.npmjs.org/@feathersjs/errors/-/errors-4.5.12.tgz"
   integrity sha512-xIQJ7t/acTuL1fTC6mpf0qlcWfJkA9x0rRMrSgjD3mzUnJU6VqxXFxusL8895ksGD0vQHwPueblbm8Hn6Ifqqw==
@@ -157,7 +157,7 @@
     "@types/express-serve-static-core" "^4.17.30"
     express "^4.18.1"
 
-"@feathersjs/feathers@^4.5.11", "@feathersjs/feathers@^4.5.12":
+"@feathersjs/feathers@^4.5.11":
   version "4.5.12"
   resolved "https://registry.npmjs.org/@feathersjs/feathers/-/feathers-4.5.12.tgz"
   integrity sha512-24bxpMpheBrDmVwwByNPPfXnXk2KkeiW3NvE3xXHbt7QzZj3OrPJ8WS5MqUZMPMFSLMyqlhRKs+hpQgfWhuxrA==
@@ -180,6 +180,16 @@
   version "0.7.5"
   resolved "https://registry.yarnpkg.com/@feathersjs/hooks/-/hooks-0.7.5.tgz#89907b480462b2fe524094db34cf0c2dab34ad3b"
   integrity sha512-xHbWPCJ5upr9eDdRSuJgWSKgCLN07YLvVjS7PdDqWrEz/iz5YBqoIQOzHhNPsWXOA6T7v+ArifrTUitG+ZzIRA==
+
+"@feathersjs/memory@^5.0.0-pre.28":
+  version "5.0.0-pre.28"
+  resolved "https://registry.yarnpkg.com/@feathersjs/memory/-/memory-5.0.0-pre.28.tgz#ba3d0a4f467c7e64ebcb3d8adaf01cf5d3ab1efd"
+  integrity sha512-FLvtvj9ue2N1sbB+pKCEBUWbPpIDeUNOB36bXza2qzzksHOq02rBowACFIeP5cYZgQw1FPfnTdsAlhn3Kuzzzw==
+  dependencies:
+    "@feathersjs/adapter-commons" "^5.0.0-pre.28"
+    "@feathersjs/commons" "^5.0.0-pre.28"
+    "@feathersjs/errors" "^5.0.0-pre.28"
+    sift "^16.0.0"
 
 "@feathersjs/rest-client@^5.0.0-pre.28":
   version "5.0.0-pre.28"
@@ -1602,16 +1612,6 @@ feathers-hooks-common@^5.0.6:
     lodash "^4.17.21"
     process "0.11.10"
     traverse "^0.6.6"
-
-feathers-memory@4.1.0:
-  version "4.1.0"
-  resolved "https://registry.npmjs.org/feathers-memory/-/feathers-memory-4.1.0.tgz"
-  integrity sha512-tR8DFqLsSk2w7tpSdHjA5RgPHTu3X5R3L3Kob2K+E3b/Q5cDkI6AYQarDQOiwekAyqxkkp/fm7Fg0qYdu4Ua6Q==
-  dependencies:
-    "@feathersjs/adapter-commons" "^4.3.6"
-    "@feathersjs/commons" "^4.3.0"
-    "@feathersjs/errors" "^4.3.4"
-    sift "^8.5.0"
 
 file-entry-cache@^6.0.0:
   version "6.0.1"
@@ -3278,10 +3278,10 @@ side-channel@^1.0.4:
     get-intrinsic "^1.0.2"
     object-inspect "^1.9.0"
 
-sift@^8.5.0:
-  version "8.5.1"
-  resolved "https://registry.npmjs.org/sift/-/sift-8.5.1.tgz"
-  integrity sha512-um2rEdXrc4YcRMzIliuip4i2o92mJONh5W1VD9vJlm1e0apVqMK4P2ZUijz8BIe1/oYLWmXwXaKFM+fOaO3Ysg==
+sift@^16.0.0:
+  version "16.0.0"
+  resolved "https://registry.yarnpkg.com/sift/-/sift-16.0.0.tgz#447991577db61f1a8fab727a8a98a6db57a23eb8"
+  integrity sha512-ILTjdP2Mv9V1kIxWMXeMTIRbOBrqKc4JAXmFMnFq3fKeyQ2Qwa3Dw1ubcye3vR+Y6ofA0b9gNDr/y2t6eUeIzQ==
 
 siginfo@^2.0.0:
   version "2.0.0"

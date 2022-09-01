@@ -11,7 +11,7 @@ import chai, { expect, util } from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
 import commonHooks from 'feathers-hooks-common'
-import memory from 'feathers-memory'
+import { memory } from '@feathersjs/memory'
 import io from 'socket.io-client'
 import plugin, { finalize } from '../lib/index.js'
 
