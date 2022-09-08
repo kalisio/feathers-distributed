@@ -157,9 +157,13 @@ app.configure(
 
 By default all [real-time events](https://docs.feathersjs.com/api/events.html) from local services are distributed to remote ones but you can customize the events to be dispatched by providing the list in the `distributedEvents` property of your service or disable all events publishing with the `publishEvents` boolean option.
 
+### Methods
+
+By default only [standard service methods](https://docs.feathersjs.com/api/services.html#service-methods) from local services are distributed to remote ones but you can customize the method calls to be dispatched by providing the list in the `distributedMethods` option. Then, any service declaring a custom method available in the list will dispatch the call.
+
 ### Partition keys
 
-By default the same [partition key](https://github.com/dashersw/cote#keys) is used for all distributed apps, so that there is no communication segregation. Sometimes it is better for security, maintenance or performance purpose to segregate services by following the principles of domain-driven design. In that case you can always define your own partition key for each application using the `key` string options (defaults to `'default'`). 
+By default the same [partition key](https://github.com/dashersw/cote#keys) is used for all distributed apps, so that there is no communication segregation. Sometimes it is better for security, maintenance or performance purpose to segregate services by following the principles of domain-driven design. In that case you can always define your own partition key for each application using the `key` string option (defaults to `'default'`). 
 
 A solid solution as suggested in [issue #70](https://github.com/kalisio/feathers-distributed/issues/70) is to use your package name because duplicated apps will then have the same key while different projects will not, and it will be persistent across restart:
 ```

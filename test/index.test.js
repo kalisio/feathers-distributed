@@ -57,6 +57,7 @@ describe('feathers-distributed', () => {
   const customServices = []
   const restClients = []
   const restClientServices = []
+  const restClientCustomServices = []
   const sockets = []
   const socketClients = []
   const socketClientServices = []
@@ -128,6 +129,7 @@ describe('feathers-distributed', () => {
         publicationDelay: 5000,
         publishEvents: (i !== noEvents),
         distributedEvents: ['created', 'updated', 'patched', 'removed', 'custom'],
+        distributedMethods: ['find', 'get', 'create', 'update', 'patch', 'remove', 'custom'],
         cote: { // Use cote defaults
           helloInterval: 2000,
           checkInterval: 4000,
@@ -182,14 +184,26 @@ describe('feathers-distributed', () => {
 
     for (let i = 0; i < nbApps; i++) {
       const url = 'http://localhost:' + (3030 + i)
+      const restClient = client.rest(url).superagent(request)
       restClients[i] = client()
-        .configure(client.rest(url).superagent(request))
+        .configure(restClient)
         .configure(auth())
+      // Need to register service with custom methods
+      restClients[i].registerCustomService = function (name, methods) {
+        restClients[i].use(name, restClient.service(name), { methods })
+        return restClients[i].service(name)
+      }
 
       sockets[i] = io(url)
+      const socketClient = client.socketio(sockets[i])
       socketClients[i] = client()
-          .configure(client.socketio(sockets[i]))
+          .configure(socketClient)
           .configure(auth())
+      // Need to register service with custom methods
+      socketClients[i].registerCustomService = function (name, methods) {
+        socketClients[i].use(name, socketClient.service(name), { methods })
+        return socketClients[i].service(name)
+      }
     }
 
     // Wait before all cote components have been discovered
@@ -382,11 +396,16 @@ describe('feathers-distributed', () => {
   })
 
   it('dynamically register a custom service', async () => {
-    const customService = memory()
+    let customService = memory()
+    // Add custom method
+    customService.custom = (data, params) => { return data.name }
+    const methods = ['create', 'update', 'custom']
     // Ensure we can filter events and only send custom ones
     apps[gateway].use('custom', customService, {
       events: ['custom'],
-      distributedEvents: ['created', 'custom']
+      methods,
+      distributedEvents: ['created', 'custom'],
+      distributedMethods: methods
     })
     // Retrieve service with mixins
     customServices.push(apps[gateway].service('custom'))
@@ -395,17 +414,48 @@ describe('feathers-distributed', () => {
     expect(customServices[gateway]).toExist()
     expect(customServices[service1]).toExist()
     expect(customServices[service2]).toExist()
-    socketClientCustomServices.push(socketClients[gateway].service('custom'))
-    socketClientCustomServices.push(socketClients[service1].service('custom'))
-    socketClientCustomServices.push(socketClients[service2].service('custom'))
+    expect(typeof customServices[gateway].custom).to.equal('function')
+    expect(typeof customServices[service1].custom).to.equal('function')
+    expect(typeof customServices[service2].custom).to.equal('function')
+    // Need to register service with custom methods
+    restClientCustomServices.push(restClients[gateway].registerCustomService('custom', methods))
+    restClientCustomServices.push(restClients[service1].registerCustomService('custom', methods))
+    restClientCustomServices.push(restClients[service2].registerCustomService('custom', methods))
+    expect(restClientCustomServices[gateway]).toExist()
+    expect(restClientCustomServices[service1]).toExist()
+    expect(restClientCustomServices[service2]).toExist()
+    expect(typeof restClientCustomServices[gateway].custom).to.equal('function')
+    expect(typeof restClientCustomServices[service1].custom).to.equal('function')
+    expect(typeof restClientCustomServices[service2].custom).to.equal('function')
+    socketClientCustomServices.push(socketClients[gateway].registerCustomService('custom', methods))
+    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom', methods))
+    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom', methods))
     expect(socketClientCustomServices[gateway]).toExist()
     expect(socketClientCustomServices[service1]).toExist()
     expect(socketClientCustomServices[service2]).toExist()
+    expect(typeof socketClientCustomServices[gateway].custom).to.equal('function')
+    expect(typeof socketClientCustomServices[service1].custom).to.equal('function')
+    expect(typeof socketClientCustomServices[service2].custom).to.equal('function')
     // Wait before all cote components have been discovered
     await utils.promisify(setTimeout)(30000)
   })
     // Let enough time to process
     .timeout(60000)
+
+  it('dispatch custom service calls from remote to local', async () => {
+    const name = await customServices[service1].custom({ name: 'Donald Doe' })
+    expect(name === 'Donald Doe').beTrue()
+  })
+
+  it('dispatch custom service calls from remote to local without auth', async () => {
+    const name = await restClientCustomServices[service1].custom({ name: 'Donald Doe' })
+    expect(name === 'Donald Doe').beTrue()
+  })
+
+  it('dispatch custom socket service calls from remote to local without auth', async () => {
+    const name = await socketClientCustomServices[service1].custom({ name: 'Donald Doe' })
+    expect(name === 'Donald Doe').beTrue()
+  })
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
