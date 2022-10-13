@@ -447,7 +447,7 @@ describe('feathers-distributed', () => {
     expect(name === 'Donald Doe').beTrue()
   })
 
-  it('dispatch custom service calls from remote to local without auth', async () => {
+  it('dispatch custom rest service calls from remote to local without auth', async () => {
     const name = await restClientCustomServices[service1].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
