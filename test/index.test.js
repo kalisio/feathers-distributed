@@ -124,6 +124,7 @@ describe('feathers-distributed', () => {
         services: (service) => service.path.endsWith('users') ||
                   service.path.endsWith('custom') ||
                   service.path.endsWith('no-events'),
+        remoteServicePath: (service) => (service.path.endsWith('custom') ? service.path.replace('custom', 'custom-name') : service.path),
         key: i.toString(),
         coteDelay: 5000,
         publicationDelay: 5000,
@@ -324,12 +325,10 @@ describe('feathers-distributed', () => {
     expect(users.length > 0).beTrue()
   })
 
-
   it('dispatch get socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-
 
   it('dispatch create socket service calls from remote to local without auth', async () => {
     // Jump to next user
@@ -338,24 +337,20 @@ describe('feathers-distributed', () => {
     expect(user.id === startId).beTrue()
   })
 
-
   it('dispatch update socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
-
 
   it('dispatch patch socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
 
-
   it('dispatch remove socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
-
 
   it('dispatch create socket service events from local to remote without auth', done => {
     // Jump to next user
@@ -368,7 +363,6 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].create({ name: 'Donald Doe' })
   })
 
-
   it('dispatch update socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('updated', user => {
       expect(user.name === 'Donald Dover').beTrue()
@@ -377,7 +371,6 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
   })
 
-
   it('dispatch patch socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('patched', user => {
       expect(user.name === 'Donald Doe').beTrue()
@@ -385,7 +378,6 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
   })
-
 
   it('dispatch remove socket service events from local to remote without auth', done => {
     socketClientServices[service2].once('removed', user => {
@@ -409,8 +401,8 @@ describe('feathers-distributed', () => {
     })
     // Retrieve service with mixins
     customServices.push(apps[gateway].service('custom'))
-    customServices.push(await waitForService(apps[service1], 'custom'))
-    customServices.push(await waitForService(apps[service2], 'custom'))
+    customServices.push(await waitForService(apps[service1], 'custom-name'))
+    customServices.push(await waitForService(apps[service2], 'custom-name'))
     expect(customServices[gateway]).toExist()
     expect(customServices[service1]).toExist()
     expect(customServices[service2]).toExist()
@@ -419,8 +411,8 @@ describe('feathers-distributed', () => {
     expect(typeof customServices[service2].custom).to.equal('function')
     // Need to register service with custom methods
     restClientCustomServices.push(restClients[gateway].registerCustomService('custom', methods))
-    restClientCustomServices.push(restClients[service1].registerCustomService('custom', methods))
-    restClientCustomServices.push(restClients[service2].registerCustomService('custom', methods))
+    restClientCustomServices.push(restClients[service1].registerCustomService('custom-name', methods))
+    restClientCustomServices.push(restClients[service2].registerCustomService('custom-name', methods))
     expect(restClientCustomServices[gateway]).toExist()
     expect(restClientCustomServices[service1]).toExist()
     expect(restClientCustomServices[service2]).toExist()
@@ -428,8 +420,8 @@ describe('feathers-distributed', () => {
     expect(typeof restClientCustomServices[service1].custom).to.equal('function')
     expect(typeof restClientCustomServices[service2].custom).to.equal('function')
     socketClientCustomServices.push(socketClients[gateway].registerCustomService('custom', methods))
-    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom', methods))
-    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom', methods))
+    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom-name', methods))
+    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom-name', methods))
     expect(socketClientCustomServices[gateway]).toExist()
     expect(socketClientCustomServices[service1]).toExist()
     expect(socketClientCustomServices[service2]).toExist()
