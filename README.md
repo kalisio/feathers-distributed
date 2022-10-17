@@ -114,6 +114,18 @@ app.configure(
 )
 ```
 
+By default remote services will be registered locally using the same path as in the remote application, you can use the `remoteServicePath` option to change the local path of consumed services to avoid conflict for instance:
+```javascript
+app.configure(
+  distribution({
+    // Function returning the local path for consumed services
+    // In this case we rename the remote service1 to avoid conflict with a local service1
+    // We keep the original path for others remote services
+    remoteServicePath: (service) => (service.path === 'service1' ? service.path.replace('service1', 'remote-service1') : service.path)
+  })
+)
+```
+
 You can add hooks to each registered remote service by using the `hooks` option, this is typically useful to enforce authentication on a [gateway scenario](https://github.com/kalisio/feathers-distributed#api-gateway):
 ```javascript
 app.configure(
