@@ -284,6 +284,8 @@ Our [tests](https://github.com/kalisio/feathers-distributed/blob/master/test/ind
 
 3) As the library also relies on cote components to publish/subscribe events, and **these components take some time to initialize**, there is also a publication delay (`publicationDelay` option in ms, defaults to 10s) that is respected before publishing app services once initialized.
 
+4) In order to make service discovery [more reliable](https://github.com/kalisio/feathers-distributed/issues/80) (but with a small overhead) you can publish services on a regular basis with the heartbeat interval (`heartbeatInterval` option in ms, defaults to none).
+
 ### Environment variables
 
 Some options can be directly provided as environment variables:
@@ -292,6 +294,7 @@ Some options can be directly provided as environment variables:
 * `HIGHEST_PORT` to select the ending port of the port range to be used by cote
 * `COTE_DELAY` (ms) to define the delay before initializing cote
 * `PUBLICATION_DELAY` (ms) to define the delay before publishing services
+* `HEARTBEAT_DELAY` (ms) to define the interval to publish services on a regular basis
 
 ### Cloud deployment
 
