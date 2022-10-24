@@ -294,7 +294,7 @@ Some options can be directly provided as environment variables:
 * `HIGHEST_PORT` to select the ending port of the port range to be used by cote
 * `COTE_DELAY` (ms) to define the delay before initializing cote
 * `PUBLICATION_DELAY` (ms) to define the delay before publishing services
-* `HEARTBEAT_DELAY` (ms) to define the interval to publish services on a regular basis
+* `HEARTBEAT_INTERVAL` (ms) to define the interval to publish services on a regular basis
 
 ### Cloud deployment
 
