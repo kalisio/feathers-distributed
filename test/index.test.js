@@ -79,7 +79,7 @@ describe('feathers-distributed', () => {
       entity: 'user',
       service: 'users',
       entityId: 'id',
-      authStrategies: [ 'jwt', 'local' ],
+      authStrategies: ['jwt', 'local'],
       local: {
         usernameField: 'email',
         passwordField: 'password'
@@ -102,7 +102,7 @@ describe('feathers-distributed', () => {
     app.configure(socketio())
     app.configure(express.rest())
     app.use('/authentication', authService)
-    
+
     return app
   }
 
@@ -113,7 +113,7 @@ describe('feathers-distributed', () => {
     afterHook = chai.spy(afterHook)
     serviceMiddleware = chai.spy(serviceMiddleware)
     appMiddleware = chai.spy(appMiddleware)
-    let promises = []
+    const promises = []
 
     for (let i = 0; i < nbApps; i++) {
       apps[i] = createApp(i)
@@ -173,7 +173,7 @@ describe('feathers-distributed', () => {
     }
 
     await Promise.all(promises)
-    
+
     for (let i = 0; i < nbApps; i++) {
       // See https://github.com/kalisio/feathers-distributed/issues/3
       // Now all services are registered setup handlers
@@ -198,8 +198,8 @@ describe('feathers-distributed', () => {
       sockets[i] = io(url)
       const socketClient = client.socketio(sockets[i])
       socketClients[i] = client()
-          .configure(socketClient)
-          .configure(auth())
+        .configure(socketClient)
+        .configure(auth())
       // Need to register service with custom methods
       socketClients[i].registerCustomService = function (name, methods) {
         socketClients[i].use(name, socketClient.service(name), { methods })
@@ -228,7 +228,6 @@ describe('feathers-distributed', () => {
     expect(typeof plugin).to.equal('function')
   })
 
-
   it('initiate the rest clients', () => {
     for (let i = 0; i < nbApps; i++) {
       expect(restClients[i]).toExist()
@@ -237,7 +236,6 @@ describe('feathers-distributed', () => {
     }
   })
 
-
   it('initiate the socket clients', () => {
     for (let i = 0; i < nbApps; i++) {
       expect(socketClients[i]).toExist()
@@ -245,7 +243,6 @@ describe('feathers-distributed', () => {
       expect(socketClientServices[i]).toExist()
     }
   })
-
 
   it('ensure healthcheck can been called on apps', async () => {
     // Service 1 & 2 should see the gateway 0
@@ -261,49 +258,41 @@ describe('feathers-distributed', () => {
     expect(response.body).to.deep.equal({ 'no-events': true })
   })
 
-
   it('ensure middleware can been called on app', async () => {
     const url = 'http://localhost:' + (3030 + gateway) + '/middleware'
     await request.get(url)
     expect(appMiddleware).to.have.been.called()
   })
 
-
   it('dispatch find rest service calls from remote to local without auth', async () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
-
 
   it('dispatch get rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
 
-
   it('dispatch create rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
-
 
   it('dispatch update rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
 
-
   it('dispatch patch rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
 
-
   it('dispatch remove rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
-
 
   it('ensure distribution hooks have been called on remote service', () => {
     expect(beforeHook).to.have.been.called()
@@ -388,7 +377,7 @@ describe('feathers-distributed', () => {
   })
 
   it('dynamically register a custom service', async () => {
-    let customService = memory()
+    const customService = memory()
     // Add custom method
     customService.custom = (data, params) => { return data.name }
     const methods = ['create', 'update', 'custom']
@@ -451,7 +440,7 @@ describe('feathers-distributed', () => {
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
-    let updatedCount = 0
+    const updatedCount = 0
     let customCount = 0
     const removeListeners = () => {
       customServices[service1].removeAllListeners('created')
@@ -624,12 +613,10 @@ describe('feathers-distributed', () => {
     expect(users.length > 0).beTrue()
   })
 
-
   it('dispatch get rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-
 
   it('dispatch create rest service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -638,18 +625,15 @@ describe('feathers-distributed', () => {
     expect(user.id === startId).beTrue()
   })
 
-
   it('dispatch update rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
 
-
   it('dispatch patch rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
-
 
   it('dispatch remove rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].remove(startId)
@@ -663,12 +647,10 @@ describe('feathers-distributed', () => {
     expect(users.length > 0).beTrue()
   })
 
-
   it('dispatch get socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
-
 
   it('dispatch create socket service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -677,24 +659,20 @@ describe('feathers-distributed', () => {
     expect(user.id === startId).beTrue()
   })
 
-
   it('dispatch update socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
-
 
   it('dispatch patch socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
 
-
   it('dispatch remove socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
-
 
   it('dispatch create socket service events from local to remote with auth', done => {
     // Jump to next user
@@ -706,7 +684,6 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].create({ name: 'Donald Doe' })
   })
 
-
   it('dispatch update socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('updated', user => {
       expect(user.name === 'Donald Dover').beTrue()
@@ -714,7 +691,6 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
   })
-
 
   it('dispatch patch socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('patched', user => {
@@ -724,7 +700,6 @@ describe('feathers-distributed', () => {
     socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
   })
 
-
   it('dispatch remove socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('removed', user => {
       expect(user.id === startId).beTrue()
@@ -732,7 +707,6 @@ describe('feathers-distributed', () => {
     })
     socketClientServices[gateway].remove(startId)
   })
-
 
   it('disable events publishing globally', () => {
     expect(apps[gateway].serviceEventsPublisher).toExist()
