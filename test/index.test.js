@@ -256,6 +256,13 @@ describe('feathers-distributed', () => {
     url = 'http://localhost:' + (3030 + gateway) + '/distribution/healthcheck/3'
     response = await request.get(url)
     expect(response.body).to.deep.equal({ 'no-events': true })
+    // Listing all gateway services should be the same
+    url = 'http://localhost:' + (3030 + gateway) + '/distribution/healthcheck/0'
+    response = await request.get(url)
+    expect(response.body).to.deep.equal({ 'no-events': true })
+    url = 'http://localhost:' + (3030 + gateway) + '/distribution/healthcheck'
+    response = await request.get(url)
+    expect(response.body).to.deep.equal({ 'no-events': true })
   })
 
   it('ensure middleware can been called on app', async () => {
