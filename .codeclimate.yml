@@ -1,5 +1,3 @@
-exclude_patterns:
-- "lib/"
 plugins:
   fixme:
     enabled: true
