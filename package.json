@@ -34,7 +34,7 @@
     "lint": "standard lib/**/*.js test/**/*.js --fix",
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --timeout 30000",
     "coverage": "c8 npm run mocha",
-    "test": "npm run coverage",
+    "test": "npm run lint && npm run coverage",
     "start:gateway": "cd example/gateway && npm install && npm start",
     "start:service": "cd example/service && npm install && npm start",
     "start": "npm-run-all --parallel start:**"
