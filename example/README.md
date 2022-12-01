@@ -25,6 +25,10 @@ npm start
 cd service
 npm/yarn install
 npm start
+// Launch another service
+cd service
+export PORT=3032
+npm start
 ```
 
 Open the *index.html* file in your browser, you should see a TODO from the service.

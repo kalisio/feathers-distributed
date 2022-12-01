@@ -35,8 +35,9 @@
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --timeout 30000",
     "coverage": "c8 npm run mocha",
     "test": "npm run coverage",
-    "start:gateway": "cd example/gateway && npm install && npm start",
-    "start:service": "cd example/service && npm install && npm start",
+    "start:gateway": "cd example/gateway && yarn install && cross-env PORT=3030 npm start",
+    "start:service1": "cd example/service && yarn install && cross-env PORT=3031 npm start",
+    "start:service2": "cd example/service && cross-env PORT=3032 npm start",
     "start": "npm-run-all --parallel start:**"
   },
   "standard": {

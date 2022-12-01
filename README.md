@@ -219,9 +219,10 @@ To launch the example:
 ```
 npm start
 ```
-Wait a couple of seconds so that each app is aware of other apps on the network. Open the *example/index.html* file in your browser, you should see a TODO coming from a microservice, exposed through a gateway.
 
-A more complex example is available based on a Docker compose file:
+This launches a gateway and two replicas of the microservice. Wait a couple of seconds so that each app is aware of other apps on the network, then open the *example/index.html* file in your browser. If you refresh it regularly, you should see a TODO coming from a different microservice in a random way (i.e. its ID should be different sometimes).
+
+The same example is available based on a Docker compose file:
 ```
 cd ./example
 // Start
@@ -230,7 +231,7 @@ docker-compose up -d
 docker-compose down -v
 ```
 
-This launches a gateway ( `gateway` Docker service) and two replicas of the microservice (`service1` and `service2` Docker services). If you open the *example/index.html* file in your browser, then refresh it regularly, you should see a TODO coming from a different microservice in a random way (i.e. its ID should be different sometimes).
+This launches a gateway ( `gateway` Docker service) and two replicas of the microservice (`service1` and `service2` Docker services). If you open the *example/index.html* file in your browser, then refresh it regularly, you should also see a TODO coming from a different microservice in a random way (i.e. its ID should be different sometimes).
 
 You can then try to kill one of the service replicas, e.g. `docker-compose stop service1`. Now if you refresh the page regularly you should always see the same TODO as the failed service should not be contacted anymore.
 
