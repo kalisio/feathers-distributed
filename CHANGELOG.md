@@ -1,5 +1,30 @@
 # Changelog
 
+## [v2.1.0](https://github.com/kalisio/feathers-distributed/tree/v2.1.0) (2022-12-01)
+
+[Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v2.0.2...v2.1.0)
+
+**Implemented enhancements:**
+
+- Add healthcheck endpoint aggregating healthcheck for all remote applications [\#109](https://github.com/kalisio/feathers-distributed/issues/109)
+- Support for Feathers 5 with koa middleware [\#108](https://github.com/kalisio/feathers-distributed/issues/108)
+- Allow to override remote service name [\#106](https://github.com/kalisio/feathers-distributed/issues/106)
+- Support custom service method call [\#99](https://github.com/kalisio/feathers-distributed/issues/99)
+- Make service discovery more reliable [\#80](https://github.com/kalisio/feathers-distributed/issues/80)
+- Plugin architecture to support multiple discovery/RPC libraries [\#15](https://github.com/kalisio/feathers-distributed/issues/15)
+- Allow the user service to be distributed [\#12](https://github.com/kalisio/feathers-distributed/issues/12)
+
+**Closed issues:**
+
+- Does HTTP belong? [\#104](https://github.com/kalisio/feathers-distributed/issues/104)
+
+**Merged pull requests:**
+
+- Bump glob-parent from 5.0.0 to 5.1.2 [\#103](https://github.com/kalisio/feathers-distributed/pull/103) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump ajv from 6.10.2 to 6.12.6 [\#102](https://github.com/kalisio/feathers-distributed/pull/102) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump socket.io-parser from 3.3.0 to 3.3.2 [\#101](https://github.com/kalisio/feathers-distributed/pull/101) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump shell-quote from 1.6.1 to 1.7.3 [\#98](https://github.com/kalisio/feathers-distributed/pull/98) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.0.2](https://github.com/kalisio/feathers-distributed/tree/v2.0.2) (2022-09-01)
 
 [Full Changelog](https://github.com/kalisio/feathers-distributed/compare/v2.0.1...v2.0.2)
@@ -60,6 +85,7 @@
 **Security fixes:**
 
 - \[Security\] Bump lodash.merge from 4.6.1 to 4.6.2 [\#63](https://github.com/kalisio/feathers-distributed/pull/63) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
+- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 **Closed issues:**
 
@@ -106,10 +132,6 @@
 
 - Race condition on service discovery [\#49](https://github.com/kalisio/feathers-distributed/issues/49)
 - Port allocation seems to fail in a Docker Swarm without port binding [\#45](https://github.com/kalisio/feathers-distributed/issues/45)
-
-**Security fixes:**
-
-- \[Security\] Bump fstream from 1.0.11 to 1.0.12 [\#58](https://github.com/kalisio/feathers-distributed/pull/58) ([dependabot-preview[bot]](https://github.com/apps/dependabot-preview))
 
 **Closed issues:**
 
