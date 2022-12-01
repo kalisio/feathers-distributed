@@ -8,7 +8,7 @@
 
 > Distribute your Feathers services as microservices
 
-The [`master`](https://github.com/kalisio/feathers-distributed) branch and >= 2.0.x version is expected to work with [Feathers v5](https://dove.docs.feathersjs.com/) (a.k.a. Dove).
+The [`master`](https://github.com/kalisio/feathers-distributed) branch version (`"@kalisio/feathers-distributed": "kalisio/feathers-distributed#master"`) is expected to work with [Feathers v5](https://dove.docs.feathersjs.com/) (a.k.a. Dove).
 
 The [`buzzard`](https://github.com/kalisio/feathers-distributed/tree/buzzard) branch and >= 0.3.x version is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard) and [Feathers v4](https://docs.feathersjs.com/) (a.k.a. Crow) **but will be soon deprecated**.
 
