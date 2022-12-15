@@ -27,9 +27,9 @@
   },
   "scripts": {
     "publish": "git push origin --tags && npm run changelog && git push origin",
-    "release:patch": "npm version patch && npm publish",
-    "release:minor": "npm version minor && npm publish",
-    "release:major": "npm version major && npm publish",
+    "release:patch": "npm version patch && npm publish --access public",
+    "release:minor": "npm version minor && npm publish --access public",
+    "release:major": "npm version major && npm publish --access public",
     "changelog": "github_changelog_generator -u kalisio -p feathers-distributed && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "lint": "standard lib/**/*.js test/**/*.js --fix",
     "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --timeout 30000",
