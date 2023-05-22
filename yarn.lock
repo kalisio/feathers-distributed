@@ -101,17 +101,6 @@
     long-timeout "^0.1.1"
     uuid "^9.0.0"
 
-"@feathersjs/client@^5.0.5":
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/@feathersjs/client/-/client-5.0.5.tgz#70b881b4a93ba63fc800fc5c6f98205b7648ef4d"
-  integrity sha512-6xFyHr/JAGqZylDnALj9JvglZ+3AuhfFxh80VbU8iLd1tw4Sti2iALrCULY3u9muJbuCZYcV+uLrHHGPLqpRLQ==
-  dependencies:
-    "@feathersjs/authentication-client" "^5.0.5"
-    "@feathersjs/errors" "^5.0.5"
-    "@feathersjs/feathers" "^5.0.5"
-    "@feathersjs/rest-client" "^5.0.5"
-    "@feathersjs/socketio-client" "^5.0.5"
-
 "@feathersjs/commons@^4.5.15":
   version "4.5.15"
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-4.5.15.tgz#2f9c2599fd93607206ee40ab0e5639b79c7781b8"

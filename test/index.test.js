@@ -1,7 +1,8 @@
 import { authenticate, AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
 import { LocalStrategy } from '@feathersjs/authentication-local'
 import auth from '@feathersjs/authentication-client'
-import client from '@feathersjs/client'
+import restClient from '@feathersjs/rest-client'
+import socketClient from '@feathersjs/socketio-client'
 import express from '@feathersjs/express'
 import feathers from '@feathersjs/feathers'
 import socketio from '@feathersjs/socketio'
@@ -185,27 +186,29 @@ describe('feathers-distributed', () => {
 
     for (let i = 0; i < nbApps; i++) {
       const url = 'http://localhost:' + (3030 + i)
-      const restClient = client.rest(url).superagent(request)
-      restClients.push(client()
-        .configure(restClient)
-        .configure(auth()))
-      
+      const restTransporter = restClient(url).superagent(request)
+      const rClient = feathers()
+        .configure(restTransporter)
+        .configure(auth())
+      restClients.push(rClient)
       // Need to register service with custom methods
-      restClients[i].registerCustomService = function (name, methods) {
-        this.use(name, restClient.service(name), { methods })
-        return this.service(name)
-      }.bind(restClients[i])
+      rClient.registerCustomService = function (name, methods) {
+        rClient.use(name, restTransporter.service(name), { methods })
+        return rClient.service(name)
+      }
 
-      sockets.push(io(url))
-      const socketClient = client.socketio(sockets[i])
-      socketClients.push(client()
-        .configure(socketClient)
-        .configure(auth()))
+      const socket = io(url)
+      sockets.push(socket)
+      const socketTransporter = socketClient(socket)
+      const sClient = feathers()
+        .configure(socketTransporter)
+        .configure(auth())
+      socketClients.push(sClient)
       // Need to register service with custom methods
-      socketClients[i].registerCustomService = function (name, methods) {
-        this.use(name, socketClient.service(name), { methods })
-        return this.service(name)
-      }.bind(socketClients[i])
+      sClient.registerCustomService = function (name, methods) {
+        sClient.use(name, socketTransporter.service(name), { methods })
+        return sClient.service(name)
+      }
     }
 
     // Wait before all cote components have been discovered
@@ -432,17 +435,23 @@ describe('feathers-distributed', () => {
     .timeout(60000)
 
   it('dispatch custom service calls from remote to local', async () => {
-    const name = await customServices[service1].custom({ name: 'Donald Doe' })
+    let name = await customServices[service1].custom({ name: 'Donald Doe' })
+    expect(name === 'Donald Doe').beTrue()
+    name = await customServices[service2].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
 
   it('dispatch custom rest service calls from remote to local without auth', async () => {
-    const name = await restClientCustomServices[service1].custom({ name: 'Donald Doe' })
+    let name = await restClientCustomServices[service1].custom({ name: 'Donald Doe' })
+    expect(name === 'Donald Doe').beTrue()
+    name = await restClientCustomServices[service2].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
 
   it('dispatch custom socket service calls from remote to local without auth', async () => {
-    const name = await socketClientCustomServices[service1].custom({ name: 'Donald Doe' })
+    let name = await socketClientCustomServices[service1].custom({ name: 'Donald Doe' })
+    expect(name === 'Donald Doe').beTrue()
+    name = await socketClientCustomServices[service2].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
 
