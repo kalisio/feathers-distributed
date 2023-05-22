@@ -55,7 +55,7 @@ function clone (obj) {
 describe('feathers-distributed', () => {
   const apps = []
   const servers = []
-  const customServices = []
+  let customServices = []
   const restClients = []
   const restClientServices = []
   const restClientCustomServices = []
@@ -400,9 +400,10 @@ describe('feathers-distributed', () => {
       distributedMethods: methods
     })
     // Retrieve service with mixins
-    customServices.push(apps[gateway].service('custom'))
-    customServices.push(await waitForService(apps[service1], 'custom-name'))
-    customServices.push(await waitForService(apps[service2], 'custom-name'))
+    customServices.push(Promise.resolve(apps[gateway].service('custom')))
+    customServices.push(waitForService(apps[service1], 'custom-name'))
+    customServices.push(waitForService(apps[service2], 'custom-name'))
+    customServices = await Promise.all(customServices)
     expect(customServices[gateway]).toExist()
     expect(customServices[service1]).toExist()
     expect(customServices[service2]).toExist()
@@ -429,7 +430,7 @@ describe('feathers-distributed', () => {
     expect(typeof socketClientCustomServices[service1].custom).to.equal('function')
     expect(typeof socketClientCustomServices[service2].custom).to.equal('function')
     // Wait before all cote components have been discovered
-    await utils.promisify(setTimeout)(30000)
+    await utils.promisify(setTimeout)(20000)
   })
     // Let enough time to process
     .timeout(60000)
