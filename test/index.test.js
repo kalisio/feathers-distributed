@@ -116,7 +116,7 @@ describe('feathers-distributed', () => {
     const promises = []
 
     for (let i = 0; i < nbApps; i++) {
-      apps[i] = createApp(i)
+      apps.push(createApp(i))
       apps[i].configure(plugin({
         hooks: { before: { all: beforeHook }, after: { all: afterHook } },
         middlewares: { after: express.errorHandler() },
@@ -179,32 +179,33 @@ describe('feathers-distributed', () => {
       // Now all services are registered setup handlers
       apps[i].use(express.notFound())
       apps[i].use(express.errorHandler())
-      servers[i] = await apps[i].listen(3030 + i)
+      servers.push(await apps[i].listen(3030 + i))
       promises.push(servers[i])
     }
 
     for (let i = 0; i < nbApps; i++) {
       const url = 'http://localhost:' + (3030 + i)
       const restClient = client.rest(url).superagent(request)
-      restClients[i] = client()
+      restClients.push(client()
         .configure(restClient)
-        .configure(auth())
+        .configure(auth()))
+      
       // Need to register service with custom methods
       restClients[i].registerCustomService = function (name, methods) {
-        restClients[i].use(name, restClient.service(name), { methods })
-        return restClients[i].service(name)
-      }
+        this.use(name, restClient.service(name), { methods })
+        return this.service(name)
+      }.bind(restClients[i])
 
-      sockets[i] = io(url)
+      sockets.push(io(url))
       const socketClient = client.socketio(sockets[i])
-      socketClients[i] = client()
+      socketClients.push(client()
         .configure(socketClient)
-        .configure(auth())
+        .configure(auth()))
       // Need to register service with custom methods
       socketClients[i].registerCustomService = function (name, methods) {
-        socketClients[i].use(name, socketClient.service(name), { methods })
-        return socketClients[i].service(name)
-      }
+        this.use(name, socketClient.service(name), { methods })
+        return this.service(name)
+      }.bind(socketClients[i])
     }
 
     // Wait before all cote components have been discovered
