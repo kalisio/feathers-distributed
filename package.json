@@ -26,13 +26,12 @@
     "node": ">= 16.0.0"
   },
   "scripts": {
-    "publish": "git push origin --tags && npm run changelog && git push origin",
-    "release:patch": "npm version patch && npm publish --access public",
-    "release:minor": "npm version minor && npm publish --access public",
-    "release:major": "npm version major && npm publish --access public",
-    "changelog": "github_changelog_generator -u kalisio -p feathers-distributed && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
+    "publish": "git push origin --tags && git push origin",
+    "release:patch": "npm version --force patch && npm publish --access public",
+    "release:minor": "npm version --force minor && npm publish --access public",
+    "release:major": "npm version --force major && npm publish --access public",
     "lint": "standard lib/**/*.js test/**/*.js --fix",
-    "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --timeout 30000",
+    "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --inspect-brk --exit --timeout 30000",
     "coverage": "c8 npm run mocha",
     "test": "npm run lint && npm run coverage",
     "start:gateway": "cd example/gateway && yarn install && cross-env PORT=3030 npm start",

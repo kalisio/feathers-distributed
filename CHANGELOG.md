@@ -1,3 +1,5 @@
+Please refer to GitHub issues for changelog starting from v2.2: https://github.com/kalisio/feathers-distributed/issues.
+
 # Changelog
 
 ## [v2.1.0](https://github.com/kalisio/feathers-distributed/tree/v2.1.0) (2022-12-01)
