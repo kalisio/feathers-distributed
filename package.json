@@ -31,7 +31,7 @@
     "release:minor": "npm version --force minor && npm publish --access public",
     "release:major": "npm version --force major && npm publish --access public",
     "lint": "standard lib/**/*.js test/**/*.js --fix",
-    "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --inspect-brk --exit --timeout 30000",
+    "mocha": "cross-env NODE_CONFIG_DIR=./test/config/ mocha --exit --timeout 30000",
     "coverage": "c8 npm run mocha",
     "test": "npm run lint && npm run coverage",
     "start:gateway": "cd example/gateway && yarn install && cross-env PORT=3030 npm start",
