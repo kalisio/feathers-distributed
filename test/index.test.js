@@ -8,7 +8,7 @@ import feathers from '@feathersjs/feathers'
 import socketio from '@feathersjs/socketio'
 import request from 'superagent'
 import utils from 'util'
-import chai, { expect, util } from 'chai'
+import chai, { expect, util, assert } from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
 import * as commonHooks from 'feathers-hooks-common'
@@ -219,9 +219,28 @@ describe('feathers-distributed', () => {
     return new Promise((resolve, reject) => {
       app.on('service', data => {
         if (data.path === path) {
-          const service = app.service(path)
-          expect(service).toExist()
-          resolve(service)
+          try {
+            const service = app.service(path)
+            expect(service).toExist()
+            resolve(service)
+          } catch {
+            reject(new Error(`Service on ${path} does not exist`))
+          }
+        }
+      })
+    })
+  }
+
+  function waitForServiceRemoval (app, path) {
+    return new Promise((resolve, reject) => {
+      app.on('service-removed', data => {
+        if (data.path === path) {
+          try {
+            app.service(path)
+            reject(new Error(`Service on ${path} do exists`))
+          } catch {
+            resolve()
+          }
         }
       })
     })
@@ -399,7 +418,7 @@ describe('feathers-distributed', () => {
       distributedEvents: ['created', 'custom'],
       distributedMethods: methods
     })
-    // Retrieve service with mixins
+    // Retrieve service with
     customServices.push(Promise.resolve(apps[gateway].service('custom')))
     customServices.push(waitForService(apps[service1], 'custom-name'))
     customServices.push(waitForService(apps[service2], 'custom-name'))
@@ -730,6 +749,19 @@ describe('feathers-distributed', () => {
     expect(apps[gateway].serviceEventsPublisher).toExist()
     expect(apps[service2].serviceEventsPublisher).toExist()
     expect(apps[noEvents].serviceEventsPublisher).beUndefined()
+  })
+
+  it('dynamically unregister a custom service', async () => {
+    apps[gateway].unuse('custom')
+    // Check service removal
+    try {
+      apps[gateway].service('custom')
+      assert.fail()
+    } catch {}
+    await Promise.all([
+      waitForServiceRemoval(apps[service1], 'custom-name'),
+      waitForServiceRemoval(apps[service2], 'custom-name')
+    ])
   })
 
   // Cleanup
