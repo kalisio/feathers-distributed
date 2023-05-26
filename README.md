@@ -74,15 +74,21 @@ When the plugin initializes the following is done for your local app:
 * creates a local [responder](https://github.com/dashersw/cote#creating-a-responder) to handle *incoming requests from other apps* to locally registered services.
 * creates a local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch locally registered services events to *remote apps*.
 
-What is done by overriding `app.use` is the following: 
-* each *local* Feathers service of your app is published using the local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to remote apps.
+What is done by overriding `app.use` is the following:
+* each *local* Feathers service of your app is published using the local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to remote apps through the `service` event.
 
 What is done when your app is aware of a new remotely registered app is the following: 
 * creates a local [requester](https://github.com/dashersw/cote#creating-a-requester) to send requests to the remote [responder](https://github.com/dashersw/cote#creating-a-responder) for remote services operations.
 * creates a local [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service events sent by the remote events [publisher](https://github.com/dashersw/cote#creating-a-publisher) for remote services.
 
 What is done when your app is aware of a new remotely registered service is the following: 
-* creates a local Feathers service *acting as a proxy* to the remote one by using the local [requester](https://github.com/dashersw/cote#creating-a-requester).
+* creates via `app.use` a local Feathers service *acting as a proxy* to the remote one by using the local [requester](https://github.com/dashersw/cote#creating-a-requester).
+
+What is done by overriding `app.unuse` is the following: 
+* each *local* Feathers service removed from your app is unpublished using the local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to remote apps through the `service-removed` event.
+
+What is done when your app is aware of a remotely unregistered service is the following: 
+* removes via `app.unuse` the local Feathers service *acting as a proxy* to the remote one.
 
 ## Configuration options
 
