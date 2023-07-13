@@ -41,9 +41,11 @@ function channels (app) {
     return
   }
   app.on('connection', connection => {
+    //console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' connects client ', connection)
     app.channel('all').join(connection)
   })
   app.publish((data, context) => {
+    //console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' publishes ', data)
     return app.channel('all')
   })
 }
@@ -374,7 +376,7 @@ describe('feathers-distributed', () => {
   it('dispatch create socket service events from local to remote without auth', done => {
     // Jump to next user
     startId += 1
-    socketClientServices[service2].once('created', user => {
+    socketClientServices[service1].once('created', user => {
       expect(user.name === 'Donald Doe').beTrue()
       expect(user.id === startId).beTrue()
       done()
@@ -391,7 +393,15 @@ describe('feathers-distributed', () => {
   })
 
   it('dispatch patch socket service events from local to remote without auth', done => {
-    socketClientServices[service2].once('patched', user => {
+    socketClientServices[service1].once('patched', user => {
+      expect(user.name === 'Donald Doe').beTrue()
+      done()
+    })
+    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
+  })
+
+  it('dispatch patch socket service events from local to local without auth', done => {
+    socketClientServices[gateway].once('patched', user => {
       expect(user.name === 'Donald Doe').beTrue()
       done()
     })
@@ -731,6 +741,14 @@ describe('feathers-distributed', () => {
 
   it('dispatch patch socket service events from local to remote with auth', done => {
     socketClientServices[service2].once('patched', user => {
+      expect(user.name === 'Donald Doe').beTrue()
+      done()
+    })
+    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
+  })
+
+  it('dispatch patch socket service events from local to local with auth', done => {
+    socketClientServices[gateway].once('patched', user => {
       expect(user.name === 'Donald Doe').beTrue()
       done()
     })
