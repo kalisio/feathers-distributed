@@ -41,11 +41,11 @@ function channels (app) {
     return
   }
   app.on('connection', connection => {
-    //console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' connects client ', connection)
+    // console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' connects client ', connection)
     app.channel('all').join(connection)
   })
   app.publish((data, context) => {
-    //console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' publishes ', data)
+    // console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' publishes ', data)
     return app.channel('all')
   })
 }
