@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/feathers-distributed",
   "description": "Distribute your Feathers services as microservices",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "homepage": "https://github.com/kalisio/feathers-distributed",
   "main": "lib/index.js",
   "type": "module",
