@@ -132,6 +132,20 @@ app.configure(
 )
 ```
 
+By default options used to create a service will not be associated to the corresponding remote service, as it might contain references to complex objects not serializable "as is". However, you can use the `remoteServiceOptions` option to define a list of options to be serialized and provided to the remote service when created. These options will then be available in the `remoteService.remoteOptions` object:
+```javascript
+app.configure(
+  distribution({
+    // Function returning the array of distributed options for the service
+    remoteServiceOptions: (service) => (service.path === 'service1' ? ['option1', 'option2'] : null)
+  })
+)
+app.use('service1', new MyService({ option1: 'xxx', option2: 'yyy' }))
+// In remote app
+if (app.service('service1').remoteOptions.option1 === 'xxx') ...
+```
+
+
 You can add hooks to each registered remote service by using the `hooks` option, this is typically useful to enforce authentication on a [gateway scenario](https://github.com/kalisio/feathers-distributed#api-gateway):
 ```javascript
 app.configure(

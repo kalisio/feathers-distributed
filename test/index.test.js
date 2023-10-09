@@ -128,6 +128,7 @@ describe('feathers-distributed', () => {
                   service.path.endsWith('custom') ||
                   service.path.endsWith('no-events'),
         remoteServicePath: (service) => (service.path.endsWith('custom') ? service.path.replace('custom', 'custom-name') : service.path),
+        remoteServiceOptions: (service) => service.path.endsWith('users') ? ['startId'] : null, // Distribute a memory service option
         key: i.toString(),
         coteDelay: 5000,
         publicationDelay: 5000,
@@ -221,13 +222,19 @@ describe('feathers-distributed', () => {
     return new Promise((resolve, reject) => {
       app.on('service', data => {
         if (data.path === path) {
+          let service
           try {
-            const service = app.service(path)
-            expect(service).toExist()
-            resolve(service)
+            service = app.service(path)
           } catch {
             reject(new Error(`Service on ${path} does not exist`))
+            return
           }
+          expect(service).toExist()
+          if (path === 'users') {
+            expect(service.remoteOptions).toExist()
+            expect(service.remoteOptions.startId).toExist()
+          }
+          resolve(service)
         }
       })
     })
