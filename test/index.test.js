@@ -12,9 +12,14 @@ import chai, { expect, util, assert } from 'chai'
 import chailint from 'chai-lint'
 import spies from 'chai-spies'
 import * as commonHooks from 'feathers-hooks-common'
-import { memory } from '@feathersjs/memory'
+import { MemoryService } from '@feathersjs/memory'
 import io from 'socket.io-client'
 import plugin, { finalize } from '../lib/index.js'
+
+class CustomMemoryService extends MemoryService {
+  // Add custom method
+  custom (data, params) { return data.name }
+}
 
 let startId = 6
 const store = {
@@ -149,7 +154,7 @@ describe('feathers-distributed', () => {
       // Only the first (gateway) & noEvents apps have local services
       if (i === gateway) {
         apps[gateway].use('/middleware', appMiddleware)
-        apps[gateway].use('users', serviceMiddleware, memory({ store: clone(store), startId }))
+        apps[gateway].use('users', serviceMiddleware, new CustomMemoryService({ store: clone(store), startId }))
         const userService = apps[gateway].service('users')
         expect(userService).toExist()
         userService.hooks({
@@ -168,7 +173,7 @@ describe('feathers-distributed', () => {
         })
         promises.push(Promise.resolve(userService))
       } else if (i === noEvents) {
-        apps[noEvents].use('no-events', memory(), { events: ['custom'] })
+        apps[noEvents].use('no-events', new CustomMemoryService(), { events: ['custom'] })
         promises.push(waitForService(apps[i], 'users'))
       } else {
         // For remote services we have to wait they are registered
@@ -424,9 +429,7 @@ describe('feathers-distributed', () => {
   })
 
   it('dynamically register a custom service', async () => {
-    const customService = memory()
-    // Add custom method
-    customService.custom = (data, params) => { return data.name }
+    const customService = new CustomMemoryService()
     const methods = ['create', 'update', 'custom']
     // Ensure we can filter events and only send custom ones
     apps[gateway].use('custom', customService, {
