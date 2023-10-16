@@ -7,13 +7,14 @@ notifications:
   email: false
   slack:
     rooms:
-    - secure: YCzvRkpxOXT9SsjK4T+TJTevmFPhsuNw6kADDBdIaria0gQHADhRhjYRr3DaNyTX9liYmVms8SAzq9iqMHlpcTIK139TnAyaGs44HGLxui04HMJBWnq4fDdjy4LsvVWA3QwI2U/V2HiMKQjWewnuNFoxOnj/lwG+tPLKLVGrH9NXLIq6EjTOkzs6Ujj/jzy7jPWyUAw4KdmIV17ACF0/+VP+gcl1xMZSesKj/66E10QPcC2UYIiJZWvpvrV5y94QhPKfOTQajItJF0SIthoG7X8FIy8BWV3Bq1/2kaAGMK/aPc79x16EtTap6p5F9/ORPdMQYedH0E/0RBCtiSEd69mSda9Y216+B+E3Dbf/iWsDdXWXJ+YwkxRqQUV8t8n8ign4kyrWNKatv3vlPkQV+x7NVXMAHagAw76D2UxEhxX8SUXWTshtMvRavmxTYFROvpVgP5fA4Nv8XpmWJsmA8UfqXt+ELZyaU6erTJ/P4mQCCdV4rvMuOmsyEwfwSePqzwcSYTSasM/XhMltAfOSLVcYfW85Cu+Hk5hZM67tojBwsU/xFVzsN4kDXIcY0ZCuZPVNe0rm62UcNyfujOg2SdH/LseY/c8vixaihHaOfIvdd3LFdND+6c/ejtEDF6rsL0CgVAollMZxSnoXubzCFPg0vFe/dcTwtI5VSKqbwjI=
+      secure: B0qDjjpIzUQ20iCqFlwusDKgxm4Qa3RjHCofBUfVeVeF/+NXqGBM1/2RxzmWp++1Y0GqTjh7EyUKjNW+98NYLENJn6ZwBVonD+IKKRLSarBH66vVhh6m8XFK+nSa8iNP/vVCUEPVWI8tRoFa3SKMTMxyNl+V/agFcR21SkzZ5twnOgnqxUZp9Aswp9s2POtblfdlWMc/eIvcq6y7gi2j6piGNWplVXjvF/wDgisAQMO1M4OzP7rgUlxl2/iptGvKbd0O1pa6vDqwxZN8hfldcINQI1mMbPEC+miVcRfaZfepIKMtqVE3Gn8A4Z8DJA6jImI0JaK/Y1ArWBLuuNCjoghB8GstMhbAbKoTRpetedzveYKxlsbDlo0fjIMSxF1gBsT3EwFQ7Qd+sxTWiUeZLWQ10nm1g4U7MZSCkzzEp8k7hczNQWAhWDk7kk2rNXAPdjT+/I29RDl4NqoNsqZuBiNe0G5oWHfMfn5GAHJg4dwgOuwL0hpoaDrdpDuiisjcuym4dkcJuJ3HM/SijuT72tI9jkjW9rAJs7fjAdAQgCR/T4RgSzAlV0LBXaKH+8K+OIXJLhwoqK/S1wCqpbWh2si6jfitWCRPk7GNIc277u+VOQ3vye6IufL5J5GyQKfkAOrw5pcOzm5L0B9NCKHmWkZCCaoKOttaI/1eamZHyRU=
     on_success: always
     on_failure: always
 env:
-- CC_TEST_REPORTER_ID=5184ae1a70a543a19bee9c16ed4b55a7e6afa687c49d0cbcb78994334eddf11a    
+- CC_TEST_REPORTER_ID=5184ae1a70a543a19bee9c16ed4b55a7e6afa687c49d0cbcb78994334eddf11a
 before-script:
-- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+- curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+  > ./cc-test-reporter
 - chmod +x ./cc-test-reporter
 - "./cc-test-reporter before-build"
 script:
