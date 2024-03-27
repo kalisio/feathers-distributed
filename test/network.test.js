@@ -1,14 +1,9 @@
 import express from '@feathersjs/express'
-import feathers from '@feathersjs/feathers'
-import request from 'superagent'
 import utils from 'util'
 import chai, { expect, util, assert } from 'chai'
 import chailint from 'chai-lint'
-import spies from 'chai-spies'
-import * as commonHooks from 'feathers-hooks-common'
 import { MemoryService } from '@feathersjs/memory'
-import io from 'socket.io-client'
-import { createApp, waitForService, waitForServiceRemoval, clone } from './utils.js'
+import { createApp, waitForService, clone } from './utils.js'
 import plugin, { finalize } from '../lib/index.js'
 
 const startId = 2
@@ -93,10 +88,10 @@ describe('feathers-distributed:network', () => {
     // Wait before cote component has been flagged as unreachable
     await utils.promisify(setTimeout)(6000)
     try {
-      const messages = await apps[0].service('messages').find({})
+      await apps[0].service('messages').find({})
       assert.fail('accessing messages service should raise an error')
     } catch (error) {
-      expect(error.message).to.equal(`Can not find service 'messages'`)
+      expect(error.message).to.equal('Can not find service \'messages\'')
     }
   })
 
