@@ -1,10 +1,12 @@
-FROM  node:12-buster
+FROM  node:16-bullseye
 
 MAINTAINER Luc Claustres <luc.claustres@kalisio.xyz>
 
-WORKDIR /opt/app
-COPY . /opt/app
+COPY . /opt/feathers-distributed
 
+WORKDIR /opt/feathers-distributed
+RUN yarn install
+WORKDIR /opt/feathers-distributed/example/gateway
 RUN yarn install
 
 EXPOSE 3030

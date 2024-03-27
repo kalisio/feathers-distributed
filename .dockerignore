@@ -15,8 +15,6 @@ yarn-error.log*
 node_modules
 
 # Project
-example
 coverage
-lib
-src
+
 

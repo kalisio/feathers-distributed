@@ -244,7 +244,6 @@ This launches a gateway and two replicas of the microservice. Wait a couple of s
 
 The same example is available based on a Docker compose file:
 ```
-cd ./example
 // Start
 docker-compose up -d
 // Stop when you've finished

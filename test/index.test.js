@@ -1,11 +1,9 @@
-import { authenticate, AuthenticationService, JWTStrategy } from '@feathersjs/authentication'
-import { LocalStrategy } from '@feathersjs/authentication-local'
+import { authenticate } from '@feathersjs/authentication'
 import auth from '@feathersjs/authentication-client'
 import restClient from '@feathersjs/rest-client'
 import socketClient from '@feathersjs/socketio-client'
 import express from '@feathersjs/express'
 import feathers from '@feathersjs/feathers'
-import socketio from '@feathersjs/socketio'
 import request from 'superagent'
 import utils from 'util'
 import chai, { expect, util, assert } from 'chai'
@@ -14,6 +12,7 @@ import spies from 'chai-spies'
 import * as commonHooks from 'feathers-hooks-common'
 import { MemoryService } from '@feathersjs/memory'
 import io from 'socket.io-client'
+import { createApp, waitForService, waitForServiceRemoval, channels, clone } from './utils.js'
 import plugin, { finalize } from '../lib/index.js'
 
 class CustomMemoryService extends MemoryService {
@@ -41,25 +40,7 @@ let serviceMiddleware = (req, res, next) => next()
 let appMiddleware = (req, res, next) => res.json({})
 let hookFromRemote
 
-function channels (app) {
-  if (typeof app.channel !== 'function') {
-    return
-  }
-  app.on('connection', connection => {
-    // console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' connects client ', connection)
-    app.channel('all').join(connection)
-  })
-  app.publish((data, context) => {
-    // console.log('App ' + app.uuid + ' with key ' + app.distributionKey + ' publishes ', data)
-    return app.channel('all')
-  })
-}
-
-function clone (obj) {
-  return JSON.parse(JSON.stringify(obj))
-}
-
-describe('feathers-distributed', () => {
+describe('feathers-distributed:main', () => {
   const apps = []
   const servers = []
   let customServices = []
@@ -78,42 +59,6 @@ describe('feathers-distributed', () => {
   const service2 = 2
   const noEvents = 3
 
-  function createApp (index) {
-    const app = express(feathers())
-    const authService = new AuthenticationService(app)
-
-    app.set('authentication', {
-      secret: '1234',
-      entity: 'user',
-      service: 'users',
-      entityId: 'id',
-      authStrategies: ['jwt', 'local'],
-      local: {
-        usernameField: 'email',
-        passwordField: 'password'
-      },
-      jwtOptions: {
-        header: { typ: 'access' },
-        audience: 'https://yourdomain.com',
-        issuer: 'feathers',
-        algorithm: 'HS256',
-        expiresIn: '1d'
-      }
-    })
-    authService.register('jwt', new JWTStrategy())
-
-    if (index === gateway) {
-      authService.register('local', new LocalStrategy())
-    }
-
-    app.use(express.json())
-    app.configure(socketio())
-    app.configure(express.rest())
-    app.use('/authentication', authService)
-
-    return app
-  }
-
   before(async () => {
     chailint(chai, util)
     chai.use(spies)
@@ -124,7 +69,7 @@ describe('feathers-distributed', () => {
     const promises = []
 
     for (let i = 0; i < nbApps; i++) {
-      apps.push(createApp(i))
+      apps.push(createApp(i, { authentication: (i === gateway ? ['jwt', 'local'] : ['jwt']) }))
       apps[i].configure(plugin({
         hooks: { before: { all: beforeHook }, after: { all: afterHook } },
         middlewares: { after: express.errorHandler() },
@@ -189,7 +134,6 @@ describe('feathers-distributed', () => {
       apps[i].use(express.notFound())
       apps[i].use(express.errorHandler())
       servers.push(await apps[i].listen(3030 + i))
-      promises.push(servers[i])
     }
 
     for (let i = 0; i < nbApps; i++) {
@@ -222,43 +166,6 @@ describe('feathers-distributed', () => {
     // Wait before all cote components have been discovered
     await utils.promisify(setTimeout)(10000)
   })
-
-  function waitForService (app, path) {
-    return new Promise((resolve, reject) => {
-      app.on('service', data => {
-        if (data.path === path) {
-          let service
-          try {
-            service = app.service(path)
-          } catch {
-            reject(new Error(`Service on ${path} does not exist`))
-            return
-          }
-          expect(service).toExist()
-          if (path === 'users') {
-            expect(service.remoteOptions).toExist()
-            expect(service.remoteOptions.startId).toExist()
-          }
-          resolve(service)
-        }
-      })
-    })
-  }
-
-  function waitForServiceRemoval (app, path) {
-    return new Promise((resolve, reject) => {
-      app.on('service-removed', data => {
-        if (data.path === path) {
-          try {
-            app.service(path)
-            reject(new Error(`Service on ${path} do exists`))
-          } catch {
-            resolve()
-          }
-        }
-      })
-    })
-  }
 
   it('is ES module compatible', () => {
     expect(typeof finalize).to.equal('function')

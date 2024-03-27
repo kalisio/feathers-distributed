@@ -1,8 +1,10 @@
-version: '2'
+version: '3'
 
 services:
   gateway:
-    build: ./gateway
+    build:
+      context: .
+      dockerfile: ./example/gateway/dockerfile
     container_name: gateway
     image: feathers/gateway
     ports:
@@ -10,7 +12,9 @@ services:
     networks:
       - feathers
   service1:
-    build: ./service
+    build:
+      context: .
+      dockerfile: ./example/service/dockerfile
     container_name: service1
     image: feathers/service1
     ports:
@@ -18,7 +22,9 @@ services:
     networks:
       - feathers
   service2:
-    build: ./service
+    build:
+      context: .
+      dockerfile: ./example/service/dockerfile
     container_name: service2
     image: feathers/service2
     ports:
