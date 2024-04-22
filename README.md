@@ -1,7 +1,7 @@
 # feathers-distributed
 
 [![Latest Release](https://img.shields.io/github/v/tag/kalisio/feathers-distributed?sort=semver&label=latest)](https://github.com/kalisio/feathers-distributed/releases)
-[![Main CI](https://github.com/kalisio/feathers-distributed/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/feathers-distributed/actions/workflows/main.yaml)
+[![ci](https://github.com/kalisio/feathers-distributed/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/feathers-distributed/actions/workflows/main.yaml)
 [![Code Climate](https://codeclimate.com/github/kalisio/feathers-distributed/badges/gpa.svg)](https://codeclimate.com/github/kalisio/feathers-distributed)
 [![Test Coverage](https://codeclimate.com/github/kalisio/feathers-distributed/badges/coverage.svg)](https://codeclimate.com/github/kalisio/feathers-distributed/coverage)
 [![Download Status](https://img.shields.io/npm/dm/@kalisio/feathers-distributed.svg?style=flat-square)](https://www.npmjs.com/package/@kalisio/feathers-distributed)
