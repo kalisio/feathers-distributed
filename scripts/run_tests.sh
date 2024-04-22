@@ -25,8 +25,8 @@ while getopts "n:cr:" option; do
             CODE_COVERAGE=true
             ;;
         r) # report outcome to slack
+            CI_STEP_NAME=$OPTARG        
             load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_LIBS.enc.env"
-            CI_STEP_NAME=$OPTARG
             trap 'slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$?" "$SLACK_WEBHOOK_LIBS"' EXIT
             ;;
         *)
