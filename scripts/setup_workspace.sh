@@ -8,9 +8,6 @@ ROOT_DIR=$(dirname "$THIS_DIR")
 
 . "$THIS_DIR/kash/kash.sh"
 
-WORKSPACE_BRANCH=
-WORKSPACE_TAG=
-
 begin_group "Setting up workspace ..."
 
 if [ "$CI" = true ]; then

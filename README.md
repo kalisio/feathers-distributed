@@ -4,6 +4,7 @@
 [![ci](https://github.com/kalisio/feathers-distributed/actions/workflows/main.yaml/badge.svg)](https://github.com/kalisio/feathers-distributed/actions/workflows/main.yaml)
 [![Code Climate](https://codeclimate.com/github/kalisio/feathers-distributed/badges/gpa.svg)](https://codeclimate.com/github/kalisio/feathers-distributed)
 [![Test Coverage](https://codeclimate.com/github/kalisio/feathers-distributed/badges/coverage.svg)](https://codeclimate.com/github/kalisio/feathers-distributed/coverage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Download Status](https://img.shields.io/npm/dm/@kalisio/feathers-distributed.svg?style=flat-square)](https://www.npmjs.com/package/@kalisio/feathers-distributed)
 
 > Distribute your Feathers services as microservices
