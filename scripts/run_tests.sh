@@ -12,7 +12,7 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 ## Parse options
 ##
 
-NODE_VER=16
+NODE_VER=20
 MONGO_VER=""
 CI_STEP_NAME="Run tests"
 CODE_COVERAGE=false
