@@ -159,8 +159,9 @@ describe('feathers-distributed:main', () => {
         .configure(auth())
       restClients.push(rClient)
       // Need to register service with custom methods
+      rClient.transporter = restTransporter
       rClient.registerCustomService = function (name, methods) {
-        rClient.use(name, restTransporter.service(name), { methods })
+        rClient.use(name, rClient.transporter.service(name), { methods })
         return rClient.service(name)
       }
 
@@ -172,8 +173,9 @@ describe('feathers-distributed:main', () => {
         .configure(auth())
       socketClients.push(sClient)
       // Need to register service with custom methods
-      sClient.registerCustomService = function (name, methods, events) {
-        sClient.use(name, socketTransporter.service(name), { methods, events })
+      sClient.transporter = socketTransporter
+      sClient.registerCustomService = function (name, methods) {
+        sClient.use(name, sClient.transporter.service(name), { methods })
         return sClient.service(name)
       }
     }
@@ -482,9 +484,9 @@ describe('feathers-distributed:main', () => {
     expect(typeof restClientCustomServices[gateway].custom).to.equal('function')
     expect(typeof restClientCustomServices[service1].custom).to.equal('function')
     expect(typeof restClientCustomServices[service2].custom).to.equal('function')
-    socketClientCustomServices.push(socketClients[gateway].registerCustomService('custom', methods, events))
-    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom-name', methods, events))
-    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom-name', methods, events))
+    socketClientCustomServices.push(socketClients[gateway].registerCustomService('custom', methods))
+    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom-name', methods))
+    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom-name', methods))
     expect(socketClientCustomServices[gateway]).toExist()
     expect(socketClientCustomServices[service1]).toExist()
     expect(socketClientCustomServices[service2]).toExist()
@@ -492,10 +494,10 @@ describe('feathers-distributed:main', () => {
     expect(typeof socketClientCustomServices[service1].custom).to.equal('function')
     expect(typeof socketClientCustomServices[service2].custom).to.equal('function')
     // Wait before all cote components have been discovered
-    await utils.promisify(setTimeout)(20000)
+    await utils.promisify(setTimeout)(15000)
   })
     // Let enough time to process
-    .timeout(60000)
+    .timeout(20000)
 
   it('dispatch custom service calls from remote to local', async () => {
     let name = await customServices[service1].custom({ name: 'Donald Doe' })
@@ -516,6 +518,7 @@ describe('feathers-distributed:main', () => {
     .timeout(5000)
 
   it('dispatch custom socket service calls from remote to local without auth', async () => {
+    // FIXME: call timeout whatever the reason
     let name = await socketClientCustomServices[service1].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
     name = await socketClientCustomServices[service2].custom({ name: 'Donald Doe' })
@@ -558,6 +561,7 @@ describe('feathers-distributed:main', () => {
       customCount++
       checkIsDone()
     })
+    // FIXME: not called whatever the reason
     socketClientCustomServices[service1].once('created', user => {
       expect(user.id === 0).beTrue()
       createdCount++
