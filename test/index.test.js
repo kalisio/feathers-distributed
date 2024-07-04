@@ -21,13 +21,14 @@ class CustomMemoryService extends MemoryService {
 }
 
 let startId = 6
+const authUser = {
+  name: 'Jane Doe',
+  email: 'user@test.com',
+  password: '$2a$12$97.pHfXj/1Eqn0..1V4ixOvAno7emZKTZgz.OYEHYqOOM2z.cftAu',
+  id: 0
+}
 const store = {
-  0: {
-    name: 'Jane Doe',
-    email: 'user@test.com',
-    password: '$2a$12$97.pHfXj/1Eqn0..1V4ixOvAno7emZKTZgz.OYEHYqOOM2z.cftAu',
-    id: 0
-  },
+  0: authUser,
   1: { name: 'Jack Doe', id: 1 },
   2: { name: 'John Doe', id: 2 },
   3: { name: 'Rick Doe', id: 3 },
@@ -40,10 +41,20 @@ let serviceMiddleware = (req, res, next) => next()
 let appMiddleware = (req, res, next) => res.json({})
 let hookFromRemote
 
+/* Some explanation about the tests
+4 apps are created, each app has a distribution key corresponding to its index:
+- a gateway with a local 'users' service then a dynamically added local 'custom' service with an additional 'custom' event ('created'/'custom' events distributed)
+- a first app without any local service but with the distributed gateway services
+- a second app without any local service but with the distributed gateway services
+- a third app with a local 'no-events' service with an additional 'custom' event (all events distributed) and with the distributed gateway services
+The 'custom' service is exposed remotely on a new 'custom-name' name
+*/
+
 describe('feathers-distributed:main', () => {
   const apps = []
   const servers = []
   let customServices = []
+  const appServices = []
   const restClients = []
   const restClientServices = []
   const restClientCustomServices = []
@@ -58,6 +69,7 @@ describe('feathers-distributed:main', () => {
   const service1 = 1
   const service2 = 2
   const noEvents = 3
+  const hookContext = { query: {  } }
 
   before(async () => {
     chailint(chai, util)
@@ -137,6 +149,9 @@ describe('feathers-distributed:main', () => {
     }
 
     for (let i = 0; i < nbApps; i++) {
+      appServices.push(apps[i].service('users'))
+      expect(appServices[i]).toExist()
+
       const url = 'http://localhost:' + (3030 + i)
       const restTransporter = restClient(url).superagent(request)
       const rClient = feathers()
@@ -157,8 +172,8 @@ describe('feathers-distributed:main', () => {
         .configure(auth())
       socketClients.push(sClient)
       // Need to register service with custom methods
-      sClient.registerCustomService = function (name, methods) {
-        sClient.use(name, socketTransporter.service(name), { methods })
+      sClient.registerCustomService = function (name, methods, events) {
+        sClient.use(name, socketTransporter.service(name), { methods, events })
         return sClient.service(name)
       }
     }
@@ -219,56 +234,78 @@ describe('feathers-distributed:main', () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch get rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch create rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch update rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch patch rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch remove rest service calls from remote to local without auth', async () => {
     const user = await restClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('ensure distribution hooks have been called on remote service', () => {
     expect(beforeHook).to.have.been.called()
     expect(afterHook).to.have.been.called()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('ensure local service hooks have been called with the remote service flag', () => {
     expect(hookFromRemote).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('ensure middleware can been called on local service', async () => {
     const url = 'http://localhost:' + (3030 + gateway) + '/users'
     await request.get(url)
     expect(serviceMiddleware).to.have.been.called()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch find socket service calls from remote to local without auth', async () => {
     const users = await socketClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch get socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch create socket service calls from remote to local without auth', async () => {
     // Jump to next user
@@ -276,71 +313,150 @@ describe('feathers-distributed:main', () => {
     const user = await socketClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch update socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch patch socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch remove socket service calls from remote to local without auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch create socket service events from local to remote without auth', done => {
+    let count = 0
     // Jump to next user
     startId += 1
     socketClientServices[service1].once('created', user => {
       expect(user.name === 'Donald Doe').beTrue()
       expect(user.id === startId).beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].create({ name: 'Donald Doe' })
+    // Server side we should have hook context
+    appServices[service1].once('created', (user, context) => {
+      expect(user.name === 'Donald Doe').beTrue()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('created')
+      expect(context.method).to.equal('create')
+      expect(context.data).to.deep.equal({ name: 'Donald Doe' })
+      expect(context.result).to.deep.equal({ name: 'Donald Doe', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      count++
+      if (count === 2) done()
+    })
+    hookContext.query.id = startId
+    socketClientServices[gateway].create({ name: 'Donald Doe' }, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch update socket service events from local to remote without auth', done => {
+    let count = 0
     socketClientServices[service2].once('updated', user => {
       expect(user.name === 'Donald Dover').beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
+    // Server side we should have hook context
+    appServices[service2].once('updated', (user, context) => {
+      expect(user.name === 'Donald Dover').beTrue()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('updated')
+      expect(context.method).to.equal('update')
+      expect(context.data).to.deep.equal({ name: 'Donald Dover' })
+      expect(context.result).to.deep.equal({ name: 'Donald Dover', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      count++
+      if (count === 2) done()
+    })
+    socketClientServices[gateway].update(startId, { name: 'Donald Dover' }, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch patch socket service events from local to remote without auth', done => {
+    let count = 0
     socketClientServices[service1].once('patched', user => {
       expect(user.name === 'Donald Doe').beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
-  })
-
-  it('dispatch patch socket service events from local to local without auth', done => {
-    socketClientServices[gateway].once('patched', user => {
+    // Server side we should have hook context
+    appServices[service1].once('patched', (user, context) => {
       expect(user.name === 'Donald Doe').beTrue()
-      done()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('patched')
+      expect(context.method).to.equal('patch')
+      expect(context.data).to.deep.equal({ name: 'Donald Doe' })
+      expect(context.result).to.deep.equal({ name: 'Donald Doe', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
+    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' }, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch remove socket service events from local to remote without auth', done => {
+    let count = 0
     socketClientServices[service2].once('removed', user => {
       expect(user.id === startId).beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].remove(startId)
+    // Server side we should have hook context
+    appServices[service2].once('removed', (user, context) => {
+      expect(user.name === 'Donald Doe').beTrue()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('removed')
+      expect(context.method).to.equal('remove')
+      expect(context.data).beUndefined()
+      expect(context.id).to.equal(startId)
+      expect(context.result).to.deep.equal({ name: 'Donald Doe', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      count++
+      if (count === 2) done()
+    })
+    socketClientServices[gateway].remove(startId, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dynamically register a custom service', async () => {
     const customService = new CustomMemoryService()
     const methods = ['create', 'update', 'custom']
+    const events = ['custom']
     // Ensure we can filter events and only send custom ones
     apps[gateway].use('custom', customService, {
-      events: ['custom'],
+      events,
       methods,
       distributedEvents: ['created', 'custom'],
       distributedMethods: methods
@@ -366,9 +482,9 @@ describe('feathers-distributed:main', () => {
     expect(typeof restClientCustomServices[gateway].custom).to.equal('function')
     expect(typeof restClientCustomServices[service1].custom).to.equal('function')
     expect(typeof restClientCustomServices[service2].custom).to.equal('function')
-    socketClientCustomServices.push(socketClients[gateway].registerCustomService('custom', methods))
-    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom-name', methods))
-    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom-name', methods))
+    socketClientCustomServices.push(socketClients[gateway].registerCustomService('custom', methods, events))
+    socketClientCustomServices.push(socketClients[service1].registerCustomService('custom-name', methods, events))
+    socketClientCustomServices.push(socketClients[service2].registerCustomService('custom-name', methods, events))
     expect(socketClientCustomServices[gateway]).toExist()
     expect(socketClientCustomServices[service1]).toExist()
     expect(socketClientCustomServices[service2]).toExist()
@@ -387,6 +503,8 @@ describe('feathers-distributed:main', () => {
     name = await customServices[service2].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch custom rest service calls from remote to local without auth', async () => {
     let name = await restClientCustomServices[service1].custom({ name: 'Donald Doe' })
@@ -394,6 +512,8 @@ describe('feathers-distributed:main', () => {
     name = await restClientCustomServices[service2].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch custom socket service calls from remote to local without auth', async () => {
     let name = await socketClientCustomServices[service1].custom({ name: 'Donald Doe' })
@@ -401,6 +521,8 @@ describe('feathers-distributed:main', () => {
     name = await socketClientCustomServices[service2].custom({ name: 'Donald Doe' })
     expect(name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
@@ -469,6 +591,8 @@ describe('feathers-distributed:main', () => {
       expect(err.status).to.equal(404)
     }
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('not found request should return 404 on remote service', async () => {
     const url = 'http://localhost:' + (3030 + service1) + '/xxx'
@@ -480,6 +604,8 @@ describe('feathers-distributed:main', () => {
       expect(err.status).to.equal(404)
     }
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('unauthenticated call should return 401 on local service with auth', async () => {
     checkAuthentication = true
@@ -490,6 +616,8 @@ describe('feathers-distributed:main', () => {
       expect(err.code).to.equal(401)
     }
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('unauthenticated request should return 401 on local service with auth', async () => {
     const url = 'http://localhost:' + (3030 + gateway) + '/users'
@@ -501,6 +629,8 @@ describe('feathers-distributed:main', () => {
       expect(err.status).to.equal(401)
     }
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('unauthenticated call should return 401 on remote service with auth', async () => {
     try {
@@ -510,6 +640,8 @@ describe('feathers-distributed:main', () => {
       expect(err.code).to.equal(401)
     }
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('unauthenticated request should return 401 on remote service with auth', async () => {
     const url = 'http://localhost:' + (3030 + service1) + '/users'
@@ -521,6 +653,8 @@ describe('feathers-distributed:main', () => {
       expect(err.status).to.equal(401)
     }
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('authenticate rest client should return token', async () => {
     // Local auth on gateway
@@ -546,6 +680,8 @@ describe('feathers-distributed:main', () => {
     accessToken = response.accessToken
     expect(accessToken).toExist()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('authenticate socket client should return token', async () => {
     // Local auth on gateway
@@ -571,16 +707,22 @@ describe('feathers-distributed:main', () => {
     accessToken = response.accessToken
     expect(accessToken).toExist()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch find rest service calls from remote to local with auth', async () => {
     const users = await restClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch get rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch create rest service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -588,16 +730,22 @@ describe('feathers-distributed:main', () => {
     const user = await restClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch update rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch patch rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch remove rest service calls from remote to local with auth', async () => {
     const user = await restClientServices[service1].remove(startId)
@@ -610,11 +758,15 @@ describe('feathers-distributed:main', () => {
     const users = await socketClientServices[service1].find({})
     expect(users.length > 0).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch get socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].get(1)
     expect(user.id === 1).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch create socket service calls from remote to local with auth', async () => {
     // Jump to next user
@@ -622,63 +774,145 @@ describe('feathers-distributed:main', () => {
     const user = await socketClientServices[service1].create({ name: 'Donald Doe' })
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch update socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].update(startId, { name: 'Donald Dover' })
     expect(user.name === 'Donald Dover').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch patch socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].patch(startId, { name: 'Donald Doe' })
     expect(user.name === 'Donald Doe').beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch remove socket service calls from remote to local with auth', async () => {
     const user = await socketClientServices[service1].remove(startId)
     expect(user.id === startId).beTrue()
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch create socket service events from local to remote with auth', done => {
+    let count = 0
     // Jump to next user
     startId += 1
     socketClientServices[service2].once('created', user => {
       expect(user.id === startId).beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].create({ name: 'Donald Doe' })
+    // Server side we should have hook context
+    appServices[service2].once('created', (user, context) => {
+      expect(user.name === 'Donald Doe').beTrue()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('created')
+      expect(context.method).to.equal('create')
+      expect(context.data).to.deep.equal({ name: 'Donald Doe' })
+      expect(context.result).to.deep.equal({ name: 'Donald Doe', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      expect(context.params.user).to.deep.equal(authUser)
+      count++
+      if (count === 2) done()
+    })
+    hookContext.query.id = startId
+    socketClientServices[gateway].create({ name: 'Donald Doe' }, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch update socket service events from local to remote with auth', done => {
+    let count = 0
     socketClientServices[service2].once('updated', user => {
       expect(user.name === 'Donald Dover').beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].update(startId, { name: 'Donald Dover' })
+    // Server side we should have hook context
+    appServices[service2].once('updated', (user, context) => {
+      expect(user.name === 'Donald Dover').beTrue()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('updated')
+      expect(context.method).to.equal('update')
+      expect(context.data).to.deep.equal({ name: 'Donald Dover' })
+      expect(context.result).to.deep.equal({ name: 'Donald Dover', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      expect(context.params.user).to.deep.equal(authUser)
+      count++
+      if (count === 2) done()
+    })
+    socketClientServices[gateway].update(startId, { name: 'Donald Dover' }, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch patch socket service events from local to remote with auth', done => {
+    let count = 0
     socketClientServices[service2].once('patched', user => {
       expect(user.name === 'Donald Doe').beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
-  })
-
-  it('dispatch patch socket service events from local to local with auth', done => {
-    socketClientServices[gateway].once('patched', user => {
+    // Server side we should have hook context
+    appServices[service1].once('patched', (user, context) => {
       expect(user.name === 'Donald Doe').beTrue()
-      done()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('patched')
+      expect(context.method).to.equal('patch')
+      expect(context.data).to.deep.equal({ name: 'Donald Doe' })
+      expect(context.result).to.deep.equal({ name: 'Donald Doe', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      expect(context.params.user).to.deep.equal(authUser)
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' })
+    socketClientServices[gateway].patch(startId, { name: 'Donald Doe' }, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('dispatch remove socket service events from local to remote with auth', done => {
+    let count = 0
     socketClientServices[service2].once('removed', user => {
       expect(user.id === startId).beTrue()
-      done()
+      count++
+      if (count === 2) done()
     })
-    socketClientServices[gateway].remove(startId)
+    // Server side we should have hook context
+    appServices[service2].once('removed', (user, context) => {
+      expect(user.name === 'Donald Doe').beTrue()
+      expect(user.id === startId).beTrue()
+      expect(context).toExist()
+      expect(context.type).to.equal('around')
+      expect(context.event).to.equal('removed')
+      expect(context.method).to.equal('remove')
+      expect(context.data).beUndefined()
+      expect(context.id).to.equal(startId)
+      expect(context.result).to.deep.equal({ name: 'Donald Doe', id: startId })
+      expect(context.params).toExist()
+      expect(context.params.query).to.deep.equal(hookContext.query)
+      expect(context.params.user).to.deep.equal(authUser)
+      count++
+      if (count === 2) done()
+    })
+    socketClientServices[gateway].remove(startId, hookContext)
   })
+    // Let enough time to process
+    .timeout(5000)
 
   it('disable events publishing globally', () => {
     expect(apps[gateway].serviceEventsPublisher).toExist()
