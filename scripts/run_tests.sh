@@ -16,11 +16,8 @@ NODE_VER=20
 MONGO_VER=""
 CI_STEP_NAME="Run tests"
 CODE_COVERAGE=false
-while getopts "m:n:cr:" option; do
+while getopts "n:cr:" option; do
     case $option in
-        m) # defines mongo version
-            MONGO_VER=$OPTARG
-            ;;    
         n) # defines node version
             NODE_VER=$OPTARG
              ;;
