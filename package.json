@@ -4,11 +4,9 @@
   "version": "2.4.0",
   "homepage": "https://github.com/kalisio/feathers-distributed",
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "type": "module",
-  "keywords": [
-    "feathers",
-    "feathers-plugin"
-  ],
+  "keywords": ["feathers", "feathers-plugin"],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -41,9 +39,7 @@
   },
   "standard": {
     "sourceType": "module",
-    "env": [
-      "mocha"
-    ]
+    "env": ["mocha"]
   },
   "directories": {
     "lib": "lib"
