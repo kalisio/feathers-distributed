@@ -39,6 +39,7 @@ let beforeHook = (hook) => hook
 let afterHook = (hook) => hook
 let serviceMiddleware = (req, res, next) => next()
 let appMiddleware = (req, res, next) => res.json({})
+let customMiddleware = (req, res, next) => next()
 let hookFromRemote
 
 /* Some explanation about the tests
@@ -187,6 +188,10 @@ describe('feathers-distributed:main', () => {
   it('is ES module compatible', () => {
     expect(typeof finalize).to.equal('function')
     expect(typeof plugin).to.equal('function')
+  })
+
+  it('dynamically register a custom middleware', async () => {
+    apps[gateway].use('customMiddleware', customMiddleware)
   })
 
   it('initiate the rest clients', () => {
