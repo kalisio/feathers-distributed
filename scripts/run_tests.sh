@@ -44,4 +44,9 @@ done
 
 run_lib_tests "$ROOT_DIR" "$CODE_COVERAGE" "$NODE_VER" "$MONGO_VER"
 
-cd "$ROOT_DIR" && sonar-scanner
+## Run SonarQube analysis
+##
+
+if [ "$CODE_COVERAGE" = true ]; then
+    cd "$ROOT_DIR" && sonar-scanner
+fi

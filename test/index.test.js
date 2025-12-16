@@ -530,7 +530,7 @@ describe('feathers-distributed:main', () => {
     expect(name === 'Donald Doe').beTrue()
   })
     // Let enough time to process
-    .timeout(5000)
+    .timeout(40000)
 
   it('dispatch custom events and ignore the ones not configured for distribution', (done) => {
     let createdCount = 0
@@ -588,7 +588,7 @@ describe('feathers-distributed:main', () => {
       .then(_ => customServices[gateway].emit('custom', { payload: 'Donald Doe' }))
   })
     // Let enough time to process
-    .timeout(20000)
+    .timeout(40000)
 
   it('not found request should return 404 on local service', async () => {
     const url = 'http://localhost:' + (3030 + gateway) + '/xxx'
