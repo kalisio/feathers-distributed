@@ -36,7 +36,7 @@ jobs:
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/run_tests.sh -c -r ${{ github.job }}
+        run: bash ./scripts/run_tests.sh -s -r ${{ github.job }}
   
   additional_tests:
     strategy:
