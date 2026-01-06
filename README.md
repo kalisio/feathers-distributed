@@ -57,7 +57,7 @@ app.configure(distribution());
 
 > A common problem with distribution is that it can register new remote services to your app after it has been configured and started, which typically causes 404 errors, read [the documentation](https://github.com/kalisio/feathers-distributed#remote-services) about this issue.
 
-If you are not running a long-lived server and want to use distribution in your test suite for instance, you can clean it up gracefully like this: 
+If you are not running a long-lived server and want to use distribution in your test suite for instance, you can clean it up gracefully like this:
 ```javascript
 const distribution = require('@kalisio/feathers-distributed');
 ...
@@ -71,25 +71,25 @@ server.close();
 ![Microservice architecture](https://cdn.rawgit.com/kalisio/feathers-distributed/dd436d9e1a70b66607a893ba9efeaeab339fd50e/Architecture%20Diagram.svg)
 
 When the plugin initializes the following is done for your local app:
-* creates a local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other apps. 
-* creates a local [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other apps. 
+* creates a local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch its *locally registered services* to other apps.
+* creates a local [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of *remotely registered services* from other apps.
 * creates a local [responder](https://github.com/dashersw/cote#creating-a-responder) to handle *incoming requests from other apps* to locally registered services.
 * creates a local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to dispatch locally registered services events to *remote apps*.
 
 What is done by overriding `app.use` is the following:
 * each *local* Feathers service of your app is published using the local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to remote apps through the `service` event.
 
-What is done when your app is aware of a new remotely registered app is the following: 
+What is done when your app is aware of a new remotely registered app is the following:
 * creates a local [requester](https://github.com/dashersw/cote#creating-a-requester) to send requests to the remote [responder](https://github.com/dashersw/cote#creating-a-responder) for remote services operations.
 * creates a local [subscriber](https://github.com/dashersw/cote#creating-a-subscriber) to be aware of service events sent by the remote events [publisher](https://github.com/dashersw/cote#creating-a-publisher) for remote services.
 
-What is done when your app is aware of a new remotely registered service is the following: 
+What is done when your app is aware of a new remotely registered service is the following:
 * creates via `app.use` a local Feathers service *acting as a proxy* to the remote one by using the local [requester](https://github.com/dashersw/cote#creating-a-requester).
 
-What is done by overriding `app.unuse` is the following: 
+What is done by overriding `app.unuse` is the following:
 * each *local* Feathers service removed from your app is unpublished using the local [publisher](https://github.com/dashersw/cote#creating-a-publisher) to remote apps through the `service-removed` event.
 
-What is done when your app is aware of a remotely unregistered service is the following: 
+What is done when your app is aware of a remotely unregistered service is the following:
 * removes via `app.unuse` the local Feathers service *acting as a proxy* to the remote one.
 
 ## Configuration options
@@ -197,7 +197,7 @@ By default only [standard service methods](https://docs.feathersjs.com/api/servi
 
 ### Partition keys
 
-By default the same [partition key](https://github.com/dashersw/cote#keys) is used for all distributed apps, so that there is no communication segregation. Sometimes it is better for security, maintenance or performance purpose to segregate services by following the principles of domain-driven design. In that case you can always define your own partition key for each application using the `key` string option (defaults to `'default'`). 
+By default the same [partition key](https://github.com/dashersw/cote#keys) is used for all distributed apps, so that there is no communication segregation. Sometimes it is better for security, maintenance or performance purpose to segregate services by following the principles of domain-driven design. In that case you can always define your own partition key for each application using the `key` string option (defaults to `'default'`).
 
 A solid solution as suggested in [issue #70](https://github.com/kalisio/feathers-distributed/issues/70) is to use your package name because duplicated apps will then have the same key while different projects will not, and it will be persistent across restart:
 ```
@@ -266,7 +266,7 @@ There are two scenarios:
 * the **API gateway**, where you have a single entry point (ie node) to authenticate and access your API but services are distributed accross different nodes
 * the **distributed application**, where you can distribute and access any service on any node on your network mesh with authentication
 
-### API gateway: 
+### API gateway:
 
 In this case you have to [install the authentication plugin](https://auk.docs.feathersjs.com/api/authentication/server.html#authentication) on your gateway and register a hook that will enforce authentication on each registered remote service by using the `hooks` option:
 ```javascript
@@ -326,6 +326,8 @@ More specifically check the [docker compose files](https://github.com/kalisio/ka
 
 ## License
 
-Copyright (c) 2017-20xx Kalisio
-
 Licensed under the [MIT license](LICENSE).
+
+Copyright (c) 2017-20xx [Kalisio](https://kalisio.com)
+
+[![Kalisio](https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-black-256x84.png)](https://kalisio.com)
