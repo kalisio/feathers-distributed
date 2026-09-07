@@ -10,6 +10,13 @@
 
 > Distribute your Feathers services as microservices
 
+> [!IMPORTANT]
+> This package has moved to the [`feathers-ekosystem`](https://github.com/kalisio/feathers-ekosystem) monorepo.
+>
+> Please use and follow the version maintained in `packages/feathers-distributed` from now on.
+>
+> This repository is no longer maintained.
+
 The [`master`](https://github.com/kalisio/feathers-distributed) branch and >= 2.0.x version is expected to work with [Feathers v5](https://dove.docs.feathersjs.com/) (a.k.a. Dove).
 
 The [`buzzard`](https://github.com/kalisio/feathers-distributed/tree/buzzard) branch and >= 0.3.x version is expected to work with [Feathers v3](https://buzzard.docs.feathersjs.com/) (a.k.a. Buzzard) and [Feathers v4](https://docs.feathersjs.com/) (a.k.a. Crow) **but is deprecated**.
